@@ -11,4 +11,8 @@ interface Flat {
     fun getCostInDollars(): Int?
 
     fun getOriginalUrl(): String?
+
+    fun getLatitude(): Double?
+
+    fun getLongitude(): Double?
 }

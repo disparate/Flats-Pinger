@@ -4,25 +4,21 @@ import com.google.gson.annotations.SerializedName
 
 
 class OnlinerFlat : Flat {
-    override fun getImageUrl(): String? {
-        return photoUrl
-    }
+    override fun getImageUrl(): String? = photoUrl
 
-    override fun getAddress(): String {
-        return location?.address ?: ""
-    }
+    override fun getAddress(): String = location?.address ?: ""
 
     override fun getNearestSubwayStation(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getCostInDollars(): Int? {
-        return price?.amount?.toInt()
-    }
+    override fun getCostInDollars(): Int? = price?.amount?.toInt()
 
-    override fun getOriginalUrl(): String? {
-        return siteUrl
-    }
+    override fun getOriginalUrl(): String? = siteUrl
+
+    override fun getLatitude(): Double? = location?.latitude
+
+    override fun getLongitude(): Double? = location?.longitude
 
     @SerializedName("id")
     val id: Long? = null

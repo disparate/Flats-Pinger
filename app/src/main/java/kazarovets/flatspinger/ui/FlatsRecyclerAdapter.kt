@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.utils.SubwayUtils
 
 
 class FlatsRecyclerAdapter(flats: MutableList<Flat>)
@@ -31,6 +32,11 @@ class FlatsRecyclerAdapter(flats: MutableList<Flat>)
 
             holder.addressView?.text = flat.getAddress()
             holder.costView?.text = "${flat.getCostInDollars()}$"
+            val latitude = flat.getLatitude()
+            val longitude = flat.getLongitude()
+            if(latitude != null && longitude != null) {
+                holder.subwayView?.text = SubwayUtils.getNearestSubway(latitude, longitude).name
+            }
         }
     }
 
@@ -62,13 +68,15 @@ class FlatsRecyclerAdapter(flats: MutableList<Flat>)
         var addressView: TextView? = null
         var imageView: ImageView? = null
         var costView: TextView? = null
+        var subwayView: TextView? = null
 
         var flat: Flat? = null
 
         init {
-            addressView = itemView?.findViewById<TextView>(R.id.address)
-            imageView = itemView?.findViewById<ImageView>(R.id.image)
-            costView = itemView?.findViewById<TextView>(R.id.cost)
+            addressView = itemView?.findViewById(R.id.address)
+            imageView = itemView?.findViewById(R.id.image)
+            costView = itemView?.findViewById(R.id.cost)
+            subwayView = itemView?.findViewById(R.id.subway_name)
         }
     }
 
