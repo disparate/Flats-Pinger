@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SubwaysSelectorView">
+        <attr name="selectedColor" format="color" />
+        <attr name="checkboxSelector" format="integer"/>
+    </declare-styleable>
+</resources>

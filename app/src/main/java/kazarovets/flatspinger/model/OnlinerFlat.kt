@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 
 class OnlinerFlat : Flat {
+
     override fun getImageUrl(): String? = photoUrl
 
     override fun getAddress(): String = location?.address ?: ""
@@ -19,6 +20,8 @@ class OnlinerFlat : Flat {
     override fun getLatitude(): Double? = location?.latitude
 
     override fun getLongitude(): Double? = location?.longitude
+
+    override fun isOwner(): Boolean = contact?.isOwner ?: false
 
     @SerializedName("id")
     val id: Long? = null
@@ -44,6 +47,9 @@ class OnlinerFlat : Flat {
     @SerializedName("url")
     val siteUrl: String? = null
 
+    @SerializedName("contact")
+    val contact: Contact? = null
+
 
     class Price {
         @SerializedName("amount")
@@ -65,5 +71,10 @@ class OnlinerFlat : Flat {
 
         @SerializedName("longitude")
         val longitude: Double? = null
+    }
+
+    class Contact {
+        @SerializedName("owner")
+        val isOwner: Boolean? = null
     }
 }

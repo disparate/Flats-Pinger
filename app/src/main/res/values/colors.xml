@@ -5,9 +5,9 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorTextPrimary">#ffffff</color>
-    <color name="colorPrimaryTranslucient">#883F51B5</color>
+    <color name="colorPrimaryTranslucient">#aa3F51B5</color>
 
     <color name="colorSubwayRed">#e41d25</color>
     <color name="colorSubwayBlue">#3b338b</color>
-    <color name="colorSubwayNeytral">#a6a5ac</color>
+    <color name="colorSubwayNeutral">#a6a5ac</color>
 </resources>

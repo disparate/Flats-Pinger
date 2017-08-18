@@ -15,4 +15,6 @@ interface Flat {
     fun getLatitude(): Double?
 
     fun getLongitude(): Double?
+
+    fun isOwner(): Boolean
 }

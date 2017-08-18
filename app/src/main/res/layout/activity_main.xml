@@ -8,18 +8,22 @@
     android:orientation="vertical"
     tools:context="kazarovets.flatspinger.ui.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/content"
+    <ViewSwitcher
+        android:id="@+id/view_switcher"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler"
+        <fragment
+            android:id="@+id/flats_list_fragment"
+            class="kazarovets.flatspinger.fragments.FlatsListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </ViewSwitcher>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

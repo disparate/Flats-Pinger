@@ -37,6 +37,7 @@ class FlatsRecyclerAdapter(flats: MutableList<Flat>)
             if(latitude != null && longitude != null) {
                 holder.subwayView?.text = SubwayUtils.getNearestSubway(latitude, longitude).name
             }
+            holder.ownerView?.setText(if(flat.isOwner()) R.string.owner else R.string.agent)
         }
     }
 
@@ -69,6 +70,7 @@ class FlatsRecyclerAdapter(flats: MutableList<Flat>)
         var imageView: ImageView? = null
         var costView: TextView? = null
         var subwayView: TextView? = null
+        var ownerView: TextView? = null
 
         var flat: Flat? = null
 
@@ -77,6 +79,7 @@ class FlatsRecyclerAdapter(flats: MutableList<Flat>)
             imageView = itemView?.findViewById(R.id.image)
             costView = itemView?.findViewById(R.id.cost)
             subwayView = itemView?.findViewById(R.id.subway_name)
+            ownerView = itemView?.findViewById(R.id.owner)
         }
     }
 
