@@ -11,18 +11,23 @@ class MainActivity : AppCompatActivity() {
     companion object {
         val POSITION_LIST = 0
         val POSITION_FILTER = 1
+
+        val CURRENT_POSITION = "curr_pos"
     }
 
     private var viewSwitcher: ViewSwitcher? = null
+    private var currPosition = POSITION_LIST
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
-                viewSwitcher?.displayedChild = POSITION_LIST
+                currPosition = POSITION_LIST
+                viewSwitcher?.displayedChild = currPosition
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_filter -> {
-                viewSwitcher?.displayedChild = POSITION_FILTER
+                currPosition = POSITION_FILTER
+                viewSwitcher?.displayedChild = currPosition
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -37,6 +42,14 @@ class MainActivity : AppCompatActivity() {
 
         val navigation = findViewById<BottomNavigationView>(R.id.navigation)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        currPosition = savedInstanceState?.getInt(CURRENT_POSITION) ?: currPosition
+        viewSwitcher?.displayedChild = currPosition
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putInt(CURRENT_POSITION, currPosition)
     }
 
 }

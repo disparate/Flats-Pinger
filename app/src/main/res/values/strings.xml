@@ -5,4 +5,8 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="owner">Собственник</string>
     <string name="agent">Агент</string>
+    <string name="filter_subway_title">Станции метро</string>
+    <string name="filter_allow_agency">Показывать объявления от агентств?</string>
+    <string name="filter_min_cost">Минимальная стоимость (USD)</string>
+    <string name="filter_max_cost">Максимальная стоимость (USD)</string>
 </resources>

@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <!-- Larger blue circle in back -->
     <item
         android:bottom="@dimen/subway_selector_checkbox_padding"
         android:left="@dimen/subway_selector_checkbox_padding"
         android:right="@dimen/subway_selector_checkbox_padding"
         android:top="@dimen/subway_selector_checkbox_padding">
         <shape android:shape="oval">
+            <stroke android:color="@color/colorSubwayRed"
+                android:width="2dp"/>
             <size
                 android:width="@dimen/subway_selector_checkbox_width"
                 android:height="@dimen/subway_selector_checkbox_width" />
-            <solid android:color="@color/colorSubwayBlue" />
+            <solid android:color="#ffffff" />
         </shape>
     </item>
-
 </layer-list>

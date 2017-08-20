@@ -6,6 +6,9 @@
     <dimen name="subway_selector_item_height">36dp</dimen>
     <dimen name="subway_selector_item_height_half">18dp</dimen>
 
+    <dimen name="subway_selector_checkbox_width_with_padding">36dp</dimen>
+    <dimen name="subway_selector_checkbox_padding">6dp</dimen>
+    <dimen name="subway_selector_checkbox_inner_circle_padding">8dp</dimen>
     <dimen name="subway_selector_checkbox_width">24dp</dimen>
-    <dimen name="subway_selector_checkbox_width_half">12dp</dimen>
+    <dimen name="subway_selector_checkbox_width_with_padding_half">18dp</dimen>
 </resources>

@@ -20,9 +20,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <FrameLayout
+        <fragment
+            android:id="@+id/flats_filter_fragment"
+            class="kazarovets.flatspinger.fragments.FlatsFilterFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </ViewSwitcher>
 
     <android.support.design.widget.BottomNavigationView

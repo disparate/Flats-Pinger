@@ -3,18 +3,26 @@ package kazarovets.flatspinger.views
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Bundle
+import android.os.Parcelable
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.model.Subway
 
 
-class SubwaysSelectorView : RelativeLayout {
+class SubwaysSelectorView : FrameLayout {
+
+    companion object {
+        val BUNDLE_SUPER_STATE = "super_state"
+        val BUNDLE_CHECKED_IDS = "checked_ids"
+    }
 
     var subways: Array<Subway> = emptyArray()
         set(value) {
@@ -26,19 +34,13 @@ class SubwaysSelectorView : RelativeLayout {
     val colorNeutral: Int
     val checkboxDrawable: Drawable
 
-    var viewsBetweenCheckboxes: MutableList<View> = ArrayList()
-    var checkboxesViews: MutableList<CheckBox> = ArrayList()
-    var names: MutableList<TextView> = ArrayList()
+    //    private var viewsBetweenCheckboxes: MutableList<View> = ArrayList()
+    private var checkboxesViews: MutableMap<Int, CheckBox> = HashMap()
 
-    val mainContainer: ViewGroup
-    val linesContainer: ViewGroup
+    private val mainContainer: ViewGroup
+    private val verticalLine: View
 
-    private var onCheckedChangedListener = object : OnPositionCheckedListener {
-        override fun onPositionChecked(pos: Int, checked: Boolean) {
-            colorizeItem(pos, checked)
-        }
-    }
-
+    var onCheckedChangedListener: OnSubwayCheckedListener? = null
 
     constructor(context: Context) :
             this(context, null)
@@ -51,86 +53,73 @@ class SubwaysSelectorView : RelativeLayout {
         inflate(context, R.layout.view_subways_selector, this)
 
         mainContainer = findViewById(R.id.main_container)
-        linesContainer = findViewById(R.id.lines_container)
+        verticalLine = findViewById(R.id.vertical_line)
 
         colorNeutral = ContextCompat.getColor(context, R.color.colorSubwayNeutral)
 
         if (attrs != null) {
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.SubwaysSelectorView)
             color = typedArray.getColor(R.styleable.SubwaysSelectorView_selectedColor, Color.RED)
-            checkboxDrawable = ContextCompat.getDrawable(context,
-                    typedArray.getInt(R.styleable.SubwaysSelectorView_checkboxSelector,
-                            R.drawable.selector_check_subway_red))
+            checkboxDrawable = typedArray.getDrawable(R.styleable.SubwaysSelectorView_checkboxSelector)
             typedArray.recycle()
         } else {
             color = Color.RED
             checkboxDrawable = ContextCompat.getDrawable(context, R.drawable.selector_check_subway_red)
         }
+        verticalLine.setBackgroundColor(color)
     }
 
     private fun addChildViews() {
         checkboxesViews.clear()
-        names.clear()
-        viewsBetweenCheckboxes.clear()
 
-        linesContainer.removeAllViews()
         mainContainer.removeAllViews()
 
         for (i in subways.indices) {
-            addItemView(i, subways.get(i))
+            addItemView(subways.get(i))
 
             if (i < subways.size - 1) {
                 addLineView()
             }
         }
+        invalidate()
     }
 
-    private fun updateCheckedSubways(checkedIds: List<Int>) {
+    fun updateCheckedSubways(checkedIds: MutableSet<Int>) {
         for (i in subways.indices) {
             val subway = subways.get(i)
-            colorizeItem(i, checkedIds.contains(subway.id))
+            val checkbox = checkboxesViews.get(subway.id)
+            checkbox?.isChecked = checkedIds.contains(subway.id)
         }
     }
 
-    private fun colorizeItem(pos: Int, isChecked: Boolean) {
-        if (pos < checkboxesViews.size) {
-            val checkbox = checkboxesViews.get(pos)
-            checkbox.isChecked = isChecked
-            val text = names.get(pos)
-            text.setTextColor(if (isChecked) color else colorNeutral)
-            if (pos < viewsBetweenCheckboxes.size) {
-                val view = viewsBetweenCheckboxes.get(pos)
-                view.setBackgroundColor(if (isChecked) color else colorNeutral)
-            }
-        }
+    private fun colorizeItem(id: Int, isChecked: Boolean) {
+        val checkbox = checkboxesViews.get(id)
+        checkbox?.setTextColor(if (isChecked) color else colorNeutral)
     }
 
-    private fun addItemView(pos: Int, subway: Subway) {
-        val container = View.inflate(context, R.layout.item_subway, null)
-
-        val checkBox = container.findViewById<CheckBox>(R.id.checkbox)
-        checkBox.buttonDrawable = checkboxDrawable
+    private fun addItemView(subway: Subway) {
+        val checkBox = View.inflate(context, R.layout.item_subway, null) as CheckBox
+        checkBox.buttonDrawable = checkboxDrawable.getConstantState().newDrawable()
         checkBox.setOnCheckedChangeListener { compoundButton, b
             ->
-            onCheckedChangedListener.onPositionChecked(pos, b)
+            colorizeItem(subway.id, b)
+            onCheckedChangedListener?.onPositionChecked(subway, b)
         }
+        checkBox.setText(subway.name)
+        checkBox.isSaveEnabled = false
 
-        val name = container.findViewById<TextView>(R.id.name)
-        name.setText(subway.name)
-
-        checkboxesViews.add(checkBox)
-        names.add(name)
-        linesContainer.addView(container)
+        checkboxesViews.put(subway.id, checkBox)
+        mainContainer.addView(checkBox)
     }
 
     private fun addLineView() {
         val view = View(context)
-        view.layoutParams.height = LayoutParams.MATCH_PARENT
-        linesContainer.addView(view)
-        viewsBetweenCheckboxes.add(view)
+        val lp = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0)
+        lp.weight = 1.0F
+        view.layoutParams = lp
     }
 
-    private interface OnPositionCheckedListener {
-        fun onPositionChecked(pos: Int, checked: Boolean)
+    interface OnSubwayCheckedListener {
+        fun onPositionChecked(subway: Subway, checked: Boolean)
     }
 }

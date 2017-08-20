@@ -10,6 +10,6 @@
     <item android:state_selected="true"
         android:drawable="@drawable/oval_subway_red"/>
 
-    <item android:drawable="@drawable/oval_subway_neutral"/>
+    <item android:drawable="@drawable/oval_subway_red_white"/>
 
 </selector>

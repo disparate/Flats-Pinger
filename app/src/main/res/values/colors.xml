@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="colorTextPrimary">#ffffff</color>
+    <color name="colorTextSecondary">#9e9e9e</color>
     <color name="colorPrimaryTranslucient">#aa3F51B5</color>
 
     <color name="colorSubwayRed">#e41d25</color>
