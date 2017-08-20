@@ -12,6 +12,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -19,6 +20,9 @@ import kazarovets.flatspinger.R
 import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
+import kazarovets.flatspinger.utils.FlatsFilterMatcher
+import kazarovets.flatspinger.utils.PreferenceUtils
+import java.util.*
 
 
 class FlatsListFragment : Fragment() {
@@ -59,7 +63,11 @@ class FlatsListFragment : Fragment() {
 
     private fun loadData() {
         swipeRefreshLayout?.isRefreshing = true
-        disposable = ApiManager.onlinerApi.getLatestFlats()
+        disposable = ApiManager.onlinerApi.getLatestFlats(PreferenceUtils.minCost, PreferenceUtils.maxCost)
+                .toObservable()
+                .flatMap { Observable.fromIterable(it) }
+                .filter { FlatsFilterMatcher.matches(PreferenceUtils.flatFilter, it) }
+                .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<Flat>>() {
                     override fun onError(e: Throwable) {

@@ -1,6 +1,7 @@
 package kazarovets.flatspinger.model
 
 import com.google.gson.annotations.SerializedName
+import kazarovets.flatspinger.utils.SubwayUtils
 
 
 class OnlinerFlat : Flat {
@@ -9,11 +10,7 @@ class OnlinerFlat : Flat {
 
     override fun getAddress(): String = location?.address ?: ""
 
-    override fun getNearestSubwayStation(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getCostInDollars(): Int? = price?.amount?.toInt()
+    override fun getCostInDollars(): Int = price?.amount?.toInt() ?: 0
 
     override fun getOriginalUrl(): String? = siteUrl
 
@@ -22,6 +19,10 @@ class OnlinerFlat : Flat {
     override fun getLongitude(): Double? = location?.longitude
 
     override fun isOwner(): Boolean = contact?.isOwner ?: false
+
+    override fun getRentType(): RentType {
+        return RentType.FLAT_1_ROOM
+    }
 
     @SerializedName("id")
     val id: Long? = null
