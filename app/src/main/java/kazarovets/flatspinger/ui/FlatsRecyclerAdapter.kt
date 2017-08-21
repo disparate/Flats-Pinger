@@ -38,7 +38,8 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
             val latitude = flat.getLatitude()
             val longitude = flat.getLongitude()
             if (latitude != null && longitude != null) {
-                holder.subwayView?.text = SubwayUtils.getNearestSubway(latitude, longitude).name
+                holder.subwayView?.text = "${SubwayUtils.getNearestSubway(latitude, longitude).name}" +
+                        " (${flat.getDistanceToSubwayInMeters().toInt()}${context.getString(R.string.meter_small)})"
             }
             holder.ownerView?.setText(if (flat.isOwner()) R.string.owner else R.string.agent)
             holder.provider?.setImageResource(flat.getProvider().drawableRes)
@@ -57,10 +58,10 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
         val showDays = days > 0
         val showHours = hours > 0 && (!showDays || days < 2)
         val showMinutes = days < 1 && hours < 1
-        timeAgoView?.text = "${if (showDays) "${days}${context.getString(R.string.day_small)} " else ""} " +
-                "${if (showHours) "${hours}${context.getString(R.string.hour_small)} " else ""}" +
-                "${if (showMinutes) "${minutes}${context.getString(R.string.minute_small)} " else ""}" +
-                context.getString(R.string.time_ago)
+        timeAgoView?.text = "${if (showDays) "${days}${context.getString(R.string.day_small)}" else ""} " +
+                "${if (showHours) "${hours}${context.getString(R.string.hour_small)}" else ""}" +
+                "${if (showMinutes) "${minutes}${context.getString(R.string.minute_small)}" else ""}" +
+                " " + context.getString(R.string.time_ago)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): FlatsViewHolder {

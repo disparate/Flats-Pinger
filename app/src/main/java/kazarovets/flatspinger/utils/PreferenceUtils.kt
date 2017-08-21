@@ -18,6 +18,7 @@ object PreferenceUtils {
     val FILTER_AGENCY_ALLOWED = "filter_agency_allowed"
     val FILTER_SUBWAYS_IDS = "filter_subways_ids"
     val FILTER_RENT_TYPES = "filter_rent_types"
+    val FILTER_MAX_DISTANCE_TO_SUBWAY = "filter_max_dist_to_subway"
 
     val TAG = "PreferenceUtils"
 
@@ -28,25 +29,25 @@ object PreferenceUtils {
         this.context = context.applicationContext
     }
 
-    var minCost: Int = 0
+    var minCost: Int? = null
         get() {
-            field = prefs.getInt(FILTER_MIN_COST_USD, 0)
+            field = getNullableInt(FILTER_MIN_COST_USD)
             return field
         }
         set(value) {
             field = value
-            prefs.edit().putInt(FILTER_MIN_COST_USD, value).apply()
+            putNullableValue(FILTER_MIN_COST_USD, value)
         }
 
 
-    var maxCost: Int = 0
+    var maxCost: Int? = null
         get() {
-            field = prefs.getInt(FILTER_MAX_COST_USD, 0)
+            field = getNullableInt(FILTER_MAX_COST_USD)
             return field
         }
         set(value) {
             field = value
-            prefs.edit().putInt(FILTER_MAX_COST_USD, value).apply()
+            putNullableValue(FILTER_MAX_COST_USD, value)
         }
 
     var allowAgency: Boolean = false
@@ -100,24 +101,62 @@ object PreferenceUtils {
             prefs.edit().putStringSet(FILTER_SUBWAYS_IDS, set).apply()
         }
 
+    var maxDistToSubway: Double? = null
+        get() {
+            field = getNullableDouble(FILTER_MAX_DISTANCE_TO_SUBWAY)
+            return field
+        }
+        set(value) {
+            field = value
+            putNullableValue(FILTER_MAX_DISTANCE_TO_SUBWAY, value)
+        }
+
     var flatFilter: FlatFilter? = null
         get() {
             field = FlatFilter(minCost = minCost,
                     maxCost = maxCost,
                     subwaysIds = subwayIds,
                     agencyAllowed = allowAgency,
-                    rentTypes = rentTypes)
+                    rentTypes = rentTypes,
+                    maxDistToSubway = maxDistToSubway)
             return field
 
         }
         set(value) {
-            if(value != null) {
+            if (value != null) {
                 field = value
                 minCost = value.minCost
                 maxCost = value.maxCost
                 subwayIds = value.subwaysIds
                 allowAgency = value.agencyAllowed
                 rentTypes = value.rentTypes
+                maxDistToSubway = value.maxDistToSubway
             }
         }
+
+    private fun getNullableInt(fieldName: String): Int? {
+        val value = prefs.getInt(fieldName, 0)
+        return if (value > 0) value else null
+    }
+
+    private fun getNullableDouble(fieldName: String): Double? {
+        val value = prefs.getFloat(fieldName, 0F)
+        return if (value > 0F) value.toDouble() else null
+    }
+
+    private fun putNullableValue(fieldName: String, value: Int?) {
+        if (value != null) {
+            prefs.edit().putInt(fieldName, value).apply()
+        } else {
+            prefs.edit().remove(fieldName).apply()
+        }
+    }
+
+    private fun putNullableValue(fieldName: String, value: Double?) {
+        if (value != null) {
+            prefs.edit().putFloat(fieldName, value.toFloat()).apply()
+        } else {
+            prefs.edit().remove(fieldName).apply()
+        }
+    }
 }

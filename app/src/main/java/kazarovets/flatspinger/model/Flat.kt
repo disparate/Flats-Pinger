@@ -20,6 +20,17 @@ interface Flat : Comparable<Flat> {
         return null
     }
 
+    fun getDistanceToSubwayInMeters(): Double {
+        val nearest = getNearestSubway()
+        val lat = getLatitude()
+        val long = getLongitude()
+        if (nearest != null && lat != null && long != null) {
+            return SubwayUtils.distanceBetweenInMeters(lat, long, nearest.latitude, nearest.longitude)
+        } else {
+            return Double.MAX_VALUE
+        }
+    }
+
     fun getCostInDollars(): Int
 
     fun getOriginalUrl(): String?

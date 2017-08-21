@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
 import kazarovets.flatspinger.R
@@ -19,11 +21,16 @@ import kazarovets.flatspinger.views.SubwaysSelectorView
 
 class FlatsFilterFragment : Fragment() {
 
+    companion object {
+        val TAG = "FlatsFilterFragment"
+    }
+
     private var redSubwaysSelector: SubwaysSelectorView? = null
     private var blueSubwaysSelector: SubwaysSelectorView? = null
     private var allowAgencyCheckbox: CheckBox? = null
     private var minCostUsd: TextView? = null
     private var maxCostUsd: TextView? = null
+    private var maxDistanceToSubway: EditText? = null
     private var scrollView: ScrollView? = null
 
     private var selectedSubwaysIds: MutableSet<Int> = HashSet()
@@ -67,41 +74,52 @@ class FlatsFilterFragment : Fragment() {
 
 
         minCostUsd = view?.findViewById(R.id.edit_text_min_cost)
-        if (PreferenceUtils.minCost > 0) {
-            minCostUsd?.text = PreferenceUtils.minCost.toString()
-        }
-        minCostUsd?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-                val value = if (p0.toString().isNotEmpty()) p0.toString().toInt() else 0
+        minCostUsd?.text = PreferenceUtils.minCost.toString()
+        minCostUsd?.addTextChangedListener(object : OnNumberTextChangedTextWatcher {
+            override fun parseText(text: String) {
+                val value = if (text.isNotEmpty()) text.toInt() else null
                 PreferenceUtils.minCost = value
             }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
         })
 
         maxCostUsd = view?.findViewById(R.id.edit_text_max_cost)
-        if (PreferenceUtils.maxCost > 0) {
-            maxCostUsd?.text = PreferenceUtils.maxCost.toString()
-        }
-        maxCostUsd?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-                val value = if (p0.toString().isNotEmpty()) p0.toString().toInt() else 0
+        maxCostUsd?.text = PreferenceUtils.maxCost?.toString()
+        maxCostUsd?.addTextChangedListener(object : OnNumberTextChangedTextWatcher {
+            override fun parseText(text: String) {
+                val value = if (text.isNotEmpty()) text.toInt() else null
                 PreferenceUtils.maxCost = value
-
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
         })
+
+        maxDistanceToSubway = view?.findViewById(R.id.edit_text_distance_to_subway)
+        maxDistanceToSubway?.setText(PreferenceUtils.maxDistToSubway?.toString() ?: "")
+        maxDistanceToSubway?.addTextChangedListener(object : OnNumberTextChangedTextWatcher {
+            override fun parseText(text: String) {
+                val value = if (text.isNotEmpty()) text.toDouble() else null
+                PreferenceUtils.maxDistToSubway = value
+            }
+
+        })
+    }
+
+    interface OnNumberTextChangedTextWatcher : TextWatcher {
+
+        fun parseText(text: String)
+
+        override fun afterTextChanged(p0: Editable?) {
+            try {
+                parseText(p0.toString())
+            } catch (ex: NumberFormatException) {
+                Log.d(TAG, "Exception parsing text in number", ex)
+            }
+        }
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
     }
 
 }

@@ -12,10 +12,11 @@ class FlatsFilterMatcher {
                 return true
             }
             return (filter.agencyAllowed || flat.isOwner())
-                    && (filter.minCost <= 0 || filter.minCost < flat.getCostInDollars())
-                    && (filter.maxCost <= 0 || filter.maxCost > flat.getCostInDollars())
+                    && (filter.minCost == null || filter.minCost < flat.getCostInDollars())
+                    && (filter.maxCost == null || filter.maxCost > flat.getCostInDollars())
                     && (filter.rentTypes.isEmpty() || filter.rentTypes.contains(flat.getRentType()))
                     && (filter.subwaysIds.isEmpty() || filter.subwaysIds.contains(flat.getNearestSubway()?.id))
+                    && (filter.maxDistToSubway == null || filter.maxDistToSubway > flat.getDistanceToSubwayInMeters())
         }
     }
 }

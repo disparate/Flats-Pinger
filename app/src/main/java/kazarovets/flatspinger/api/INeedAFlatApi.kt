@@ -54,8 +54,10 @@ class INeedAFlatApi {
         return retrofit.create(INeedAFlatApiService::class.java)
     }
 
-    fun getFlats(minCost: Double, maxCost: Double): Single<List<Flat>> {
-        var query = "{\"attributes.price.value\":{\"\$gte\":$minCost,\"\$lte\":$maxCost}," +
+    fun getFlats(minCost: Double?, maxCost: Double?): Single<List<Flat>> {
+        val min = if (minCost != null) minCost else 0.0
+        val max = if (maxCost != null) maxCost else 100000.0
+        var query = "{\"attributes.price.value\":{\"\$gte\":$min,\"\$lte\":$max}," +
                 "\"attributes.geoCoordinates\":{\"\$geoWithin\":{\"\$polygon\":[" +
                 "[27.451969720423218,53.911758829765866]" +
                 ",[27.443541884422306,53.90599553856022]" +

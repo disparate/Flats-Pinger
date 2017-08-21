@@ -45,7 +45,7 @@ class SubwayUtils {
             var min = Double.MAX_VALUE
             var nearest: Subway = RED_LINE_SUBWAYS[0]
             for (subway in RED_LINE_SUBWAYS + BLUE_LINE_SUBWAYS) {
-                val distance = distanceBetween(subway.latitude, subway.longitude, latitude, longitude)
+                val distance = distanceBetweenInMeters(subway.latitude, subway.longitude, latitude, longitude)
                 if (distance < min) {
                     min = distance
                     nearest = subway
@@ -55,7 +55,7 @@ class SubwayUtils {
 
         }
 
-        private fun distanceBetween(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
+        fun distanceBetweenInMeters(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
             val locationA = Location("point A")
             locationA.setLatitude(lat1)
             locationA.setLongitude(lng1)

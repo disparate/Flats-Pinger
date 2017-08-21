@@ -68,7 +68,7 @@ class FlatsListFragment : Fragment() {
         val maxCost = PreferenceUtils.maxCost
         swipeRefreshLayout?.isRefreshing = true
         disposable = ApiManager.iNeedAFlatApi
-                .getFlats(minCost.toDouble(), maxCost.toDouble())
+                .getFlats(minCost?.toDouble(), maxCost?.toDouble())
                 .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost))
                 .toObservable()
                 .flatMap { Observable.fromIterable(it) }

@@ -1,10 +1,11 @@
 package kazarovets.flatspinger.model
 
 
-data class FlatFilter(val minCost: Int = 0,
-                      val maxCost: Int = 0,
+data class FlatFilter(val minCost: Int? = null,
+                      val maxCost: Int? = null,
                       val agencyAllowed: Boolean = true,
                       val closeToSubway: Boolean = true,
                       val subwaysIds: MutableSet<Int> = HashSet(),
-                      val rentTypes: MutableSet<RentType> = HashSet()) {
+                      val rentTypes: MutableSet<RentType> = HashSet(),
+                      val maxDistToSubway: Double? = null) {
 }
