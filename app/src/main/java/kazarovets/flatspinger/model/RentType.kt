@@ -6,5 +6,6 @@ enum class RentType {
     FLAT_1_ROOM,
     FLAT_2_ROOM,
     FLAT_3_ROOM,
-    FLAT_4_ROOM
+    FLAT_4_ROOM,
+    NONE
 }

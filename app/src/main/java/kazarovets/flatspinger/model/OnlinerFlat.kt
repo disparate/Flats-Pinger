@@ -1,10 +1,19 @@
 package kazarovets.flatspinger.model
 
+import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
-import kazarovets.flatspinger.utils.SubwayUtils
+import java.text.SimpleDateFormat
 
 
 class OnlinerFlat : Flat {
+
+    companion object {
+        val FORMAT_TIME = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+    }
+
+    override fun getId(): Long {
+        return id ?: 0
+    }
 
     override fun getImageUrl(): String? = photoUrl
 
@@ -23,6 +32,10 @@ class OnlinerFlat : Flat {
     override fun getRentType(): RentType {
         return RentType.FLAT_1_ROOM
     }
+
+    override fun getProvider(): Provider = Provider.ONLINER
+
+    override fun getUpdatedTime(): Long = FORMAT_TIME.parse(lastTimeUp).time
 
     @SerializedName("id")
     val id: Long? = null
@@ -50,6 +63,16 @@ class OnlinerFlat : Flat {
 
     @SerializedName("contact")
     val contact: Contact? = null
+
+
+    override fun equals(other: Any?): Boolean {
+        if (other is Flat?) {
+            return TextUtils.equals(other?.getOriginalUrl(), getOriginalUrl())
+        }
+        return false
+    }
+
+    override fun hashCode(): Int = getOriginalUrl()?.hashCode() ?: 0
 
 
     class Price {

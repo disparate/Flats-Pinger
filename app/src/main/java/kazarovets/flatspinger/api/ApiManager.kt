@@ -11,6 +11,7 @@ object ApiManager {
     val GSON = GsonBuilder().create()
 
     val onlinerApi by lazy { OnlinerApi(context) }
+    val iNeedAFlatApi by lazy { INeedAFlatApi() }
 
     fun init(context: Context) {
         this.context = context.applicationContext

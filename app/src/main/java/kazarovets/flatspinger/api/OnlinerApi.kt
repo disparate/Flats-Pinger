@@ -1,8 +1,8 @@
 package kazarovets.flatspinger.api
 
 import android.content.Context
+import android.util.Log
 import io.reactivex.Single
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.OnlinerFlatsResponse
@@ -13,21 +13,27 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
-
-
 class OnlinerApi constructor(context: Context) {
 
     companion object {
-        private val BASE_URL = "https://ak.api.onliner.by/";
+        val TAG = "OnlinerApi"
+        private val BASE_URL = "https://ak.api.onliner.by/"
     }
 
     val onlinerApiService by lazy { createService() }
 
-    public fun getLatestFlats(priceMin: Int, priceMax: Int): Single<List<Flat>> {
+    fun getLatestFlats(priceMin: Int, priceMax: Int): Single<List<Flat>> {
         val rentType = "1_room"
         val currency = "USD"
         return onlinerApiService.getFlats(rentType, priceMin, priceMax, currency)
-                .map {ApiManager.GSON.fromJson(it, OnlinerFlatsResponse::class.java).flatsList}
+                .map {
+                    Log.d(TAG, "started parsing flats")
+                    ApiManager.GSON.fromJson(it, OnlinerFlatsResponse::class.java)
+                }
+                .map {
+                    Log.d(TAG, "finished parsing flats")
+                    it.flatsList
+                }
     }
 
     fun createService(): OnlinerApiService {

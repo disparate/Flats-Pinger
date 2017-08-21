@@ -9,6 +9,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import io.reactivex.observers.DisposableSingleObserver
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.OnlinerFlat
 import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
 import kazarovets.flatspinger.utils.FlatsFilterMatcher
 import kazarovets.flatspinger.utils.PreferenceUtils
@@ -62,15 +64,20 @@ class FlatsListFragment : Fragment() {
     }
 
     private fun loadData() {
+        val minCost = PreferenceUtils.minCost
+        val maxCost = PreferenceUtils.maxCost
         swipeRefreshLayout?.isRefreshing = true
-        disposable = ApiManager.onlinerApi.getLatestFlats(PreferenceUtils.minCost, PreferenceUtils.maxCost)
+        disposable = ApiManager.iNeedAFlatApi
+                .getFlats(minCost.toDouble(), maxCost.toDouble())
+                .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost))
                 .toObservable()
                 .flatMap { Observable.fromIterable(it) }
                 .filter { FlatsFilterMatcher.matches(PreferenceUtils.flatFilter, it) }
-                .toList()
+                .toSortedList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<Flat>>() {
                     override fun onError(e: Throwable) {
+                        Log.e("FlatsListFragment", "Error receiving flats", e)
                         onFlatsReceived(null)
                         swipeRefreshLayout?.isRefreshing = false
                     }

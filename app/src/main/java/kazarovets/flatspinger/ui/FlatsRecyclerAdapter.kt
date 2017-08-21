@@ -1,7 +1,9 @@
 package kazarovets.flatspinger.ui
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,18 +13,19 @@ import com.bumptech.glide.Glide
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.utils.SubwayUtils
+import java.util.concurrent.TimeUnit
 
 
-class FlatsRecyclerAdapter(flats: MutableList<Flat>)
+class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
     : RecyclerView.Adapter<FlatsRecyclerAdapter.FlatsViewHolder>() {
 
-    var flats: MutableList<Flat> = flats
     var onClickListener: OnItemClickListener? = null
 
 
     override fun onBindViewHolder(holder: FlatsViewHolder?, position: Int) {
         val flat = flats.get(position)
         if (holder != null) {
+            val context = holder.itemView.context
             holder.flat = flat
 
             Glide.clear(holder.imageView)
@@ -34,11 +37,30 @@ class FlatsRecyclerAdapter(flats: MutableList<Flat>)
             holder.costView?.text = "${flat.getCostInDollars()}$"
             val latitude = flat.getLatitude()
             val longitude = flat.getLongitude()
-            if(latitude != null && longitude != null) {
+            if (latitude != null && longitude != null) {
                 holder.subwayView?.text = SubwayUtils.getNearestSubway(latitude, longitude).name
             }
-            holder.ownerView?.setText(if(flat.isOwner()) R.string.owner else R.string.agent)
+            holder.ownerView?.setText(if (flat.isOwner()) R.string.owner else R.string.agent)
+            holder.provider?.setImageResource(flat.getProvider().drawableRes)
+
+            setTimeAgo(holder?.updatedTime, flat, context)
         }
+    }
+
+    private fun setTimeAgo(timeAgoView: TextView?, flat: Flat, context: Context) {
+        var diff = System.currentTimeMillis() - flat.getUpdatedTime()
+        val days = TimeUnit.MILLISECONDS.toDays(diff)
+        diff -= days * DateUtils.DAY_IN_MILLIS
+        val hours = TimeUnit.MILLISECONDS.toHours(diff)
+        diff -= hours * DateUtils.HOUR_IN_MILLIS
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+        val showDays = days > 0
+        val showHours = hours > 0 && (!showDays || days < 2)
+        val showMinutes = days < 1 && hours < 1
+        timeAgoView?.text = "${if (showDays) "${days}${context.getString(R.string.day_small)} " else ""} " +
+                "${if (showHours) "${hours}${context.getString(R.string.hour_small)} " else ""}" +
+                "${if (showMinutes) "${minutes}${context.getString(R.string.minute_small)} " else ""}" +
+                context.getString(R.string.time_ago)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): FlatsViewHolder {
@@ -71,6 +93,8 @@ class FlatsRecyclerAdapter(flats: MutableList<Flat>)
         var costView: TextView? = null
         var subwayView: TextView? = null
         var ownerView: TextView? = null
+        var provider: ImageView? = null
+        var updatedTime: TextView? = null
 
         var flat: Flat? = null
 
@@ -80,6 +104,8 @@ class FlatsRecyclerAdapter(flats: MutableList<Flat>)
             costView = itemView?.findViewById(R.id.cost)
             subwayView = itemView?.findViewById(R.id.subway_name)
             ownerView = itemView?.findViewById(R.id.owner)
+            provider = itemView?.findViewById(R.id.provider)
+            updatedTime = itemView?.findViewById(R.id.update_time)
         }
     }
 

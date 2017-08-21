@@ -33,9 +33,7 @@ class FlatsFilterFragment : Fragment() {
             if (checked) selectedSubwaysIds.add(subway.id) else selectedSubwaysIds.remove(subway.id)
             PreferenceUtils.subwayIds = selectedSubwaysIds
         }
-
     }
-
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_filter, container, false)
@@ -50,15 +48,17 @@ class FlatsFilterFragment : Fragment() {
             return@setOnTouchListener false
         }
 
+        selectedSubwaysIds = PreferenceUtils.subwayIds
+
         redSubwaysSelector = view?.findViewById(R.id.red_line_subway_selector)
         blueSubwaysSelector = view?.findViewById(R.id.blue_line_subway_selector)
 
         redSubwaysSelector?.subways = SubwayUtils.RED_LINE_SUBWAYS
-        redSubwaysSelector?.updateCheckedSubways(PreferenceUtils.subwayIds)
+        redSubwaysSelector?.updateCheckedSubways(selectedSubwaysIds)
         redSubwaysSelector?.onCheckedChangedListener = onSubwaySelectedListener
 
         blueSubwaysSelector?.subways = SubwayUtils.BLUE_LINE_SUBWAYS
-        blueSubwaysSelector?.updateCheckedSubways(PreferenceUtils.subwayIds)
+        blueSubwaysSelector?.updateCheckedSubways(selectedSubwaysIds)
         blueSubwaysSelector?.onCheckedChangedListener = onSubwaySelectedListener
 
         allowAgencyCheckbox = view?.findViewById(R.id.allow_agency_checkbox)
