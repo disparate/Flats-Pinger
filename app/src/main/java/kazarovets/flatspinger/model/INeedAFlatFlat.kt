@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
 class INeedAFlatFlat : Flat {
 
     @SerializedName("id")
-    val id: String? = null
+    val idText: String? = null
 
     @SerializedName("url")
     val url: String? = null
@@ -37,7 +37,9 @@ class INeedAFlatFlat : Flat {
     val agent: Agent? = null
 
 
-    override fun getId(): Long = id?.toDouble()?.toLong() ?: 0
+    override fun getId(): String {
+        return idText ?: ""
+    }
 
     override fun getImageUrl(): String? {
         return if (attributes?.images != null && attributes.images.isNotEmpty()) attributes.images.get(0) else null

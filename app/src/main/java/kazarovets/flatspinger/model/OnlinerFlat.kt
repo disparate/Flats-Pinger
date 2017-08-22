@@ -11,9 +11,7 @@ class OnlinerFlat : Flat {
         val FORMAT_TIME = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
     }
 
-    override fun getId(): Long {
-        return id ?: 0
-    }
+    override fun getId(): String = idText ?: ""
 
     override fun getImageUrl(): String? = photoUrl
 
@@ -38,7 +36,7 @@ class OnlinerFlat : Flat {
     override fun getUpdatedTime(): Long = FORMAT_TIME.parse(lastTimeUp).time
 
     @SerializedName("id")
-    val id: Long? = null
+    val idText: String? = null
 
     @SerializedName("price")
     val price: Price? = null

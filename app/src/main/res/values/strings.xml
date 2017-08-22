@@ -20,4 +20,10 @@
 
     <string name="onliner_provider_name">Onliner</string>
     <string name="i_need_a_flat_provider_name">INeedAFlat</string>
+
+    <string name="fab_all">Все</string>
+    <string name="fab_favorites">Избранные</string>
+    <string name="fab_seen">Просмотренные</string>
+    <string name="fab_not_seen">Не просмотренные</string>
+    <string name="fab_deleted">Удалённые</string>
 </resources>

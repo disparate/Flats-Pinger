@@ -80,13 +80,22 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
         return flats.size
     }
 
-    public fun setData(data: List<Flat>?) {
+    fun setData(data: List<Flat>?) {
         if (data != null) {
             flats.clear()
             flats.addAll(data)
             notifyDataSetChanged()
         }
     }
+
+    fun getItem(pos: Int): Flat? = flats.getOrNull(pos)
+
+    fun removeItem(position: Int) {
+        flats.removeAt(position)
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, flats.size)
+    }
+
 
     class FlatsViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         var addressView: TextView? = null

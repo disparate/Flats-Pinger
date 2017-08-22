@@ -11,4 +11,7 @@
     <color name="colorSubwayRed">#e41d25</color>
     <color name="colorSubwayBlue">#3b338b</color>
     <color name="colorSubwayNeutral">#a6a5ac</color>
+
+    <color name="colorFlatDelete">#D32F2F</color>
+    <color name="colorFlatSeen">#6e6f71</color>
 </resources>

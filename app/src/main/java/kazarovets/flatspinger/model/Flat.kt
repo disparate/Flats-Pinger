@@ -5,7 +5,7 @@ import kazarovets.flatspinger.utils.SubwayUtils
 
 interface Flat : Comparable<Flat> {
 
-    fun getId(): Long
+    fun getId(): String
 
     fun getImageUrl(): String?
 
