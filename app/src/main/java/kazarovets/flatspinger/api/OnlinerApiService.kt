@@ -11,5 +11,6 @@ interface OnlinerApiService {
     fun getFlats(@Query("rent_type[]") rentType: String,
                  @Query("price[min]") priceMin: Int,
                  @Query("price[max]") priceMax: Int,
-                 @Query("currency") currency: String): Single<String>
+                 @Query("currency") currency: String,
+                 @Query("only_owner") owner: Boolean): Single<String>
 }

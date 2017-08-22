@@ -17,6 +17,7 @@ class FlatsFilterMatcher {
                     && (filter.rentTypes.isEmpty() || filter.rentTypes.contains(flat.getRentType()))
                     && (filter.subwaysIds.isEmpty() || filter.subwaysIds.contains(flat.getNearestSubway()?.id))
                     && (filter.maxDistToSubway == null || filter.maxDistToSubway > flat.getDistanceToSubwayInMeters())
+                    && (!filter.allowWithPhotosOnly || flat.hasImages())
         }
     }
 }

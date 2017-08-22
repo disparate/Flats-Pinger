@@ -88,6 +88,7 @@ class FlatsDatabase private constructor(context: Context)
 
     fun getFlatStatus(id: String, provider: Provider): FlatStatus {
         val db = readableDatabase
+        var status = FlatStatus.NOT_SEEN
         val cursor = db.query(TABLE_FLATS_STATUSES,
                 arrayOf(KEY_STATUS),
                 "$KEY_FLAT_ID = ? AND $KEY_PROVIDER = ?",
@@ -95,10 +96,10 @@ class FlatsDatabase private constructor(context: Context)
                 null, null, null)
         if (cursor.moveToFirst()) {
             val name = cursor.getString(cursor.getColumnIndex(KEY_STATUS))
-            return FlatStatus.valueOf(name)
+            status = FlatStatus.valueOf(name)
         }
         cursor.close()
-        return FlatStatus.NOT_SEEN
+        return status
     }
 
 

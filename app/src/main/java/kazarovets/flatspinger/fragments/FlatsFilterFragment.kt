@@ -28,6 +28,7 @@ class FlatsFilterFragment : Fragment() {
     private var redSubwaysSelector: SubwaysSelectorView? = null
     private var blueSubwaysSelector: SubwaysSelectorView? = null
     private var allowAgencyCheckbox: CheckBox? = null
+    private var allowOnlyWithPhotosCheckbox: CheckBox? = null
     private var minCostUsd: TextView? = null
     private var maxCostUsd: TextView? = null
     private var maxDistanceToSubway: EditText? = null
@@ -71,6 +72,11 @@ class FlatsFilterFragment : Fragment() {
         allowAgencyCheckbox = view?.findViewById(R.id.allow_agency_checkbox)
         allowAgencyCheckbox?.isChecked = PreferenceUtils.allowAgency
         allowAgencyCheckbox?.setOnCheckedChangeListener { compoundButton, b -> PreferenceUtils.allowAgency = b }
+
+        allowOnlyWithPhotosCheckbox = view?.findViewById(R.id.allow_only_with_photos_checkbox)
+        allowOnlyWithPhotosCheckbox?.isChecked = PreferenceUtils.allowPhotosOnly
+        allowOnlyWithPhotosCheckbox?.setOnCheckedChangeListener { compoundButton, b -> PreferenceUtils.allowPhotosOnly = b }
+
 
 
         minCostUsd = view?.findViewById(R.id.edit_text_min_cost)

@@ -47,6 +47,8 @@ interface Flat : Comparable<Flat> {
 
     fun getUpdatedTime(): Long
 
+    fun hasImages(): Boolean = !getImageUrl().isNullOrBlank()
+
     override fun compareTo(other: Flat): Int {
         if (getUpdatedTime() < other.getUpdatedTime()) {
             return 1

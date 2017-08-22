@@ -8,6 +8,7 @@
 
     <string name="filter_subway_title">Станции метро</string>
     <string name="filter_allow_agency">Показывать объявления от агентств?</string>
+    <string name="filter_allow_with_photos_only">Только с фото</string>
     <string name="filter_min_cost">Минимальная стоимость (USD)</string>
     <string name="filter_max_cost">Максимальная стоимость (USD)</string>
     <string name="filter_distance_to_subway">Максимальное расстояние до метро (м)</string>

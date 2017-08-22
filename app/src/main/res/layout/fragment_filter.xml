@@ -20,6 +20,13 @@
             android:layout_height="wrap_content"
             android:text="@string/filter_allow_agency" />
 
+
+        <CheckBox
+            android:id="@+id/allow_only_with_photos_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_allow_with_photos_only" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

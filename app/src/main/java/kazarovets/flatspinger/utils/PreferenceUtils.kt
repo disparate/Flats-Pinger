@@ -16,6 +16,7 @@ object PreferenceUtils {
     val FILTER_MIN_COST_USD = "filter_min_cost_usd"
     val FILTER_MAX_COST_USD = "filter_max_cost_usd"
     val FILTER_AGENCY_ALLOWED = "filter_agency_allowed"
+    val FILTER_WITH_PHOTOS_ONLY = "filter_with_photos_only"
     val FILTER_SUBWAYS_IDS = "filter_subways_ids"
     val FILTER_RENT_TYPES = "filter_rent_types"
     val FILTER_MAX_DISTANCE_TO_SUBWAY = "filter_max_dist_to_subway"
@@ -50,14 +51,24 @@ object PreferenceUtils {
             putNullableValue(FILTER_MAX_COST_USD, value)
         }
 
-    var allowAgency: Boolean = false
+    var allowAgency: Boolean = true
         get() {
-            field = prefs.getBoolean(FILTER_AGENCY_ALLOWED, false)
+            field = prefs.getBoolean(FILTER_AGENCY_ALLOWED, true)
             return field
         }
         set(value) {
             field = value
             prefs.edit().putBoolean(FILTER_AGENCY_ALLOWED, value).apply()
+        }
+
+    var allowPhotosOnly: Boolean = false
+        get() {
+            field = prefs.getBoolean(FILTER_WITH_PHOTOS_ONLY, false)
+            return field
+        }
+        set(value) {
+            field = value
+            prefs.edit().putBoolean(FILTER_WITH_PHOTOS_ONLY, value).apply()
         }
 
     var subwayIds: MutableSet<Int> = HashSet()
@@ -117,6 +128,7 @@ object PreferenceUtils {
                     maxCost = maxCost,
                     subwaysIds = subwayIds,
                     agencyAllowed = allowAgency,
+                    allowWithPhotosOnly = allowPhotosOnly,
                     rentTypes = rentTypes,
                     maxDistToSubway = maxDistToSubway)
             return field
@@ -131,6 +143,7 @@ object PreferenceUtils {
                 allowAgency = value.agencyAllowed
                 rentTypes = value.rentTypes
                 maxDistToSubway = value.maxDistToSubway
+                allowPhotosOnly = value.allowWithPhotosOnly
             }
         }
 

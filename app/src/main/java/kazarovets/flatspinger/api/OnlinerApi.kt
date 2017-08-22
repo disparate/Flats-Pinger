@@ -22,13 +22,13 @@ class OnlinerApi constructor(context: Context) {
 
     val onlinerApiService by lazy { createService() }
 
-    fun getLatestFlats(minCost: Int?, maxCost: Int?): Single<List<Flat>> {
+    fun getLatestFlats(minCost: Int?, maxCost: Int?, onlyOwner: Boolean): Single<List<Flat>> {
         val rentType = "1_room"
         val currency = "USD"
 
         val min = if (minCost != null) minCost else 0
         val max = if (maxCost != null) maxCost else 100000
-        return onlinerApiService.getFlats(rentType, min, max, currency)
+        return onlinerApiService.getFlats(rentType, min, max, currency, onlyOwner)
                 .map {
                     Log.d(TAG, "started parsing flats")
                     ApiManager.GSON.fromJson(it, OnlinerFlatsResponse::class.java)

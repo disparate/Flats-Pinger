@@ -94,10 +94,11 @@ class FlatsListFragment : Fragment() {
     private fun loadData() {
         val minCost = PreferenceUtils.minCost
         val maxCost = PreferenceUtils.maxCost
+        val allowAgency = PreferenceUtils.allowAgency
         swipeRefreshLayout?.isRefreshing = true
         disposable = ApiManager.iNeedAFlatApi
-                .getFlats(minCost?.toDouble(), maxCost?.toDouble())
-                .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost))
+                .getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency)
+                .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency))
                 .toObservable()
                 .flatMap { Observable.fromIterable(it) }
                 .filter { FlatsFilterMatcher.matches(PreferenceUtils.flatFilter, it) }
