@@ -27,4 +27,8 @@
     <string name="fab_seen">Просмотренные</string>
     <string name="fab_not_seen">Не просмотренные</string>
     <string name="fab_deleted">Удалённые</string>
+
+    <string name="title_activity_images">ImagesActivity</string>
+
+    <string name="open_link">Открыть в браузере</string>
 </resources>

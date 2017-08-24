@@ -2,6 +2,7 @@ package kazarovets.flatspinger.model
 
 import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 
 class INeedAFlatFlat : Flat {
@@ -79,6 +80,8 @@ class INeedAFlatFlat : Flat {
 
     override fun getUpdatedTime(): Long = updatedAt ?: 0
 
+    override fun getSource(): String = attributes?.source ?: "ineedaflat.by"
+
     override fun equals(other: Any?): Boolean {
         if (other is Flat?) {
             return TextUtils.equals(other?.getOriginalUrl(), getOriginalUrl())
@@ -88,8 +91,10 @@ class INeedAFlatFlat : Flat {
 
     override fun hashCode(): Int = getOriginalUrl()?.hashCode() ?: 0
 
+    fun getImages(): List<String> = attributes?.images ?: emptyList()
 
-    class Attributes {
+
+    class Attributes : Serializable {
         @SerializedName("title")
         val title: String? = null
 
@@ -129,7 +134,7 @@ class INeedAFlatFlat : Flat {
         @SerializedName("agencyName")
         val agencyName: String? = null
 
-        class Price {
+        class Price : Serializable {
             @SerializedName("value")
             val value: Int? = null
 
@@ -138,7 +143,7 @@ class INeedAFlatFlat : Flat {
         }
     }
 
-    class Agent {
+    class Agent : Serializable {
         @SerializedName("id")
         val id: String? = null
 

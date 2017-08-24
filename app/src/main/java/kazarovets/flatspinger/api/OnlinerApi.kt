@@ -25,10 +25,9 @@ class OnlinerApi constructor(context: Context) {
     fun getLatestFlats(minCost: Int?, maxCost: Int?, onlyOwner: Boolean): Single<List<Flat>> {
         val rentType = "1_room"
         val currency = "USD"
+        val owner = if(onlyOwner) true else null //weird onliner api
 
-        val min = if (minCost != null) minCost else 0
-        val max = if (maxCost != null) maxCost else 100000
-        return onlinerApiService.getFlats(rentType, min, max, currency, onlyOwner)
+        return onlinerApiService.getFlats(rentType, minCost, maxCost, currency, owner)
                 .map {
                     Log.d(TAG, "started parsing flats")
                     ApiManager.GSON.fromJson(it, OnlinerFlatsResponse::class.java)

@@ -1,5 +1,6 @@
 package kazarovets.flatspinger.utils
 
+import android.text.format.DateUtils
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatFilter
 
@@ -18,6 +19,7 @@ class FlatsFilterMatcher {
                     && (filter.subwaysIds.isEmpty() || filter.subwaysIds.contains(flat.getNearestSubway()?.id))
                     && (filter.maxDistToSubway == null || filter.maxDistToSubway > flat.getDistanceToSubwayInMeters())
                     && (!filter.allowWithPhotosOnly || flat.hasImages())
+                    && (flat.getUpdatedTime() > System.currentTimeMillis() - filter.updateDatesAgo * DateUtils.DAY_IN_MILLIS)
         }
     }
 }

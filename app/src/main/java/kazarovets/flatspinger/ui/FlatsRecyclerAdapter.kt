@@ -11,7 +11,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import kazarovets.flatspinger.R
+import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.SubwayUtils
 import java.util.concurrent.TimeUnit
 
@@ -20,7 +22,6 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
     : RecyclerView.Adapter<FlatsRecyclerAdapter.FlatsViewHolder>() {
 
     var onClickListener: OnItemClickListener? = null
-
 
     override fun onBindViewHolder(holder: FlatsViewHolder?, position: Int) {
         val flat = flats.get(position)
@@ -33,7 +34,6 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
                 Glide.with(holder.itemView.context).load(flat.getImageUrl()).centerCrop().into(holder.imageView)
             }
 
-            holder.addressView?.text = flat.getAddress()
             holder.costView?.text = "${flat.getCostInDollars()}$"
             val latitude = flat.getLatitude()
             val longitude = flat.getLongitude()
@@ -41,11 +41,33 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
                 holder.subwayView?.text = "${SubwayUtils.getNearestSubway(latitude, longitude).name}" +
                         " (${flat.getDistanceToSubwayInMeters().toInt()}${context.getString(R.string.meter_small)})"
             }
-            holder.ownerView?.setText(if (flat.isOwner()) R.string.owner else R.string.agent)
+            holder.agencyLine?.visibility = if (flat.isOwner()) View.INVISIBLE else View.VISIBLE
             holder.provider?.setImageResource(flat.getProvider().drawableRes)
+            holder.source?.text = flat.getSource()
 
             setTimeAgo(holder?.updatedTime, flat, context)
+
+            val isFavorite = FlatsDatabase.getInstance(context)
+                    .getFlatStatus(flat.getId(), flat.getProvider()) == FlatStatus.FAVORITE
+            setFavoriteIcon(holder.favoriteIcon, isFavorite)
+            holder.favoriteIcon?.isSelected = isFavorite
+            holder.favoriteIcon?.setOnClickListener {
+                val imageView = it as ImageView
+                val db = FlatsDatabase.getInstance(context)
+                imageView.isSelected = !imageView.isSelected
+                if (imageView.isSelected) {
+                    db.setFavoriteFlat(flat.getId(), flat.getProvider())
+                } else {
+                    db.setSeenFlat(flat.getId(), flat.getProvider())
+                }
+                imageView.isSelected
+                setFavoriteIcon(imageView, imageView.isSelected)
+            }
         }
+    }
+
+    private fun setFavoriteIcon(favoriteIcon: ImageView?, isFavorite: Boolean) {
+        favoriteIcon?.setImageResource(if (isFavorite) R.drawable.ic_star_24dp else R.drawable.ic_star_border_24dp)
     }
 
     private fun setTimeAgo(timeAgoView: TextView?, flat: Flat, context: Context) {
@@ -98,24 +120,26 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
 
 
     class FlatsViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        var addressView: TextView? = null
         var imageView: ImageView? = null
         var costView: TextView? = null
         var subwayView: TextView? = null
-        var ownerView: TextView? = null
+        var agencyLine: View? = null
         var provider: ImageView? = null
         var updatedTime: TextView? = null
+        var source: TextView? = null
+        var favoriteIcon: ImageView? = null
 
         var flat: Flat? = null
 
         init {
-            addressView = itemView?.findViewById(R.id.address)
             imageView = itemView?.findViewById(R.id.image)
             costView = itemView?.findViewById(R.id.cost)
             subwayView = itemView?.findViewById(R.id.subway_name)
-            ownerView = itemView?.findViewById(R.id.owner)
+            agencyLine = itemView?.findViewById(R.id.agent_line)
             provider = itemView?.findViewById(R.id.provider)
             updatedTime = itemView?.findViewById(R.id.update_time)
+            source = itemView?.findViewById(R.id.site)
+            favoriteIcon = itemView?.findViewById(R.id.favorite_icon)
         }
     }
 

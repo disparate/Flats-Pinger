@@ -17,7 +17,7 @@ class FlatsDatabase private constructor(context: Context)
 
         @Synchronized
         fun getInstance(context: Context): FlatsDatabase {
-            if (instance == null)  // NOT thread safe!
+            if (instance == null)
                 instance = FlatsDatabase(context)
 
             return instance!!
@@ -26,7 +26,7 @@ class FlatsDatabase private constructor(context: Context)
 
         val DATABASE_NAME = "FlatsDatabase"
         val TAG = DATABASE_NAME
-        val DATABASE_VERSION = 3
+        val DATABASE_VERSION = 8
 
         val TABLE_FLATS_STATUSES = "FlatsStatuses"
         val KEY_FLAT_ID = "id"
@@ -40,15 +40,16 @@ class FlatsDatabase private constructor(context: Context)
                 "(" +
                 "$KEY_FLAT_ID TEXT," +
                 "$KEY_STATUS TEXT," +
-                "$KEY_PROVIDER TEXT" +
+                "$KEY_PROVIDER TEXT," +
+                "PRIMARY KEY ($KEY_FLAT_ID, $KEY_PROVIDER)" +
                 ")"
         db?.execSQL(CREATE_STATUSES_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        if (newVersion == 3 && oldVersion < newVersion) {
-            db?.execSQL("DROP TABLE IF EXISTS $TABLE_FLATS_STATUSES")
-        }
+//        if (newVersion == 7 && oldVersion < newVersion) {
+        db?.execSQL("DROP TABLE IF EXISTS $TABLE_FLATS_STATUSES")
+//        }
         onCreate(db)
     }
 
@@ -61,7 +62,10 @@ class FlatsDatabase private constructor(context: Context)
             values.put(KEY_PROVIDER, provider.name)
             values.put(KEY_STATUS, status.name)
 
-            db.insert(TABLE_FLATS_STATUSES, null, values)
+            val res = db.insertWithOnConflict(TABLE_FLATS_STATUSES, null, values, SQLiteDatabase.CONFLICT_IGNORE)
+            if (res == -1L) {
+                db.update(TABLE_FLATS_STATUSES, values, "$KEY_FLAT_ID = ? AND $KEY_PROVIDER = ?", arrayOf(id, provider.name))
+            }
             db.setTransactionSuccessful()
         } catch (ex: Exception) {
             Log.d(TAG, "Error when trying to add a flat status", ex)

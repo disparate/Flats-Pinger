@@ -9,8 +9,8 @@ interface OnlinerApiService {
 
     @GET("search/apartments?metro%5B%5D=red_line&metro%5B%5D=blue_line")
     fun getFlats(@Query("rent_type[]") rentType: String,
-                 @Query("price[min]") priceMin: Int,
-                 @Query("price[max]") priceMax: Int,
+                 @Query("price[min]") priceMin: Int?,
+                 @Query("price[max]") priceMax: Int?,
                  @Query("currency") currency: String,
-                 @Query("only_owner") owner: Boolean): Single<String>
+                 @Query("only_owner") owner: Boolean?): Single<String>
 }

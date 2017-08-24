@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -29,6 +28,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
 import kazarovets.flatspinger.R
+import kazarovets.flatspinger.activity.FlatDetailsActivity
 import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
@@ -72,14 +72,11 @@ class FlatsListFragment : Fragment() {
 
         recyclerView = view?.findViewById(R.id.recycler)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-        recyclerView?.addItemDecoration(DividerItemDecoration(context, RecyclerView.VERTICAL))
         adapter = FlatsRecyclerAdapter(ArrayList())
         adapter?.onClickListener = object : FlatsRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(item: Flat) {
-                if (!TextUtils.isEmpty(item.getOriginalUrl())) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.getOriginalUrl()))
-                    startActivity(intent)
-                }
+                val intent = FlatDetailsActivity.getCallingIntent(context, item)
+                startActivity(intent)
             }
         }
         recyclerView?.adapter = adapter
@@ -131,8 +128,15 @@ class FlatsListFragment : Fragment() {
         val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
             override fun isItemViewSwipeEnabled(): Boolean {
-                return currentMode == MODE.MODE_ALL || currentMode == MODE.MODE_NOT_SEEN
+                return currentMode == MODE.MODE_ALL || currentMode == MODE.MODE_NOT_SEEN || currentMode == MODE.MODE_FAVORITES
             }
+
+            override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+                val dragFlags = 0
+                val swipeFlags = ItemTouchHelper.LEFT
+                return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
+            }
+
 
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 return false
@@ -146,10 +150,9 @@ class FlatsListFragment : Fragment() {
                     if (direction == ItemTouchHelper.LEFT) {
                         adapter?.removeItem(position)
                         FlatsDatabase.getInstance(context).setHiddenFlat(flat.getId(), flat.getProvider())
-
-                    } else {
-                        adapter?.removeItem(position)
-                        FlatsDatabase.getInstance(context).setSeenFlat(flat.getId(), flat.getProvider())
+//                    } else {
+//                        adapter?.removeItem(position)
+//                        FlatsDatabase.getInstance(context).setSeenFlat(flat.getId(), flat.getProvider())
                     }
                 }
             }
@@ -165,14 +168,14 @@ class FlatsListFragment : Fragment() {
                     val width = height / 3
 
                     if (dX > 0) {
-                        paint.setColor(ContextCompat.getColor(context, R.color.colorFlatSeen))
-                        val background = RectF(itemView.left.toFloat(), itemView.top.toFloat(), dX, itemView.bottom.toFloat())
-                        c.drawRect(background, paint)
-                        val vectorDrawable = context.getDrawable(R.drawable.ic_seen_white) as VectorDrawable
-                        icon = getBitmap(vectorDrawable)
-                        val icon_dest = RectF(itemView.left.toFloat() - width / 2 + dX / 2, itemView.top.toFloat() + width,
-                                itemView.left.toFloat() + width / 2 + dX / 2, itemView.bottom.toFloat() - width)
-                        c.drawBitmap(icon, null, icon_dest, paint)
+//                        paint.setColor(ContextCompat.getColor(context, R.color.colorFlatSeen))
+//                        val background = RectF(itemView.left.toFloat(), itemView.top.toFloat(), dX, itemView.bottom.toFloat())
+//                        c.drawRect(background, paint)
+//                        val vectorDrawable = context.getDrawable(R.drawable.ic_seen_white) as VectorDrawable
+//                        icon = getBitmap(vectorDrawable)
+//                        val icon_dest = RectF(itemView.left.toFloat() - width / 2 + dX / 2, itemView.top.toFloat() + width,
+//                                itemView.left.toFloat() + width / 2 + dX / 2, itemView.bottom.toFloat() - width)
+//                        c.drawBitmap(icon, null, icon_dest, paint)
                     } else {
                         paint.setColor(ContextCompat.getColor(context, R.color.colorFlatDelete))
                         val background = RectF(itemView.right.toFloat() + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())

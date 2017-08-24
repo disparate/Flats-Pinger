@@ -1,4 +1,4 @@
-package kazarovets.flatspinger.ui
+package kazarovets.flatspinger.activity
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView

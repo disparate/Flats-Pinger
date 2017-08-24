@@ -1,9 +1,10 @@
 package kazarovets.flatspinger.model
 
 import kazarovets.flatspinger.utils.SubwayUtils
+import java.io.Serializable
 
 
-interface Flat : Comparable<Flat> {
+interface Flat : Comparable<Flat>, Serializable {
 
     fun getId(): String
 
@@ -48,6 +49,8 @@ interface Flat : Comparable<Flat> {
     fun getUpdatedTime(): Long
 
     fun hasImages(): Boolean = !getImageUrl().isNullOrBlank()
+
+    fun getSource(): String
 
     override fun compareTo(other: Flat): Int {
         if (getUpdatedTime() < other.getUpdatedTime()) {

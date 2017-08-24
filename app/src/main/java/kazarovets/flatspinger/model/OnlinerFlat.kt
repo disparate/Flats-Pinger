@@ -2,6 +2,7 @@ package kazarovets.flatspinger.model
 
 import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 import java.text.SimpleDateFormat
 
 
@@ -34,6 +35,8 @@ class OnlinerFlat : Flat {
     override fun getProvider(): Provider = Provider.ONLINER
 
     override fun getUpdatedTime(): Long = FORMAT_TIME.parse(lastTimeUp).time
+
+    override fun getSource(): String = "onliner.by"
 
     @SerializedName("id")
     val idText: String? = null
@@ -73,7 +76,7 @@ class OnlinerFlat : Flat {
     override fun hashCode(): Int = getOriginalUrl()?.hashCode() ?: 0
 
 
-    class Price {
+    class Price : Serializable {
         @SerializedName("amount")
         val amount: Double? = null
 
@@ -81,7 +84,7 @@ class OnlinerFlat : Flat {
         val currency: String? = null
     }
 
-    class Location {
+    class Location : Serializable {
         @SerializedName("address")
         val address: String? = null
 
@@ -95,7 +98,7 @@ class OnlinerFlat : Flat {
         val longitude: Double? = null
     }
 
-    class Contact {
+    class Contact : Serializable {
         @SerializedName("owner")
         val isOwner: Boolean? = null
     }
