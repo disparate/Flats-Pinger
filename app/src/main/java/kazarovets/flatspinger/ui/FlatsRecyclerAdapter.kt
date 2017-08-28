@@ -14,6 +14,7 @@ import kazarovets.flatspinger.R
 import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatStatus
+import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.utils.SubwayUtils
 import java.util.concurrent.TimeUnit
 
@@ -45,7 +46,7 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
             holder.provider?.setImageResource(flat.getProvider().drawableRes)
             holder.source?.text = flat.getSource()
 
-            setTimeAgo(holder?.updatedTime, flat, context)
+            holder.updatedTime?.text = StringsUtils.getTimeAgoString(flat.getUpdatedTime(), context)
 
             val isFavorite = FlatsDatabase.getInstance(context)
                     .getFlatStatus(flat.getId(), flat.getProvider()) == FlatStatus.FAVORITE

@@ -80,6 +80,8 @@ class INeedAFlatFlat : Flat {
 
     override fun getUpdatedTime(): Long = updatedAt ?: 0
 
+    override fun getCreatedTime(): Long = createdAd ?: 0
+
     override fun getSource(): String = attributes?.source ?: "ineedaflat.by"
 
     override fun equals(other: Any?): Boolean {

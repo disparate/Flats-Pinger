@@ -31,4 +31,15 @@
     <string name="title_activity_images">ImagesActivity</string>
 
     <string name="open_link">Открыть в браузере</string>
+
+    <string name="tag_rent_1k">1к</string>
+    <string name="tag_rent_2k">2к</string>
+    <string name="tag_rent_3k">3к</string>
+    <string name="tag_rent_4k">4к</string>
+
+    <string name="updated">Обновлено:</string>
+    <string name="created">Размещено:</string>
+
+    <string name="menu_favorite">Добавить в избранное</string>
+    <string name="menu_web">Открыть в браузере</string>
 </resources>

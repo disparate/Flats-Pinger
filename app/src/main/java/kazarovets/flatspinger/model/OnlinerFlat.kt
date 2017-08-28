@@ -36,6 +36,8 @@ class OnlinerFlat : Flat {
 
     override fun getUpdatedTime(): Long = FORMAT_TIME.parse(lastTimeUp).time
 
+    override fun getCreatedTime(): Long = FORMAT_TIME.parse(createAt).time
+
     override fun getSource(): String = "onliner.by"
 
     @SerializedName("id")

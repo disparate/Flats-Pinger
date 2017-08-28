@@ -48,9 +48,18 @@ interface Flat : Comparable<Flat>, Serializable {
 
     fun getUpdatedTime(): Long
 
+    fun getCreatedTime(): Long
+
     fun hasImages(): Boolean = !getImageUrl().isNullOrBlank()
 
     fun getSource(): String
+
+    fun getTags(): List<Tag> = listOf(
+            RentTypeTag(getRentType()),
+            OwnerTag(isOwner()),
+            SubwayTag(getNearestSubway()),
+            StringTag(getSource())
+    )
 
     override fun compareTo(other: Flat): Int {
         if (getUpdatedTime() < other.getUpdatedTime()) {

@@ -25,4 +25,16 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
+    <style name="TextAppearance.FlatDetails.CollapsingToolbar" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/toolbarTitleTextColor</item>
+    </style>
+
+    <style name="TextAppearance.FlatDetails.CollapsingToolbar.Collapsed">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+
+    <style name="TextAppearance.FlatDetails.CollapsingToolbar.Expanded">
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>
