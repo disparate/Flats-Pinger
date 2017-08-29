@@ -1,9 +1,7 @@
 package kazarovets.flatspinger.ui
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +14,6 @@ import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.utils.SubwayUtils
-import java.util.concurrent.TimeUnit
 
 
 class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
@@ -59,7 +56,7 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
                 if (imageView.isSelected) {
                     db.setFavoriteFlat(flat.getId(), flat.getProvider())
                 } else {
-                    db.setSeenFlat(flat.getId(), flat.getProvider())
+                    db.setRegularFlat(flat.getId(), flat.getProvider())
                 }
                 imageView.isSelected
                 setFavoriteIcon(imageView, imageView.isSelected)
@@ -69,22 +66,6 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
 
     private fun setFavoriteIcon(favoriteIcon: ImageView?, isFavorite: Boolean) {
         favoriteIcon?.setImageResource(if (isFavorite) R.drawable.ic_star_24dp else R.drawable.ic_star_border_24dp)
-    }
-
-    private fun setTimeAgo(timeAgoView: TextView?, flat: Flat, context: Context) {
-        var diff = System.currentTimeMillis() - flat.getUpdatedTime()
-        val days = TimeUnit.MILLISECONDS.toDays(diff)
-        diff -= days * DateUtils.DAY_IN_MILLIS
-        val hours = TimeUnit.MILLISECONDS.toHours(diff)
-        diff -= hours * DateUtils.HOUR_IN_MILLIS
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
-        val showDays = days > 0
-        val showHours = hours > 0 && (!showDays || days < 2)
-        val showMinutes = days < 1 && hours < 1
-        timeAgoView?.text = "${if (showDays) "${days}${context.getString(R.string.day_small)}" else ""} " +
-                "${if (showHours) "${hours}${context.getString(R.string.hour_small)}" else ""}" +
-                "${if (showMinutes) "${minutes}${context.getString(R.string.minute_small)}" else ""}" +
-                " " + context.getString(R.string.time_ago)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): FlatsViewHolder {

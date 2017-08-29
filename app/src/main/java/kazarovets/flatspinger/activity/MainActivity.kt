@@ -7,18 +7,18 @@ import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.ViewSwitcher
 import kazarovets.flatspinger.R
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
+import kazarovets.flatspinger.utils.ScheduleUtils
 
 
 class MainActivity : AppCompatActivity() {
+
 
     companion object {
         val POSITION_LIST = 0
         val POSITION_FILTER = 1
 
         val CURRENT_POSITION = "curr_pos"
+        val FLAT_NOTIFICATIONS_JOB_ID = 228
     }
 
     private var viewSwitcher: ViewSwitcher? = null
@@ -56,7 +56,10 @@ class MainActivity : AppCompatActivity() {
 
         currPosition = savedInstanceState?.getInt(CURRENT_POSITION) ?: currPosition
         viewSwitcher?.displayedChild = currPosition
+
+        ScheduleUtils.scheduleFlatsNotificationsJob(this)
     }
+
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)

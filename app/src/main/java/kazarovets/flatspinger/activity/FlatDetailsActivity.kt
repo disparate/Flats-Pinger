@@ -56,6 +56,8 @@ class FlatDetailsActivity : AppCompatActivity() {
         val flat = intent.extras.getSerializable(EXTRA_FLAT) as Flat
         this.flat = flat
 
+
+
         setContentView(R.layout.activity_flat_details)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -91,6 +93,8 @@ class FlatDetailsActivity : AppCompatActivity() {
 
         isFavorite = FlatsDatabase.getInstance(this)
                 .getFlatStatus(flat.getId(), flat.getProvider()) == FlatStatus.FAVORITE
+
+        FlatsDatabase.getInstance(this).setSeenFlat(flat.getId(), flat.getProvider())
     }
 
     private fun openInBrowser() {
@@ -105,7 +109,7 @@ class FlatDetailsActivity : AppCompatActivity() {
         if (isFavorite) {
             FlatsDatabase.getInstance(this).setFavoriteFlat(flat.getId(), flat.getProvider())
         } else {
-            FlatsDatabase.getInstance(this).setSeenFlat(flat.getId(), flat.getProvider())
+            FlatsDatabase.getInstance(this).setRegularFlat(flat.getId(), flat.getProvider())
         }
     }
 

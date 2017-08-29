@@ -22,30 +22,27 @@
 
         <ImageView
             android:id="@+id/favorite_icon"
-
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:padding="4dp"
             app:layout_constraintRight_toRightOf="@+id/agent_line"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <TextView
             android:id="@+id/cost"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:layout_marginEnd="4dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="4dp"
             android:layout_marginStart="8dp"
+            android:gravity="center_vertical"
             android:textColor="@color/colorTextPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/favorite_icon"
             app:layout_constraintLeft_toRightOf="@+id/guideline"
             app:layout_constraintRight_toLeftOf="@+id/favorite_icon"
             app:layout_constraintTop_toTopOf="@+id/favorite_icon" />
-
 
         <LinearLayout
             android:id="@+id/subway_container"
@@ -74,7 +71,6 @@
                 android:textColor="@color/colorTextPrimary" />
         </LinearLayout>
 
-
         <ImageView
             android:id="@+id/provider"
             android:layout_width="wrap_content"
@@ -89,10 +85,11 @@
             android:id="@+id/time_ago_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginRight="4dp"
+            android:layout_marginTop="16dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:visibility="gone"
             app:layout_constraintRight_toLeftOf="@+id/agent_line"
             app:layout_constraintTop_toBottomOf="@+id/subway_container">
 
@@ -123,6 +120,8 @@
             android:layout_marginTop="16dp"
             android:gravity="left"
             android:maxLines="1"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
             android:textColor="@color/colorTextSecondary"
             app:layout_constraintLeft_toLeftOf="@+id/cost"
             app:layout_constraintRight_toRightOf="@+id/time_ago_container"
@@ -142,7 +141,7 @@
         <android.support.constraint.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.4" />
 

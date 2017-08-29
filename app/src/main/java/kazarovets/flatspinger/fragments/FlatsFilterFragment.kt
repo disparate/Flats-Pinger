@@ -78,7 +78,6 @@ class FlatsFilterFragment : Fragment() {
         allowOnlyWithPhotosCheckbox?.setOnCheckedChangeListener { compoundButton, b -> PreferenceUtils.allowPhotosOnly = b }
 
 
-
         minCostUsd = view?.findViewById(R.id.edit_text_min_cost)
         minCostUsd?.text = PreferenceUtils.minCost.toString()
         minCostUsd?.addTextChangedListener(object : OnNumberTextChangedTextWatcher {
@@ -95,7 +94,6 @@ class FlatsFilterFragment : Fragment() {
                 val value = if (text.isNotEmpty()) text.toInt() else null
                 PreferenceUtils.maxCost = value
             }
-
         })
 
         maxDistanceToSubway = view?.findViewById(R.id.edit_text_distance_to_subway)
@@ -105,7 +103,6 @@ class FlatsFilterFragment : Fragment() {
                 val value = if (text.isNotEmpty()) text.toDouble() else null
                 PreferenceUtils.maxDistToSubway = value
             }
-
         })
     }
 

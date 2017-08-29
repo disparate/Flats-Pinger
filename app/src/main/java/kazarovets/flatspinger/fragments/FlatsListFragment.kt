@@ -152,7 +152,7 @@ class FlatsListFragment : Fragment() {
                         FlatsDatabase.getInstance(context).setHiddenFlat(flat.getId(), flat.getProvider())
 //                    } else {
 //                        adapter?.removeItem(position)
-//                        FlatsDatabase.getInstance(context).setSeenFlat(flat.getId(), flat.getProvider())
+//                        FlatsDatabase.getInstance(context).setRegularFlat(flat.getId(), flat.getProvider())
                     }
                 }
             }
@@ -196,8 +196,11 @@ class FlatsListFragment : Fragment() {
 
     private fun updateAdapterData() {
         adapter?.setData(flats.filter {
-            val status = FlatsDatabase.getInstance(context).getFlatStatus(it.getId(), it.getProvider())
-            currentMode.statuses.contains(status)
+            val db = FlatsDatabase.getInstance(context)
+            val status = db.getFlatStatus(it.getId(), it.getProvider())
+            val seen = db.isSeenFlat(it.getId(), it.getProvider())
+
+            currentMode.statuses.contains(status) && currentMode.seenStatuses.contains(seen)
         })
     }
 
@@ -256,11 +259,11 @@ class FlatsListFragment : Fragment() {
         super.onDestroyView()
     }
 
-    enum class MODE(val statuses: List<FlatStatus>) {
-        MODE_ALL(arrayListOf(FlatStatus.FAVORITE, FlatStatus.NOT_SEEN, FlatStatus.SEEN)),
-        MODE_NOT_SEEN(arrayListOf(FlatStatus.NOT_SEEN)),
-        MODE_SEEN(arrayListOf(FlatStatus.FAVORITE, FlatStatus.SEEN)),
-        MODE_FAVORITES(arrayListOf(FlatStatus.FAVORITE)),
-        MODE_DELETED(arrayListOf(FlatStatus.HIDDEN))
+    enum class MODE(val statuses: List<FlatStatus>, val seenStatuses: List<Boolean>) {
+        MODE_ALL(listOf(FlatStatus.FAVORITE, FlatStatus.REGULAR), listOf(true, false)),
+        MODE_NOT_SEEN(listOf(FlatStatus.REGULAR), listOf(false)),
+        MODE_SEEN(listOf(FlatStatus.FAVORITE, FlatStatus.REGULAR), listOf(true)),
+        MODE_FAVORITES(listOf(FlatStatus.FAVORITE), listOf(true, false)),
+        MODE_DELETED(listOf(FlatStatus.HIDDEN), listOf(true, false))
     }
 }
