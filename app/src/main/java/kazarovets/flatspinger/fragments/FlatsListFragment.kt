@@ -1,13 +1,11 @@
 package kazarovets.flatspinger.fragments
 
 import android.annotation.TargetApi
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.VectorDrawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -16,7 +14,6 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -85,6 +82,11 @@ class FlatsListFragment : Fragment() {
         floatingActionMenu = view?.findViewById(R.id.fab_menu)
         fillFloatingMenu()
 
+        loadData()
+    }
+
+    override fun onResume() {
+        super.onResume()
         loadData()
     }
 

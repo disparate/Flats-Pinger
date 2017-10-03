@@ -91,7 +91,7 @@ class JobSchedulerService : JobService() {
 
     private fun showNotification(flats: List<Flat>) {
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.notification_title_new_flats))
 //                .setContentText("${flats.size} ${getString(R.string)}")
                 .setAutoCancel(true)

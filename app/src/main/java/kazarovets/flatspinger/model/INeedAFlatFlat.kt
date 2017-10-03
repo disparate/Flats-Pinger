@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 
-class INeedAFlatFlat : Flat {
+class INeedAFlatFlat : Flat, FlatDetails {
 
     @SerializedName("id")
     val idText: String? = null
@@ -95,6 +95,9 @@ class INeedAFlatFlat : Flat {
 
     fun getImages(): List<String> = attributes?.images ?: emptyList()
 
+    override fun getDescription(): String? = attributes?.description
+
+    override fun getPhones(): List<String> = attributes?.phones.orEmpty()
 
     class Attributes : Serializable {
         @SerializedName("title")
@@ -151,7 +154,6 @@ class INeedAFlatFlat : Flat {
 
         @SerializedName("primaryName")
         val primaryName: String? = null
-
     }
 
 }

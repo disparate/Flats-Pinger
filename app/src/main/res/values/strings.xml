@@ -6,6 +6,7 @@
     <string name="owner">Собственник</string>
     <string name="agent">Агент</string>
 
+    <string name="settings_enable_notifications">Показывать уведомления о новых объявлениях?</string>
     <string name="filter_subway_title">Станции метро</string>
     <string name="filter_allow_agency">Показывать объявления от агентств?</string>
     <string name="filter_allow_with_photos_only">Только с фото</string>

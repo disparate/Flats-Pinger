@@ -10,6 +10,7 @@ import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,6 +18,7 @@ import com.bumptech.glide.Glide
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.FlatDetails
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.model.INeedAFlatFlat
 import kazarovets.flatspinger.utils.StringsUtils
@@ -43,6 +45,7 @@ class FlatDetailsActivity : AppCompatActivity() {
     private var updatedAtTextView: TextView? = null
     private var flatTagsView: FlatTagsView? = null
 
+
     private lateinit var flat: Flat
 
     var isFavorite = false
@@ -55,8 +58,6 @@ class FlatDetailsActivity : AppCompatActivity() {
 
         val flat = intent.extras.getSerializable(EXTRA_FLAT) as Flat
         this.flat = flat
-
-
 
         setContentView(R.layout.activity_flat_details)
 
@@ -73,11 +74,6 @@ class FlatDetailsActivity : AppCompatActivity() {
             flatImage?.setOnClickListener { startActivity(ImagesActivity.getCallingIntent(this, flat.getImages())) }
         }
 
-        openInChrome = findViewById(R.id.open_in_web_button)
-        openInChrome?.setOnClickListener {
-
-        }
-
         createdAtTextView = findViewById(R.id.created_time_ago)
         createdAtTextView?.text = "${getString(R.string.created)} ${StringsUtils.getTimeAgoString(flat.getCreatedTime(), this)}"
 
@@ -90,11 +86,37 @@ class FlatDetailsActivity : AppCompatActivity() {
         flatTagsView = findViewById(R.id.flat_tags)
         flatTagsView?.tags = flat.getTags()
 
-
         isFavorite = FlatsDatabase.getInstance(this)
                 .getFlatStatus(flat.getId(), flat.getProvider()) == FlatStatus.FAVORITE
 
+        fillDetails()
+
         FlatsDatabase.getInstance(this).setSeenFlat(flat.getId(), flat.getProvider())
+    }
+
+    private fun fillDetails() {
+        val descriptionContainer = findViewById<ViewGroup>(R.id.description_container)
+        val descriptionTextView = findViewById<TextView>(R.id.description)
+
+        val phoneContainer = findViewById<ViewGroup>(R.id.phone_container)
+        val phoneTextView = findViewById<TextView>(R.id.phone)
+
+        val flat = flat
+        if(flat is FlatDetails) {
+            if(!flat.getDescription().isNullOrEmpty()) {
+                descriptionTextView.text = flat.getDescription()
+            } else {
+                descriptionContainer.visibility = View.GONE
+            }
+            if(flat.getPhones().isNotEmpty()) {
+                phoneTextView.text = flat.getPhones()[0]
+            } else {
+                phoneContainer.visibility = View.GONE
+            }
+        } else {
+            descriptionContainer.visibility = View.GONE
+            phoneContainer.visibility = View.GONE
+        }
     }
 
     private fun openInBrowser() {

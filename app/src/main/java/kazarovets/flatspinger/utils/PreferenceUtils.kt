@@ -20,6 +20,7 @@ object PreferenceUtils {
     val FILTER_SUBWAYS_IDS = "filter_subways_ids"
     val FILTER_RENT_TYPES = "filter_rent_types"
     val FILTER_MAX_DISTANCE_TO_SUBWAY = "filter_max_dist_to_subway"
+    val ENABLE_NOTIFICATONS = "enable_notifications"
 
     val TAG = "PreferenceUtils"
 
@@ -145,6 +146,15 @@ object PreferenceUtils {
                 maxDistToSubway = value.maxDistToSubway
                 allowPhotosOnly = value.allowWithPhotosOnly
             }
+        }
+
+    var enableNotifications: Boolean = false
+        get() {
+            field = prefs.getBoolean(ENABLE_NOTIFICATONS, false)
+            return field
+        }
+        set(value) {
+            prefs.edit().putBoolean(ENABLE_NOTIFICATONS, value).apply()
         }
 
     private fun getNullableInt(fieldName: String): Int? {

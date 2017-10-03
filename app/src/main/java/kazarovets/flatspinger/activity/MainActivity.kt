@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.ViewSwitcher
 import kazarovets.flatspinger.R
-import kazarovets.flatspinger.utils.ScheduleUtils
 
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +17,6 @@ class MainActivity : AppCompatActivity() {
         val POSITION_FILTER = 1
 
         val CURRENT_POSITION = "curr_pos"
-        val FLAT_NOTIFICATIONS_JOB_ID = 228
     }
 
     private var viewSwitcher: ViewSwitcher? = null
@@ -57,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         currPosition = savedInstanceState?.getInt(CURRENT_POSITION) ?: currPosition
         viewSwitcher?.displayedChild = currPosition
 
-        ScheduleUtils.scheduleFlatsNotificationsJob(this)
     }
 
 
