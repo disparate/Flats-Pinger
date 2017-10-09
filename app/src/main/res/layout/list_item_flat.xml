@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="8dp"
     app:cardCornerRadius="4dp"
     app:cardElevation="5dp">
@@ -13,6 +14,7 @@
 
         <ImageView
             android:id="@+id/image"
+            tools:background="@drawable/rectangle_circular_bg"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/site"
@@ -25,6 +27,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:padding="4dp"
+            tools:src="@drawable/ic_star_24dp"
             app:layout_constraintRight_toRightOf="@+id/agent_line"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,6 +43,7 @@
             android:textColor="@color/colorTextPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
+            tools:text="350$"
             app:layout_constraintLeft_toRightOf="@+id/guideline"
             app:layout_constraintRight_toLeftOf="@+id/favorite_icon"
             app:layout_constraintTop_toTopOf="@+id/favorite_icon" />
@@ -67,6 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="end"
+                tools:text="Уручье (538м)"
                 android:maxLines="1"
                 android:textColor="@color/colorTextPrimary" />
         </LinearLayout>
@@ -105,6 +110,7 @@
             <TextView
                 android:id="@+id/update_time"
                 android:layout_width="wrap_content"
+                tools:text="23ч. назад"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:textColor="@color/colorTextSecondary"
@@ -120,9 +126,10 @@
             android:layout_marginTop="16dp"
             android:gravity="left"
             android:maxLines="1"
-            android:paddingBottom="4dp"
+            android:layout_marginBottom="4dp"
             android:paddingTop="4dp"
             android:textColor="@color/colorTextSecondary"
+            tools:text="r.onliner.by"
             app:layout_constraintLeft_toLeftOf="@+id/cost"
             app:layout_constraintRight_toRightOf="@+id/time_ago_container"
             app:layout_constraintTop_toBottomOf="@+id/subway_container" />

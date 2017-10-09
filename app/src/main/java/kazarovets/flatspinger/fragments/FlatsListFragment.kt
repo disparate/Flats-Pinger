@@ -82,6 +82,8 @@ class FlatsListFragment : Fragment() {
         floatingActionMenu = view?.findViewById(R.id.fab_menu)
         fillFloatingMenu()
 
+
+        swipeRefreshLayout?.isRefreshing = true
         loadData()
     }
 
@@ -94,7 +96,6 @@ class FlatsListFragment : Fragment() {
         val minCost = PreferenceUtils.minCost
         val maxCost = PreferenceUtils.maxCost
         val allowAgency = PreferenceUtils.allowAgency
-        swipeRefreshLayout?.isRefreshing = true
         disposable = ApiManager.iNeedAFlatApi
                 .getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency)
                 .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency))
