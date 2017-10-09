@@ -95,7 +95,7 @@ class FlatsFilterFragment : Fragment() {
         }
 
         minCostUsd = view?.findViewById(R.id.edit_text_min_cost)
-        minCostUsd?.text = PreferenceUtils.minCost.toString()
+        minCostUsd?.text = PreferenceUtils.minCost?.toString()
         minCostUsd?.addTextChangedListener(object : OnNumberTextChangedTextWatcher {
             override fun parseText(text: String) {
                 val value = if (text.isNotEmpty()) text.toInt() else null
