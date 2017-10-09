@@ -198,6 +198,10 @@ class FlatsListFragment : Fragment() {
 
     private fun updateAdapterData() {
         adapter?.setData(flats.filter {
+            if(context == null) {
+                return
+            }
+
             val db = FlatsDatabase.getInstance(context)
             val status = db.getFlatStatus(it.getId(), it.getProvider())
             val seen = db.isSeenFlat(it.getId(), it.getProvider())

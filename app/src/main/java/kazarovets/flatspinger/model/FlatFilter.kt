@@ -9,5 +9,6 @@ data class FlatFilter(val minCost: Int? = null,
                       val subwaysIds: MutableSet<Int> = HashSet(),
                       val rentTypes: MutableSet<RentType> = HashSet(),
                       val maxDistToSubway: Double? = null,
-                      val updateDatesAgo: Int = 3) {
+                      val keywords: MutableSet<String> = HashSet(),
+                      val updateDatesAgo: Int = 10) {
 }

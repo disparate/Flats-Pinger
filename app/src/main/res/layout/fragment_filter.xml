@@ -77,6 +77,35 @@
                 android:minEms="4" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
+                android:layout_weight="1"
+                android:text="@string/filter_keywords_title" />
+
+            <FrameLayout
+                android:id="@+id/edit_keywords_button"
+                android:layout_width="50dp"
+                android:layout_height="32dp"
+                android:background="@drawable/rectangle_circular_bg">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_edit_black_24dp"
+                    android:tint="@android:color/white" />
+            </FrameLayout>
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="match_parent"

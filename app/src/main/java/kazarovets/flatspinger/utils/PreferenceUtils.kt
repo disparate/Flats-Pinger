@@ -20,6 +20,8 @@ object PreferenceUtils {
     val FILTER_SUBWAYS_IDS = "filter_subways_ids"
     val FILTER_RENT_TYPES = "filter_rent_types"
     val FILTER_MAX_DISTANCE_TO_SUBWAY = "filter_max_dist_to_subway"
+    val FILTER_KEYWORDS = "filter_keywords"
+
     val ENABLE_NOTIFICATONS = "enable_notifications"
 
     val TAG = "PreferenceUtils"
@@ -123,6 +125,21 @@ object PreferenceUtils {
             putNullableValue(FILTER_MAX_DISTANCE_TO_SUBWAY, value)
         }
 
+    var keywords: MutableSet<String> = HashSet()
+        get() {
+            val stringSet = prefs.getStringSet(FILTER_KEYWORDS, HashSet<String>())
+            field = HashSet()
+            for (string in stringSet) {
+                field.add(string)
+            }
+            return field
+        }
+        set(value) {
+            field = value
+            val set = HashSet(value)
+            prefs.edit().putStringSet(FILTER_KEYWORDS, set).apply()
+        }
+
     var flatFilter: FlatFilter? = null
         get() {
             field = FlatFilter(minCost = minCost,
@@ -131,7 +148,8 @@ object PreferenceUtils {
                     agencyAllowed = allowAgency,
                     allowWithPhotosOnly = allowPhotosOnly,
                     rentTypes = rentTypes,
-                    maxDistToSubway = maxDistToSubway)
+                    maxDistToSubway = maxDistToSubway,
+                    keywords = keywords)
             return field
 
         }
@@ -145,6 +163,7 @@ object PreferenceUtils {
                 rentTypes = value.rentTypes
                 maxDistToSubway = value.maxDistToSubway
                 allowPhotosOnly = value.allowWithPhotosOnly
+                keywords = value.keywords
             }
         }
 

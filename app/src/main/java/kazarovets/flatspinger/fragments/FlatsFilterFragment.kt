@@ -24,6 +24,8 @@ class FlatsFilterFragment : Fragment() {
 
     companion object {
         val TAG = "FlatsFilterFragment"
+
+        val KEYWORDS_FRAGMENT_TAG = "keywords_fragment"
     }
 
     private var redSubwaysSelector: SubwaysSelectorView? = null
@@ -36,6 +38,7 @@ class FlatsFilterFragment : Fragment() {
     private var maxCostUsd: TextView? = null
     private var maxDistanceToSubway: EditText? = null
     private var scrollView: ScrollView? = null
+    private var editKeywordsButton: View? = null
 
     private var selectedSubwaysIds: MutableSet<Int> = HashSet()
 
@@ -117,6 +120,11 @@ class FlatsFilterFragment : Fragment() {
                 PreferenceUtils.maxDistToSubway = value
             }
         })
+
+        editKeywordsButton = view?.findViewById(R.id.edit_keywords_button)
+        editKeywordsButton?.setOnClickListener {
+            KeywordsDialogFragment().show(childFragmentManager, KEYWORDS_FRAGMENT_TAG)
+        }
     }
 
     interface OnNumberTextChangedTextWatcher : TextWatcher {

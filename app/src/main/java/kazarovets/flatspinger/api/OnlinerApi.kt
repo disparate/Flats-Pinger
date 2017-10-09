@@ -23,7 +23,7 @@ class OnlinerApi constructor(context: Context) {
     val onlinerApiService by lazy { createService() }
 
     fun getLatestFlats(minCost: Int?, maxCost: Int?, onlyOwner: Boolean): Single<List<Flat>> {
-        val rentType = "1_room"
+        val rentType = "2_rooms"
         val currency = "USD"
         val owner = if(onlyOwner) true else null //weird onliner api
 

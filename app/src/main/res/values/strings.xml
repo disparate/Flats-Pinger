@@ -13,6 +13,7 @@
     <string name="filter_min_cost">Минимальная стоимость (USD)</string>
     <string name="filter_max_cost">Максимальная стоимость (USD)</string>
     <string name="filter_distance_to_subway">Максимальное расстояние до метро (м)</string>
+    <string name="filter_keywords_title">Ключевые слова</string>
 
     <string name="day_small">д.</string>
     <string name="hour_small">ч.</string>
@@ -44,4 +45,5 @@
     <string name="menu_favorite">Добавить в избранное</string>
     <string name="menu_web">Открыть в браузере</string>
     <string name="notification_title_new_flats">Новые квартиры!</string>
+    <string name="button_add">+</string>
 </resources>
