@@ -14,6 +14,7 @@
     <string name="filter_max_cost">Максимальная стоимость (USD)</string>
     <string name="filter_distance_to_subway">Максимальное расстояние до метро (м)</string>
     <string name="filter_keywords_title">Ключевые слова</string>
+    <string name="filter_rooms_number">Количество комнат:</string>
 
     <string name="day_small">д.</string>
     <string name="hour_small">ч.</string>
@@ -34,10 +35,11 @@
 
     <string name="open_link">Открыть в браузере</string>
 
-    <string name="tag_rent_1k">1к</string>
-    <string name="tag_rent_2k">2к</string>
-    <string name="tag_rent_3k">3к</string>
-    <string name="tag_rent_4k">4к</string>
+    <string name="rent_1k">1к</string>
+    <string name="rent_2k">2к</string>
+    <string name="rent_3k">3к</string>
+    <string name="rent_4k">4к+</string>
+
 
     <string name="updated">Обновлено:</string>
     <string name="created">Размещено:</string>

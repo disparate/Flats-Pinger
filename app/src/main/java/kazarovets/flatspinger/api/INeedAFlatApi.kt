@@ -1,11 +1,11 @@
 package kazarovets.flatspinger.api
 
-import android.text.format.DateUtils
 import android.util.Log
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.INeedAFlatListResponse
+import kazarovets.flatspinger.model.RentType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -19,6 +19,16 @@ class INeedAFlatApi {
     companion object {
         val TAG = "INeedAFlatApi"
         private val BASE_URL = "http://ineedaflat.by/ineedaflat-server/"
+
+        private val ONE_ROOM = "1.0"
+        private val TWO_ROOMS = "2.0"
+        private val THREE_ROOMS = "3.0"
+        private val FOUR_ROOMS = "4.0"
+
+        private val rentTypesMap = mapOf(RentType.FLAT_1_ROOM to ONE_ROOM,
+                RentType.FLAT_2_ROOM to TWO_ROOMS,
+                RentType.FLAT_3_ROOM to THREE_ROOMS,
+                RentType.FLAT_4_ROOM_OR_MORE to FOUR_ROOMS)
     }
 
     val iNeedAFlatApiService by lazy { createApiService() }
@@ -55,12 +65,12 @@ class INeedAFlatApi {
         return retrofit.create(INeedAFlatApiService::class.java)
     }
 
-    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean): Single<List<Flat>> {
+    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rooms: Set<String>): Single<List<Flat>> {
         val min = if (minCost != null) minCost else 0.0
         val max = if (maxCost != null) maxCost else 100000.0
         var query = "{\"attributes.price.value\":{\"\$gte\":$min,\"\$lte\":$max}," +
                 (if (agencyAllowed) "" else "\"agentImpudence\":{\"\$lte\":15.0},") +
-//                "\"attributes.geoCoordinates\":{\"\$geoWithin\":{\"\$polygon\":[" +
+                //                "\"attributes.geoCoordinates\":{\"\$geoWithin\":{\"\$polygon\":[" +
 //                "[27.551849484443665,53.90512705553124]," +
 //                "[27.54768267273903,53.90359566086626]," +
 //                "[27.54117462784052,53.90586340073318]," +
@@ -81,7 +91,7 @@ class INeedAFlatApi {
 //                "[27.522090040147308,53.929109668408316]," +
 //                "[27.52436690032482,53.925279425063465]," +
 //                "[27.534565664827824,53.91715641692136]]}}," +
-                "\"attributes.rooms\":{\"\$in\":[2.0]}}"
+                getRoomsParam(rooms)
         query = query.replace("{", "%7B").replace("}", "%7D")
                 .replace("[", "%5B").replace("]", "%5D")
 //        val createdAt = System.currentTimeMillis() - daysUpdatedAgo * DateUtils.DAY_IN_MILLIS
@@ -96,7 +106,18 @@ class INeedAFlatApi {
                 }
     }
 
-    private fun getRoomsParam() {
-
+    private fun getRoomsParam(rooms: Set<String>): String {
+        var list = ArrayList<String?>()
+        if (rooms.isEmpty()) {
+            list = ArrayList(rentTypesMap.values)
+        }
+        for (room in rooms) {
+            val rentType = RentType.valueOf(room)
+            if (rentTypesMap.containsKey(rentType)) {
+                list.add(rentTypesMap.get(rentType))
+            }
+        }
+        return "\"attributes.rooms\":{\"\$in\":[${list.joinToString(separator = ",")}]}}"
     }
+
 }

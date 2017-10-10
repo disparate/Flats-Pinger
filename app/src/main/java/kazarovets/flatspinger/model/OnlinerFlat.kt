@@ -2,6 +2,7 @@ package kazarovets.flatspinger.model
 
 import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
+import kazarovets.flatspinger.api.OnlinerApi
 import java.io.Serializable
 import java.text.SimpleDateFormat
 
@@ -28,8 +29,12 @@ class OnlinerFlat : Flat {
 
     override fun isOwner(): Boolean = contact?.isOwner ?: false
 
-    override fun getRentType(): RentType {
-        return RentType.FLAT_1_ROOM
+    override fun getRentType(): RentType = when (rentType) {
+        OnlinerApi.ONE_ROOM -> RentType.FLAT_1_ROOM
+        OnlinerApi.TWO_ROOMS -> RentType.FLAT_2_ROOM
+        OnlinerApi.THREE_ROOMS -> RentType.FLAT_3_ROOM
+        OnlinerApi.FOUR_ROOMS, OnlinerApi.FIVE_ROOMS, OnlinerApi.SIX_ROOMS -> RentType.FLAT_4_ROOM_OR_MORE
+        else -> RentType.NONE
     }
 
     override fun getProvider(): Provider = Provider.ONLINER

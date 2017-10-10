@@ -96,9 +96,10 @@ class FlatsListFragment : Fragment() {
         val minCost = PreferenceUtils.minCost
         val maxCost = PreferenceUtils.maxCost
         val allowAgency = PreferenceUtils.allowAgency
+        val roomNumbers = PreferenceUtils.roomNumbers
         disposable = ApiManager.iNeedAFlatApi
-                .getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency)
-                .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency))
+                .getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, roomNumbers)
+                .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, roomNumbers))
                 .toObservable()
                 .flatMap { Observable.fromIterable(it) }
                 .filter { FlatsFilterMatcher.matches(PreferenceUtils.flatFilter, it) }

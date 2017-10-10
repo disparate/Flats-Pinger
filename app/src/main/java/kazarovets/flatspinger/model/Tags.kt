@@ -27,10 +27,10 @@ class StringTag(private val value: String?) : Tag {
 
 class RentTypeTag(private val type: RentType) : Tag {
     override fun getString(context: Context): String = when (type) {
-        RentType.FLAT_1_ROOM -> context.getString(R.string.tag_rent_1k)
-        RentType.FLAT_2_ROOM -> context.getString(R.string.tag_rent_2k)
-        RentType.FLAT_3_ROOM -> context.getString(R.string.tag_rent_3k)
-        RentType.FLAT_4_ROOM -> context.getString(R.string.tag_rent_4k)
+        RentType.FLAT_1_ROOM -> context.getString(R.string.rent_1k)
+        RentType.FLAT_2_ROOM -> context.getString(R.string.rent_2k)
+        RentType.FLAT_3_ROOM -> context.getString(R.string.rent_3k)
+        RentType.FLAT_4_ROOM_OR_MORE -> context.getString(R.string.rent_4k)
         RentType.NONE -> ""
     }
 

@@ -8,11 +8,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ScrollView
-import android.widget.TextView
+import android.widget.*
 import kazarovets.flatspinger.R
+import kazarovets.flatspinger.model.RentType
 import kazarovets.flatspinger.model.Subway
 import kazarovets.flatspinger.utils.PreferenceUtils
 import kazarovets.flatspinger.utils.ScheduleUtils
@@ -26,6 +24,37 @@ class FlatsFilterFragment : Fragment() {
         val TAG = "FlatsFilterFragment"
 
         val KEYWORDS_FRAGMENT_TAG = "keywords_fragment"
+
+        interface OnNumberTextChangedTextWatcher : TextWatcher {
+
+            fun parseText(text: String)
+
+            override fun afterTextChanged(p0: Editable?) {
+                try {
+                    parseText(p0.toString())
+                } catch (ex: NumberFormatException) {
+                    Log.d(TAG, "Exception parsing text in number", ex)
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        }
+
+        class OnRentTypeCheckedListener(val rentType: RentType) : CompoundButton.OnCheckedChangeListener {
+            override fun onCheckedChanged(button: CompoundButton?, checked: Boolean) {
+                val set = HashSet(PreferenceUtils.roomNumbers)
+                if (checked) {
+                    set.add(rentType.name)
+                } else {
+                    set.remove(rentType.name)
+                }
+                PreferenceUtils.roomNumbers = set
+            }
+        }
     }
 
     private var redSubwaysSelector: SubwaysSelectorView? = null
@@ -34,6 +63,12 @@ class FlatsFilterFragment : Fragment() {
     private var enableNotificationsCheckbox: CheckBox? = null
     private var allowAgencyCheckbox: CheckBox? = null
     private var allowOnlyWithPhotosCheckbox: CheckBox? = null
+
+    private var oneRoomCheckbox: CheckBox? = null
+    private var twoRoomsCheckbox: CheckBox? = null
+    private var threeRoomsCheckbox: CheckBox? = null
+    private var fourRoomsCheckbox: CheckBox? = null
+
     private var minCostUsd: TextView? = null
     private var maxCostUsd: TextView? = null
     private var maxDistanceToSubway: EditText? = null
@@ -87,7 +122,7 @@ class FlatsFilterFragment : Fragment() {
         enableNotificationsCheckbox?.isChecked = PreferenceUtils.enableNotifications
         enableNotificationsCheckbox?.setOnCheckedChangeListener { compoundButton, checked ->
             PreferenceUtils.enableNotifications = checked
-            if(checked) {
+            if (checked) {
                 ScheduleUtils.scheduleFlatsNotificationsJob(context)
             } else {
                 ScheduleUtils.cancelScheduledJob(context)
@@ -125,25 +160,23 @@ class FlatsFilterFragment : Fragment() {
         editKeywordsButton?.setOnClickListener {
             KeywordsDialogFragment().show(childFragmentManager, KEYWORDS_FRAGMENT_TAG)
         }
+
+        oneRoomCheckbox = view?.findViewById(R.id.rent_1k)
+        oneRoomCheckbox?.isChecked = PreferenceUtils.roomNumbers.contains(RentType.FLAT_1_ROOM.name)
+        oneRoomCheckbox?.setOnCheckedChangeListener(OnRentTypeCheckedListener(RentType.FLAT_1_ROOM))
+
+        twoRoomsCheckbox = view?.findViewById(R.id.rent_2k)
+        twoRoomsCheckbox?.isChecked = PreferenceUtils.roomNumbers.contains(RentType.FLAT_2_ROOM.name)
+        twoRoomsCheckbox?.setOnCheckedChangeListener(OnRentTypeCheckedListener(RentType.FLAT_2_ROOM))
+
+        threeRoomsCheckbox = view?.findViewById(R.id.rent_3k)
+        threeRoomsCheckbox?.isChecked = PreferenceUtils.roomNumbers.contains(RentType.FLAT_3_ROOM.name)
+        threeRoomsCheckbox?.setOnCheckedChangeListener(OnRentTypeCheckedListener(RentType.FLAT_3_ROOM))
+
+        fourRoomsCheckbox = view?.findViewById(R.id.rent_4k_and_more)
+        fourRoomsCheckbox?.isChecked = PreferenceUtils.roomNumbers.contains(RentType.FLAT_4_ROOM_OR_MORE.name)
+        fourRoomsCheckbox?.setOnCheckedChangeListener(OnRentTypeCheckedListener(RentType.FLAT_4_ROOM_OR_MORE))
     }
 
-    interface OnNumberTextChangedTextWatcher : TextWatcher {
-
-        fun parseText(text: String)
-
-        override fun afterTextChanged(p0: Editable?) {
-            try {
-                parseText(p0.toString())
-            } catch (ex: NumberFormatException) {
-                Log.d(TAG, "Exception parsing text in number", ex)
-            }
-        }
-
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-    }
 
 }

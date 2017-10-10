@@ -72,7 +72,7 @@ class INeedAFlatFlat : Flat, FlatDetails {
         1 -> RentType.FLAT_1_ROOM
         2 -> RentType.FLAT_2_ROOM
         3 -> RentType.FLAT_3_ROOM
-        4 -> RentType.FLAT_4_ROOM
+        4 -> RentType.FLAT_4_ROOM_OR_MORE
         else -> RentType.NONE
     }
 

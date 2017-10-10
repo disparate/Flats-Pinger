@@ -22,6 +22,7 @@ class FlatsFilterMatcher {
                     && (!filter.allowWithPhotosOnly || flat.hasImages())
                     && (flat.getUpdatedTime() > System.currentTimeMillis() - filter.updateDatesAgo * DateUtils.DAY_IN_MILLIS)
                     && matchesKeywords(flat, filter.keywords)
+                    && filter.roomNumbers.isEmpty() || filter.roomNumbers.contains(flat.getRentType().name)
         }
 
         fun matchesKeywords(flat: Flat, keywords: Set<String>): Boolean {
@@ -47,5 +48,6 @@ class FlatsFilterMatcher {
             return matchedAll
 
         }
+
     }
 }
