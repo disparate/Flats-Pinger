@@ -68,11 +68,11 @@ class KeywordsDialogFragment : DialogFragment() {
     }
 
     private fun addKeyword(keyword: String?) {
-        if (keyword == null) {
+        if (keyword == null || keyword.isEmpty()) {
             return
         }
 
-        adapter?.addFirst(keyword)
+        adapter?.addFirst(keyword.trim())
         val set = HashSet(PreferenceUtils.keywords)
         set.add(keyword)
         PreferenceUtils.keywords = set

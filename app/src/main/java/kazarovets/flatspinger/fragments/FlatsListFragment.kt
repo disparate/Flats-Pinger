@@ -33,6 +33,7 @@ import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
 import kazarovets.flatspinger.utils.FlatsFilterMatcher
 import kazarovets.flatspinger.utils.PreferenceUtils
+import java.util.*
 
 
 class FlatsListFragment : Fragment() {
@@ -82,7 +83,6 @@ class FlatsListFragment : Fragment() {
         floatingActionMenu = view?.findViewById(R.id.fab_menu)
         fillFloatingMenu()
 
-
         swipeRefreshLayout?.isRefreshing = true
         loadData()
     }
@@ -97,12 +97,13 @@ class FlatsListFragment : Fragment() {
         val maxCost = PreferenceUtils.maxCost
         val allowAgency = PreferenceUtils.allowAgency
         val roomNumbers = PreferenceUtils.roomNumbers
+        val flatsFilter = PreferenceUtils.flatFilter
         disposable = ApiManager.iNeedAFlatApi
                 .getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, roomNumbers)
                 .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, roomNumbers))
                 .toObservable()
                 .flatMap { Observable.fromIterable(it) }
-                .filter { FlatsFilterMatcher.matches(PreferenceUtils.flatFilter, it) }
+                .filter { FlatsFilterMatcher.matches(flatsFilter, it) }
                 .toSortedList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<Flat>>() {
@@ -122,11 +123,12 @@ class FlatsListFragment : Fragment() {
 
     private fun onFlatsReceived(flats: List<Flat>?) {
         val list = ArrayList<Flat>()
-        if (flats != null) list.addAll(flats)
+        if (flats != null) {
+            list.addAll(flats)
+        }
         this.flats = list
         updateAdapterData()
     }
-
 
     private fun initSwipe() {
         val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
@@ -200,7 +202,7 @@ class FlatsListFragment : Fragment() {
 
     private fun updateAdapterData() {
         adapter?.setData(flats.filter {
-            if(context == null) {
+            if (context == null) {
                 return
             }
 

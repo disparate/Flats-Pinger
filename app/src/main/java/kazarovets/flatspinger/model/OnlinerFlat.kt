@@ -72,6 +72,8 @@ class OnlinerFlat : Flat {
     @SerializedName("contact")
     val contact: Contact? = null
 
+    override fun toString(): String = "OnlinerFlat: address = ${getAddress()}"
+
 
     override fun equals(other: Any?): Boolean {
         if (other is Flat?) {

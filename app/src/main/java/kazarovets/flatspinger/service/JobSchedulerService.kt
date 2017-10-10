@@ -53,12 +53,13 @@ class JobSchedulerService : JobService() {
         val maxCost = PreferenceUtils.maxCost
         val allowAgency = PreferenceUtils.allowAgency
         val rooms = PreferenceUtils.roomNumbers
+        val flatsFilter = PreferenceUtils.flatFilter
         disposable = ApiManager.iNeedAFlatApi
                 .getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, rooms)
                 .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, rooms))
                 .toObservable()
                 .flatMap { Observable.fromIterable(it) }
-                .filter { FlatsFilterMatcher.matches(PreferenceUtils.flatFilter, it) }
+                .filter { FlatsFilterMatcher.matches(flatsFilter, it) }
                 .filter {
                     val db = FlatsDatabase.getInstance(applicationContext)
                     !db.isSeenFlat(it.getId(), it.getProvider())

@@ -99,6 +99,8 @@ class INeedAFlatFlat : Flat, FlatDetails {
 
     override fun getPhones(): List<String> = attributes?.phones.orEmpty()
 
+    override fun toString(): String = "INeedAFlatFlat: address = ${getAddress()}, desc = ${getDescription()}"
+
     class Attributes : Serializable {
         @SerializedName("title")
         val title: String? = null
