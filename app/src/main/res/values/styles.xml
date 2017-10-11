@@ -11,6 +11,10 @@
         <item name="android:statusBarColor">#00000000</item>
     </style>
 
+    <style name="ToolbarTheme">
+        <item name="colorControlNormal">#fff</item>
+    </style>
+
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
