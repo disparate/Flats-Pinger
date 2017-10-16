@@ -33,38 +33,6 @@ class INeedAFlatApi {
 
     val iNeedAFlatApiService by lazy { createApiService() }
 
-    private fun createApiService(): INeedAFlatApiService {
-
-        val httpInterceptor = HttpLoggingInterceptor()
-        httpInterceptor.level = HttpLoggingInterceptor.Level.BASIC
-        val okHttpBuilder = OkHttpClient.Builder()
-                .addInterceptor(httpInterceptor)
-                .connectTimeout(3, TimeUnit.MINUTES)
-                .readTimeout(3, TimeUnit.MINUTES)
-                .writeTimeout(3, TimeUnit.MINUTES)
-//                .addInterceptor { chain ->
-//                    val original = chain.request()
-//
-//                    //adding header info
-//                    val request = original.newBuilder()
-//                            .header("Content-Type", "application/json")
-//                            .header("Accept", "application/json")
-//                            .method(original.method(), original.body())
-//                            .build()
-//
-//                    return@addInterceptor chain.proceed(request)
-//                }
-
-        val retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(okHttpBuilder.build())
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-                .build()
-
-        return retrofit.create(INeedAFlatApiService::class.java)
-    }
-
     fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rooms: Set<String>): Single<List<Flat>> {
         val min = if (minCost != null) minCost else 0.0
         val max = if (maxCost != null) maxCost else 100000.0
@@ -119,5 +87,39 @@ class INeedAFlatApi {
         }
         return "\"attributes.rooms\":{\"\$in\":[${list.joinToString(separator = ",")}]}}"
     }
+
+
+    private fun createApiService(): INeedAFlatApiService {
+
+        val httpInterceptor = HttpLoggingInterceptor()
+        httpInterceptor.level = HttpLoggingInterceptor.Level.BASIC
+        val okHttpBuilder = OkHttpClient.Builder()
+                .addInterceptor(httpInterceptor)
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES)
+//                .addInterceptor { chain ->
+//                    val original = chain.request()
+//
+//                    //adding header info
+//                    val request = original.newBuilder()
+//                            .header("Content-Type", "application/json")
+//                            .header("Accept", "application/json")
+//                            .method(original.method(), original.body())
+//                            .build()
+//
+//                    return@addInterceptor chain.proceed(request)
+//                }
+
+        val retrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpBuilder.build())
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+                .build()
+
+        return retrofit.create(INeedAFlatApiService::class.java)
+    }
+
 
 }

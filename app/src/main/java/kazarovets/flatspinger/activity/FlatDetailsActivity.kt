@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
@@ -15,14 +16,19 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.db.FlatsDatabase
+import kazarovets.flatspinger.fragments.MovableMapsFragment
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatDetails
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.model.INeedAFlatFlat
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.views.FlatTagsView
+
 
 class FlatDetailsActivity : AppCompatActivity() {
 
@@ -35,6 +41,8 @@ class FlatDetailsActivity : AppCompatActivity() {
             intent.setClass(context, FlatDetailsActivity::class.java)
             return intent
         }
+
+        val MAP_ZOOM = 15.0f
     }
 
     private var flatImage: ImageView? = null
@@ -45,8 +53,12 @@ class FlatDetailsActivity : AppCompatActivity() {
     private var updatedAtTextView: TextView? = null
     private var flatTagsView: FlatTagsView? = null
 
+    private var scrollView: NestedScrollView? = null
+
 
     private lateinit var flat: Flat
+
+    private var mapFragment: MovableMapsFragment? = null
 
     var isFavorite = false
 
@@ -66,6 +78,8 @@ class FlatDetailsActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.title = flat.getAddress()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        scrollView = findViewById(R.id.scroll_view)
 
         flatImage = findViewById(R.id.flat_image)
         flatImage?.visibility = if (flat.hasImages()) View.VISIBLE else View.GONE
@@ -93,12 +107,40 @@ class FlatDetailsActivity : AppCompatActivity() {
 
         fillDetails()
 
+        setupMap()
+
         FlatsDatabase.getInstance(this).setSeenFlat(flat.getId(), flat.getProvider())
     }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    private fun setupMap() {
+        mapFragment = supportFragmentManager.findFragmentById(R.id.map_fragment) as MovableMapsFragment?
+        mapFragment?.setListener(object : MovableMapsFragment.OnTouchListener {
+            override fun onTouch() {
+                scrollView?.requestDisallowInterceptTouchEvent(true)
+            }
+
+        })
+        val lat = flat.getLatitude()
+        val long = flat.getLongitude()
+        if (lat != null && long != null) {
+            mapFragment?.getMapAsync {
+                val flatsMarker = MarkerOptions()
+                        .position(LatLng(lat, long))
+                        .title(flat.getAddress())
+                it.addMarker(flatsMarker)
+                it.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), MAP_ZOOM))
+                it.uiSettings.isZoomControlsEnabled = true
+            }
+        } else {
+            if (mapFragment != null) {
+                supportFragmentManager.beginTransaction().remove(mapFragment).commit()
+            }
+        }
     }
 
     private fun fillDetails() {
@@ -109,13 +151,13 @@ class FlatDetailsActivity : AppCompatActivity() {
         val phoneTextView = findViewById<TextView>(R.id.phone)
 
         val flat = flat
-        if(flat is FlatDetails) {
-            if(!flat.getDescription().isNullOrEmpty()) {
+        if (flat is FlatDetails) {
+            if (!flat.getDescription().isNullOrEmpty()) {
                 descriptionTextView.text = flat.getDescription()
             } else {
                 descriptionContainer.visibility = View.GONE
             }
-            if(flat.getPhones().isNotEmpty()) {
+            if (flat.getPhones().isNotEmpty()) {
                 phoneTextView.text = flat.getPhones()[0]
             } else {
                 phoneContainer.visibility = View.GONE

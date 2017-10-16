@@ -35,7 +35,7 @@ dependencies {
     compile "io.reactivex.rxjava2:rxjava:${project.RX_V2_JAVA_VERSION}"
     compile "com.squareup.okhttp3:logging-interceptor:${OKHTTP_VERSION}"
 
-
+    compile "com.google.android.gms:play-services-maps:${project.PLAY_SERVICES_VERSION}"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'com.github.chrisbanes:PhotoView:2.0.0'
