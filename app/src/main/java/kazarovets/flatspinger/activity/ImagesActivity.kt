@@ -57,12 +57,13 @@ class ImagesActivity : AppCompatActivity() {
 
         val extras = intent.extras
         gallery = extras.getStringArrayList(KEY_GALLERY)
-        viewPager?.adapter = GalleryPhotoPagerAdapter(gallery)
+        viewPager?.adapter = GalleryPhotoPagerAdapter(gallery, this)
         pageIndicator?.setViewPager(viewPager)
     }
 
 
-    class GalleryPhotoPagerAdapter(private val mGallery: ArrayList<String>)
+    class GalleryPhotoPagerAdapter(private val mGallery: ArrayList<String>,
+                                   private val mActivity: ImagesActivity)
         : PagerAdapter(), ViewPager.PageTransformer {
         private var mAttacher: PhotoViewAttacher? = null
 
@@ -71,6 +72,9 @@ class ImagesActivity : AppCompatActivity() {
             val view = inflater.inflate(R.layout.item_gallery_photo, container, false)
             val image = view.findViewById<PhotoView>(R.id.item_gallery_photo_image)
             mAttacher = PhotoViewAttacher(image)
+            mAttacher?.setOnClickListener {
+                mActivity.finish()
+            }
             Glide.with(image.getContext()).load(mGallery[position]).into(image)
             container.addView(view)
             return view
