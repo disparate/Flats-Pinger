@@ -8,7 +8,9 @@
     <string name="agent">Агент</string>
 
     <string name="settings_enable_notifications">Показывать уведомления о новых объявлениях?</string>
-    <string name="filter_subway_title">Станции метро</string>
+    <string name="settings_time_ad_is_actual">Количество дней с публикации объявления (max)?</string>
+
+    <string name="filter_subway_title">Близость к метро</string>
     <string name="filter_allow_agency">Показывать объявления от агентств?</string>
     <string name="filter_allow_with_photos_only">Только с фото</string>
     <string name="filter_min_cost">Минимальная стоимость (USD)</string>

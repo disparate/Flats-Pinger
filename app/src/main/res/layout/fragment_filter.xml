@@ -148,48 +148,34 @@
         </LinearLayout>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/filter_subway_title" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
                 android:layout_weight="1"
-                android:text="@string/filter_distance_to_subway" />
+                android:text="@string/filter_subway_title" />
 
-            <EditText
-                android:id="@+id/edit_text_distance_to_subway"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="numberSigned"
-                android:minEms="4" />
+            <FrameLayout
+                android:id="@+id/edit_subways_button"
+                android:layout_width="50dp"
+                android:layout_height="32dp"
+                android:background="@drawable/rectangle_circular_bg">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_edit_black_24dp"
+                    android:tint="@android:color/white" />
+            </FrameLayout>
         </LinearLayout>
-
-        <kazarovets.flatspinger.views.SubwaysSelectorView
-            android:id="@+id/red_line_subway_selector"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            app:checkboxSelector="@drawable/selector_check_subway_red"
-            app:selectedColor="@color/colorSubwayRed" />
-
-        <kazarovets.flatspinger.views.SubwaysSelectorView
-            android:id="@+id/blue_line_subway_selector"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:checkboxSelector="@drawable/selector_check_subway_blue"
-            app:selectedColor="@color/colorSubwayBlue" />
 
     </LinearLayout>
 </ScrollView>

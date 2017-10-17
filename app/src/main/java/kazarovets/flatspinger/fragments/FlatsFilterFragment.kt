@@ -2,48 +2,26 @@ package kazarovets.flatspinger.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import android.widget.ScrollView
+import android.widget.TextView
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.model.RentType
-import kazarovets.flatspinger.model.Subway
 import kazarovets.flatspinger.utils.PreferenceUtils
-import kazarovets.flatspinger.utils.SubwayUtils
-import kazarovets.flatspinger.views.SubwaysSelectorView
+import kazarovets.flatspinger.widgets.OnNumberChangedTextWatcher
 
 
 class FlatsFilterFragment : Fragment() {
 
     companion object {
-        val TAG = "FlatsFilterFragment"
-
         val KEYWORDS_FRAGMENT_TAG = "keywords_fragment"
+        val SUBWAYS_FRAGMENT_TAG = "keywords_fragment"
 
-        interface OnNumberTextChangedTextWatcher : TextWatcher {
-
-            fun parseText(text: String)
-
-            override fun afterTextChanged(p0: Editable?) {
-                try {
-                    parseText(p0.toString())
-                } catch (ex: NumberFormatException) {
-                    Log.d(TAG, "Exception parsing text in number", ex)
-                }
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-        }
-
-        class OnRentTypeCheckedListener(val rentType: RentType) : CompoundButton.OnCheckedChangeListener {
+        class OnRentTypeCheckedListener(private val rentType: RentType) : CompoundButton.OnCheckedChangeListener {
             override fun onCheckedChanged(button: CompoundButton?, checked: Boolean) {
                 val set = HashSet(PreferenceUtils.roomNumbers)
                 if (checked) {
@@ -56,9 +34,6 @@ class FlatsFilterFragment : Fragment() {
         }
     }
 
-    private var redSubwaysSelector: SubwaysSelectorView? = null
-    private var blueSubwaysSelector: SubwaysSelectorView? = null
-
     private var allowAgencyCheckbox: CheckBox? = null
     private var allowOnlyWithPhotosCheckbox: CheckBox? = null
 
@@ -69,56 +44,34 @@ class FlatsFilterFragment : Fragment() {
 
     private var minCostUsd: TextView? = null
     private var maxCostUsd: TextView? = null
-    private var maxDistanceToSubway: EditText? = null
     private var scrollView: ScrollView? = null
     private var editKeywordsButton: View? = null
+    private var editSubwaysButton: View? = null
 
-    private var selectedSubwaysIds: MutableSet<Int> = HashSet()
 
-    private val onSubwaySelectedListener = object : SubwaysSelectorView.OnSubwayCheckedListener {
-        override fun onPositionChecked(subway: Subway, checked: Boolean) {
-            if (checked) selectedSubwaysIds.add(subway.id) else selectedSubwaysIds.remove(subway.id)
-            PreferenceUtils.subwayIds = selectedSubwaysIds
-        }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_filter, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater?.inflate(R.layout.fragment_filter, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         scrollView = view?.findViewById(R.id.scroll_view)
-        scrollView?.setOnTouchListener { v, motionEvent ->
+        scrollView?.setOnTouchListener { v, _ ->
             v.requestFocusFromTouch()
             return@setOnTouchListener false
         }
 
-        selectedSubwaysIds = PreferenceUtils.subwayIds
-
-        redSubwaysSelector = view?.findViewById(R.id.red_line_subway_selector)
-        blueSubwaysSelector = view?.findViewById(R.id.blue_line_subway_selector)
-
-        redSubwaysSelector?.subways = SubwayUtils.RED_LINE_SUBWAYS
-        redSubwaysSelector?.updateCheckedSubways(selectedSubwaysIds)
-        redSubwaysSelector?.onCheckedChangedListener = onSubwaySelectedListener
-
-        blueSubwaysSelector?.subways = SubwayUtils.BLUE_LINE_SUBWAYS
-        blueSubwaysSelector?.updateCheckedSubways(selectedSubwaysIds)
-        blueSubwaysSelector?.onCheckedChangedListener = onSubwaySelectedListener
-
         allowAgencyCheckbox = view?.findViewById(R.id.allow_agency_checkbox)
         allowAgencyCheckbox?.isChecked = PreferenceUtils.allowAgency
-        allowAgencyCheckbox?.setOnCheckedChangeListener { compoundButton, b -> PreferenceUtils.allowAgency = b }
+        allowAgencyCheckbox?.setOnCheckedChangeListener { _, b -> PreferenceUtils.allowAgency = b }
 
         allowOnlyWithPhotosCheckbox = view?.findViewById(R.id.allow_only_with_photos_checkbox)
         allowOnlyWithPhotosCheckbox?.isChecked = PreferenceUtils.allowPhotosOnly
-        allowOnlyWithPhotosCheckbox?.setOnCheckedChangeListener { compoundButton, b -> PreferenceUtils.allowPhotosOnly = b }
+        allowOnlyWithPhotosCheckbox?.setOnCheckedChangeListener { _, b -> PreferenceUtils.allowPhotosOnly = b }
 
         minCostUsd = view?.findViewById(R.id.edit_text_min_cost)
         minCostUsd?.text = PreferenceUtils.minCost?.toString()
-        minCostUsd?.addTextChangedListener(object : OnNumberTextChangedTextWatcher {
+        minCostUsd?.addTextChangedListener(object : OnNumberChangedTextWatcher {
             override fun parseText(text: String) {
                 val value = if (text.isNotEmpty()) text.toInt() else null
                 PreferenceUtils.minCost = value
@@ -127,25 +80,22 @@ class FlatsFilterFragment : Fragment() {
 
         maxCostUsd = view?.findViewById(R.id.edit_text_max_cost)
         maxCostUsd?.text = PreferenceUtils.maxCost?.toString()
-        maxCostUsd?.addTextChangedListener(object : OnNumberTextChangedTextWatcher {
+        maxCostUsd?.addTextChangedListener(object : OnNumberChangedTextWatcher {
             override fun parseText(text: String) {
                 val value = if (text.isNotEmpty()) text.toInt() else null
                 PreferenceUtils.maxCost = value
             }
         })
 
-        maxDistanceToSubway = view?.findViewById(R.id.edit_text_distance_to_subway)
-        maxDistanceToSubway?.setText(PreferenceUtils.maxDistToSubway?.toString() ?: "")
-        maxDistanceToSubway?.addTextChangedListener(object : OnNumberTextChangedTextWatcher {
-            override fun parseText(text: String) {
-                val value = if (text.isNotEmpty()) text.toDouble() else null
-                PreferenceUtils.maxDistToSubway = value
-            }
-        })
 
         editKeywordsButton = view?.findViewById(R.id.edit_keywords_button)
         editKeywordsButton?.setOnClickListener {
             KeywordsDialogFragment().show(childFragmentManager, KEYWORDS_FRAGMENT_TAG)
+        }
+
+        editSubwaysButton = view?.findViewById(R.id.edit_subways_button)
+        editSubwaysButton?.setOnClickListener {
+            SubwaysDialogFragment().show(childFragmentManager, SUBWAYS_FRAGMENT_TAG)
         }
 
         oneRoomCheckbox = view?.findViewById(R.id.rent_1k)
@@ -164,6 +114,4 @@ class FlatsFilterFragment : Fragment() {
         fourRoomsCheckbox?.isChecked = PreferenceUtils.roomNumbers.contains(RentType.FLAT_4_ROOM_OR_MORE.name)
         fourRoomsCheckbox?.setOnCheckedChangeListener(OnRentTypeCheckedListener(RentType.FLAT_4_ROOM_OR_MORE))
     }
-
-
 }

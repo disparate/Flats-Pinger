@@ -1,5 +1,7 @@
 package kazarovets.flatspinger.model
 
+import kazarovets.flatspinger.FlatsApplication
+
 
 data class FlatFilter(val minCost: Int? = null,
                       val maxCost: Int? = null,
@@ -11,5 +13,5 @@ data class FlatFilter(val minCost: Int? = null,
                       val maxDistToSubway: Double? = null,
                       val keywords: MutableSet<String> = HashSet(),
                       val roomNumbers: MutableSet<String> = HashSet(),
-                      val updateDatesAgo: Int = 10) {
+                      val updateDatesAgo: Int = FlatsApplication.DEFAULT_NUMBER_OF_DAYS_AD_IS_ACTUAL) {
 }

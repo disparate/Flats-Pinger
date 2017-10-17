@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.util.Log
+import kazarovets.flatspinger.FlatsApplication
 import kazarovets.flatspinger.model.FlatFilter
 import kazarovets.flatspinger.model.RentType
 
@@ -23,7 +24,8 @@ object PreferenceUtils {
     val FILTER_KEYWORDS = "filter_keywords"
     val FILTER_ROOM_NUMBER = "filter_room_number"
 
-    val ENABLE_NOTIFICATONS = "enable_notifications"
+    val SETTINGS_DAYS_AD_IS_ACTUAL = "days_ad_is_actual"
+    val SETTINGS_ENABLE_NOTIFICATONS = "enable_notifications"
 
     val TAG = "PreferenceUtils"
 
@@ -156,6 +158,17 @@ object PreferenceUtils {
             prefs.edit().putStringSet(FILTER_ROOM_NUMBER, set).apply()
         }
 
+    var updateDaysAgo: Int = FlatsApplication.DEFAULT_NUMBER_OF_DAYS_AD_IS_ACTUAL
+        get() {
+            field = prefs.getInt(SETTINGS_DAYS_AD_IS_ACTUAL,
+                    FlatsApplication.DEFAULT_NUMBER_OF_DAYS_AD_IS_ACTUAL)
+            return field
+        }
+        set(value) {
+            field = value
+            prefs.edit().putInt(SETTINGS_DAYS_AD_IS_ACTUAL, value).apply()
+        }
+
     var flatFilter: FlatFilter? = null
         get() {
             field = FlatFilter(minCost = minCost,
@@ -166,7 +179,8 @@ object PreferenceUtils {
                     rentTypes = rentTypes,
                     maxDistToSubway = maxDistToSubway,
                     keywords = keywords,
-                    roomNumbers = roomNumbers)
+                    roomNumbers = roomNumbers,
+                    updateDatesAgo = updateDaysAgo)
             return field
 
         }
@@ -182,16 +196,17 @@ object PreferenceUtils {
                 allowPhotosOnly = value.allowWithPhotosOnly
                 keywords = value.keywords
                 roomNumbers = value.roomNumbers
+                updateDaysAgo = value.updateDatesAgo
             }
         }
 
     var enableNotifications: Boolean = false
         get() {
-            field = prefs.getBoolean(ENABLE_NOTIFICATONS, false)
+            field = prefs.getBoolean(SETTINGS_ENABLE_NOTIFICATONS, false)
             return field
         }
         set(value) {
-            prefs.edit().putBoolean(ENABLE_NOTIFICATONS, value).apply()
+            prefs.edit().putBoolean(SETTINGS_ENABLE_NOTIFICATONS, value).apply()
         }
 
     private fun getNullableInt(fieldName: String): Int? {
