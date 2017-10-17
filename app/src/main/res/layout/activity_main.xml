@@ -28,8 +28,8 @@
         tools:context="kazarovets.flatspinger.activity.MainActivity">
 
 
-        <ViewSwitcher
-            android:id="@+id/view_switcher"
+        <ViewFlipper
+            android:id="@+id/view_flipper"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
@@ -45,7 +45,13 @@
                 class="kazarovets.flatspinger.fragments.FlatsFilterFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </ViewSwitcher>
+
+            <fragment
+                android:id="@+id/settings_fragment"
+                class="kazarovets.flatspinger.fragments.SettingsFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </ViewFlipper>
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/navigation"

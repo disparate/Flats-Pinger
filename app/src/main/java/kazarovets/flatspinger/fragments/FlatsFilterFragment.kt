@@ -13,7 +13,6 @@ import kazarovets.flatspinger.R
 import kazarovets.flatspinger.model.RentType
 import kazarovets.flatspinger.model.Subway
 import kazarovets.flatspinger.utils.PreferenceUtils
-import kazarovets.flatspinger.utils.ScheduleUtils
 import kazarovets.flatspinger.utils.SubwayUtils
 import kazarovets.flatspinger.views.SubwaysSelectorView
 
@@ -60,7 +59,6 @@ class FlatsFilterFragment : Fragment() {
     private var redSubwaysSelector: SubwaysSelectorView? = null
     private var blueSubwaysSelector: SubwaysSelectorView? = null
 
-    private var enableNotificationsCheckbox: CheckBox? = null
     private var allowAgencyCheckbox: CheckBox? = null
     private var allowOnlyWithPhotosCheckbox: CheckBox? = null
 
@@ -117,17 +115,6 @@ class FlatsFilterFragment : Fragment() {
         allowOnlyWithPhotosCheckbox = view?.findViewById(R.id.allow_only_with_photos_checkbox)
         allowOnlyWithPhotosCheckbox?.isChecked = PreferenceUtils.allowPhotosOnly
         allowOnlyWithPhotosCheckbox?.setOnCheckedChangeListener { compoundButton, b -> PreferenceUtils.allowPhotosOnly = b }
-
-        enableNotificationsCheckbox = view?.findViewById(R.id.enable_notifications_checkbox)
-        enableNotificationsCheckbox?.isChecked = PreferenceUtils.enableNotifications
-        enableNotificationsCheckbox?.setOnCheckedChangeListener { compoundButton, checked ->
-            PreferenceUtils.enableNotifications = checked
-            if (checked) {
-                ScheduleUtils.scheduleFlatsNotificationsJob(context)
-            } else {
-                ScheduleUtils.cancelScheduledJob(context)
-            }
-        }
 
         minCostUsd = view?.findViewById(R.id.edit_text_min_cost)
         minCostUsd?.text = PreferenceUtils.minCost?.toString()

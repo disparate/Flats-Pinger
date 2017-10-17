@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Flats Pinger</string>
-    <string name="title_home">Home</string>
-    <string name="title_filter">Filter</string>
+    <string name="title_home">Квартиры</string>
+    <string name="title_filter">Фильтр</string>
+    <string name="title_settings">Настройки</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="owner">Собственник</string>
     <string name="agent">Агент</string>
