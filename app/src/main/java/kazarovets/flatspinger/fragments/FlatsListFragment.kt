@@ -18,6 +18,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ViewFlipper
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
 import io.reactivex.Observable
@@ -38,6 +39,10 @@ import java.util.*
 
 class FlatsListFragment : Fragment() {
 
+    companion object {
+        val VIEW_FLIPPER_LIST_POS = 0
+        val VIEW_FLIPPER_MAP_POS = 1
+    }
 
     protected var disposable: Disposable? = null
 
@@ -45,16 +50,21 @@ class FlatsListFragment : Fragment() {
     private var adapter: FlatsRecyclerAdapter? = null
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
     private var paint: Paint = Paint()
-    private var currentMode: MODE = MODE.MODE_NOT_SEEN
+    private var currentMode: MODE = MODE.LIST
 
     private var floatingActionMenu: FloatingActionMenu? = null
     private var flats: MutableList<Flat> = ArrayList()
+
+    private var flatsMapFragment: FlatsMapFragment? = null
+
+    private var listMapSwitcher: ViewFlipper? = null
 
     private val filterClickListener = View.OnClickListener { v ->
         val mode = v?.tag as MODE
         currentMode = mode
         fillFloatingMenu()
         updateAdapterData()
+        listMapSwitcher?.displayedChild = getDisplayedPagePos(mode)
     }
 
 
@@ -85,6 +95,14 @@ class FlatsListFragment : Fragment() {
 
         swipeRefreshLayout?.isRefreshing = true
         loadData()
+
+        flatsMapFragment = FlatsMapFragment()
+        childFragmentManager
+                .beginTransaction()
+                .replace(R.id.map_container, flatsMapFragment)
+                .commit()
+
+        listMapSwitcher = view?.findViewById(R.id.list_map_switcher)
     }
 
     override fun onResume() {
@@ -128,14 +146,14 @@ class FlatsListFragment : Fragment() {
         }
         this.flats = list
         updateAdapterData()
+
+        flatsMapFragment?.setFlats(flats)
     }
 
     private fun initSwipe() {
         val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
-            override fun isItemViewSwipeEnabled(): Boolean {
-                return currentMode == MODE.MODE_ALL || currentMode == MODE.MODE_NOT_SEEN || currentMode == MODE.MODE_FAVORITES
-            }
+            override fun isItemViewSwipeEnabled(): Boolean = true
 
             override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
                 val dragFlags = 0
@@ -210,7 +228,8 @@ class FlatsListFragment : Fragment() {
             val status = db.getFlatStatus(it.getId(), it.getProvider())
             val seen = db.isSeenFlat(it.getId(), it.getProvider())
 
-            currentMode.statuses.contains(status) && currentMode.seenStatuses.contains(seen)
+            //todo: seen flats
+            currentMode.statuses.contains(status) && !seen
         })
     }
 
@@ -233,20 +252,21 @@ class FlatsListFragment : Fragment() {
         }
     }
 
+    private fun getDisplayedPagePos(mode: MODE): Int = when (mode) {
+        MODE.LIST, MODE.FAVORITES -> VIEW_FLIPPER_LIST_POS
+        MODE.MAP -> VIEW_FLIPPER_MAP_POS
+    }
+
     private fun getFabImage(mode: MODE): Int = when (mode) {
-        MODE.MODE_ALL -> R.drawable.ic_filter_all_24dp
-        MODE.MODE_NOT_SEEN -> R.drawable.ic_filter_new_white_24dp
-        MODE.MODE_SEEN -> R.drawable.ic_filter_seen_white_24dp
-        MODE.MODE_DELETED -> R.drawable.ic_filter_delete_white_24dp
-        MODE.MODE_FAVORITES -> R.drawable.ic_filter_favorites_white_24dp
+        MODE.LIST -> R.drawable.ic_format_list_bulleted_24dp
+        MODE.MAP -> R.drawable.ic_map_24dp
+        MODE.FAVORITES -> R.drawable.ic_filter_favorites_white_24dp
     }
 
     private fun getFabText(mode: MODE): Int = when (mode) {
-        MODE.MODE_ALL -> R.string.fab_all
-        MODE.MODE_NOT_SEEN -> R.string.fab_not_seen
-        MODE.MODE_SEEN -> R.string.fab_seen
-        MODE.MODE_FAVORITES -> R.string.fab_favorites
-        MODE.MODE_DELETED -> R.string.fab_deleted
+        MODE.LIST -> R.string.fab_list
+        MODE.MAP -> R.string.fab_map
+        MODE.FAVORITES -> R.string.fab_favorites
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -269,11 +289,9 @@ class FlatsListFragment : Fragment() {
         super.onDestroyView()
     }
 
-    enum class MODE(val statuses: List<FlatStatus>, val seenStatuses: List<Boolean>) {
-        MODE_ALL(listOf(FlatStatus.FAVORITE, FlatStatus.REGULAR), listOf(true, false)),
-        MODE_NOT_SEEN(listOf(FlatStatus.REGULAR), listOf(false)),
-        MODE_SEEN(listOf(FlatStatus.FAVORITE, FlatStatus.REGULAR), listOf(true)),
-        MODE_FAVORITES(listOf(FlatStatus.FAVORITE), listOf(true, false)),
-        MODE_DELETED(listOf(FlatStatus.HIDDEN), listOf(true, false))
+    enum class MODE(val statuses: List<FlatStatus>) {
+        LIST(listOf(FlatStatus.REGULAR, FlatStatus.FAVORITE)),
+        MAP(listOf(FlatStatus.REGULAR, FlatStatus.FAVORITE)),
+        FAVORITES(listOf(FlatStatus.FAVORITE))
     }
 }

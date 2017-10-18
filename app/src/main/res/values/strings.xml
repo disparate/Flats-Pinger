@@ -29,10 +29,14 @@
     <string name="i_need_a_flat_provider_name">INeedAFlat</string>
 
     <string name="fab_all">Все</string>
-    <string name="fab_favorites">Избранные</string>
     <string name="fab_seen">Просмотренные</string>
     <string name="fab_not_seen">Не просмотренные</string>
     <string name="fab_deleted">Удалённые</string>
+
+    <string name="fab_list">Список</string>
+    <string name="fab_map">Карта</string>
+    <string name="fab_favorites">Избранные</string>
+
 
     <string name="title_activity_images">ImagesActivity</string>
 
