@@ -8,6 +8,7 @@
     <string name="agent">Агент</string>
 
     <string name="settings_enable_notifications">Показывать уведомления о новых объявлениях?</string>
+    <string name="settings_show_seen_flats">Показывать просмотренные объявления?</string>
     <string name="settings_time_ad_is_actual">Количество дней с публикации объявления (max)?</string>
 
     <string name="filter_subway_title">Близость к метро</string>

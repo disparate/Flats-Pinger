@@ -147,7 +147,7 @@ class FlatsListFragment : Fragment() {
         this.flats = list
         updateAdapterData()
 
-        flatsMapFragment?.setFlats(flats)
+        flatsMapFragment?.setFlats(getFilteredFlats())
     }
 
     private fun initSwipe() {
@@ -218,19 +218,24 @@ class FlatsListFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun updateAdapterData() {
-        adapter?.setData(flats.filter {
+    private fun getFilteredFlats() : List<Flat> {
+        return flats.filter {
             if (context == null) {
-                return
+                return flats
             }
 
             val db = FlatsDatabase.getInstance(context)
             val status = db.getFlatStatus(it.getId(), it.getProvider())
             val seen = db.isSeenFlat(it.getId(), it.getProvider())
+            val showSeen = PreferenceUtils.showSeenFlats
 
             //todo: seen flats
-            currentMode.statuses.contains(status) && !seen
-        })
+            currentMode.statuses.contains(status) && (showSeen || !seen)
+        }
+    }
+
+    private fun updateAdapterData() {
+        adapter?.setData(getFilteredFlats())
     }
 
     private fun fillFloatingMenu() {

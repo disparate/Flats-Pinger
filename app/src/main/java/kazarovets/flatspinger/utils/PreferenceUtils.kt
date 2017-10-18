@@ -25,6 +25,7 @@ object PreferenceUtils {
     val FILTER_ROOM_NUMBER = "filter_room_number"
 
     val SETTINGS_DAYS_AD_IS_ACTUAL = "days_ad_is_actual"
+    val SETTINGS_SHOW_SEEN_FLATS = "show_seen_flats"
     val SETTINGS_ENABLE_NOTIFICATONS = "enable_notifications"
 
     val TAG = "PreferenceUtils"
@@ -207,6 +208,15 @@ object PreferenceUtils {
         }
         set(value) {
             prefs.edit().putBoolean(SETTINGS_ENABLE_NOTIFICATONS, value).apply()
+        }
+
+    var showSeenFlats: Boolean = false
+        get() {
+            field = prefs.getBoolean(SETTINGS_SHOW_SEEN_FLATS, false)
+            return field
+        }
+        set(value) {
+            prefs.edit().putBoolean(SETTINGS_SHOW_SEEN_FLATS, value).apply()
         }
 
     private fun getNullableInt(fieldName: String): Int? {
