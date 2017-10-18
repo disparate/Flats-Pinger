@@ -30,7 +30,7 @@ class FlatsFilterMatcher {
                 return true
             }
 
-            var matchedAll = true
+            var matchedAll = false
             for (word in keywords) {
                 val matchedAdress = flat.getAddress().contains(word.trim(), true)
 
@@ -39,7 +39,7 @@ class FlatsFilterMatcher {
                     matchedDescription = flat.getDescription()?.contains(word.trim(), true) ?: false
                 }
 
-                matchedAll = matchedAll and (matchedAdress or matchedDescription)
+                matchedAll = matchedAll or (matchedAdress or matchedDescription)
             }
 
             return matchedAll
