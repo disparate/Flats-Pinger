@@ -1,6 +1,7 @@
-package kazarovets.flatspinger.model
+package kazarovets.flatspinger.model.onliner
 
 import com.google.gson.annotations.SerializedName
+import kazarovets.flatspinger.model.onliner.OnlinerFlat
 
 
 class OnlinerFlatsResponse {

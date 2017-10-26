@@ -13,5 +13,4 @@ data class FlatFilter(val minCost: Int? = null,
                       val maxDistToSubway: Double? = null,
                       val keywords: MutableSet<String> = HashSet(),
                       val roomNumbers: MutableSet<String> = HashSet(),
-                      val updateDatesAgo: Int = FlatsApplication.DEFAULT_NUMBER_OF_DAYS_AD_IS_ACTUAL) {
-}
+                      val updateDatesAgo: Int = FlatsApplication.DEFAULT_NUMBER_OF_DAYS_AD_IS_ACTUAL)

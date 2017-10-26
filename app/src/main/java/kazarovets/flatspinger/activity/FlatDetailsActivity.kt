@@ -12,7 +12,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -25,7 +24,7 @@ import kazarovets.flatspinger.fragments.MovableMapsFragment
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatDetails
 import kazarovets.flatspinger.model.FlatStatus
-import kazarovets.flatspinger.model.INeedAFlatFlat
+import kazarovets.flatspinger.model.ineedaflat.INeedAFlatFlat
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.views.FlatTagsView
 
@@ -46,7 +45,6 @@ class FlatDetailsActivity : AppCompatActivity() {
     }
 
     private var flatImage: ImageView? = null
-    private var openInChrome: Button? = null
     private var costView: TextView? = null
 
     private var createdAtTextView: TextView? = null

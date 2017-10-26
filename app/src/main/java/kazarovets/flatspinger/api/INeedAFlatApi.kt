@@ -4,7 +4,7 @@ import android.util.Log
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.INeedAFlatListResponse
+import kazarovets.flatspinger.model.ineedaflat.INeedAFlatListResponse
 import kazarovets.flatspinger.model.RentType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
