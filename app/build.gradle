@@ -18,6 +18,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    kapt {
+        generateStubs = true
+    }
 }
 
 dependencies {
@@ -33,6 +37,7 @@ dependencies {
     compile "com.squareup.retrofit2:converter-scalars:${project.RETROFIT_VERSION}"
     compile "io.reactivex.rxjava2:rxandroid:${project.RX_V2_ANDROID_VERSION}"
     compile "io.reactivex.rxjava2:rxjava:${project.RX_V2_JAVA_VERSION}"
+    compile "io.reactivex.rxjava2:rxkotlin:2.1.0"
     compile "com.squareup.okhttp3:logging-interceptor:${OKHTTP_VERSION}"
 
     compile "com.google.android.gms:play-services-maps:${project.PLAY_SERVICES_VERSION}"
@@ -53,10 +58,22 @@ dependencies {
     compile "com.android.support:cardview-v7:${project.SUPPORT_LIBRARY_VERSION}"
     compile "com.android.support:support-v4:${project.SUPPORT_LIBRARY_VERSION}"
 
+
     compile "android.arch.persistence.room:runtime:${project.ARCH_ROOM_VERSION}"
     annotationProcessor "android.arch.persistence.room:compiler:${project.ARCH_ROOM_VERSION}"
     kapt "android.arch.persistence.room:compiler:${project.ARCH_ROOM_VERSION}"
+    compile "android.arch.persistence.room:rxjava2:${project.ARCH_ROOM_VERSION}"
 
+    compile "android.arch.lifecycle:extensions:${project.ARCH_ROOM_VERSION}"
+
+
+    compile "com.google.dagger:dagger:${project.DAGGER_VERSION}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${project.DAGGER_VERSION}"
+    kapt "com.google.dagger:dagger-compiler:${project.DAGGER_VERSION}"
+
+    compile "com.google.dagger:dagger-android-support:${project.DAGGER_VERSION}"
+    annotationProcessor "com.google.dagger:dagger-android-processor:${project.DAGGER_VERSION}"
+    kapt "com.google.dagger:dagger-android-processor:${project.DAGGER_VERSION}"
 
     testCompile 'junit:junit:4.12'
 }

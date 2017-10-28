@@ -1,5 +1,6 @@
 package kazarovets.flatspinger.model.onliner
 
+import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
@@ -19,6 +20,7 @@ import java.util.*
 data class OnlinerFlat(@PrimaryKey
                        @SerializedName("id")
                        @NonNull
+                       @ColumnInfo(name = "id")
                        var idText: String = "",
 
                        @Embedded
@@ -26,7 +28,7 @@ data class OnlinerFlat(@PrimaryKey
                        var price: Price? = null,
 
                        @SerializedName("rent_type")
-                       var rentType: String? = null,
+                       var rentTypeString: String? = null,
 
                        @Embedded
                        @SerializedName("location")
@@ -80,7 +82,7 @@ data class OnlinerFlat(@PrimaryKey
 
     override fun isOwner(): Boolean = contact?.isOwner ?: false
 
-    override fun getRentType(): RentType = when (rentType) {
+    override fun getRentType(): RentType = when (rentTypeString) {
         OnlinerApi.ONE_ROOM -> RentType.FLAT_1_ROOM
         OnlinerApi.TWO_ROOMS -> RentType.FLAT_2_ROOM
         OnlinerApi.THREE_ROOMS -> RentType.FLAT_3_ROOM
@@ -90,9 +92,13 @@ data class OnlinerFlat(@PrimaryKey
 
     override fun getProvider(): Provider = Provider.ONLINER
 
-    override fun getUpdatedTime(): Long = FORMAT_TIME.parse(lastTimeUp).time
+    override fun getUpdatedTime(): Long {
+        return FORMAT_TIME.parse(lastTimeUp ?: return 0).time
+    }
 
-    override fun getCreatedTime(): Long = FORMAT_TIME.parse(createAt).time
+    override fun getCreatedTime(): Long {
+        return FORMAT_TIME.parse(createAt ?: return 0).time
+    }
 
     override fun getSource(): String = "onliner.by"
 

@@ -2,15 +2,22 @@ package kazarovets.flatspinger.activity
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.ViewFlipper
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
 import kazarovets.flatspinger.R
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
+import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity() {
 
+
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     companion object {
         val POSITION_LIST = 0
@@ -19,6 +26,10 @@ class MainActivity : AppCompatActivity() {
 
         val CURRENT_POSITION = "curr_pos"
     }
+
+
+    @Inject
+    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
     private var viewFlipper: ViewFlipper? = null
     private var currPosition = POSITION_LIST
@@ -45,6 +56,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -68,5 +81,8 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState?.putInt(CURRENT_POSITION, currPosition)
     }
+
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
 
 }

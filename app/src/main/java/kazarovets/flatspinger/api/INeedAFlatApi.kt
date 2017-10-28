@@ -6,6 +6,7 @@ import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.ineedaflat.INeedAFlatListResponse
 import kazarovets.flatspinger.model.RentType
+import kazarovets.flatspinger.model.ineedaflat.INeedAFlatFlat
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -33,7 +34,7 @@ class INeedAFlatApi {
 
     val iNeedAFlatApiService by lazy { createApiService() }
 
-    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rooms: Set<String>): Single<List<Flat>> {
+    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rooms: Set<String>): Single<List<INeedAFlatFlat>> {
         val min = if (minCost != null) minCost else 0.0
         val max = if (maxCost != null) maxCost else 100000.0
         var query = "{\"attributes.price.value\":{\"\$gte\":$min,\"\$lte\":$max}," +

@@ -7,6 +7,7 @@ import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.onliner.OnlinerFlatsResponse
 import kazarovets.flatspinger.model.RentType
+import kazarovets.flatspinger.model.onliner.OnlinerFlat
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -36,7 +37,7 @@ class OnlinerApi constructor(context: Context) {
 
     val onlinerApiService by lazy { createService() }
 
-    fun getLatestFlats(minCost: Int?, maxCost: Int?, onlyOwner: Boolean, rentTypes: Set<String>): Single<List<Flat>> {
+    fun getLatestFlats(minCost: Int?, maxCost: Int?, onlyOwner: Boolean, rentTypes: Set<String>): Single<List<OnlinerFlat>> {
         val currency = "USD"
         val owner = if (onlyOwner) true else null //weird onliner api
 

@@ -1,6 +1,9 @@
 package kazarovets.flatspinger.fragments
 
 import android.annotation.TargetApi
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -14,27 +17,25 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ViewFlipper
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableSingleObserver
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.FlatDetailsActivity
-import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
-import kazarovets.flatspinger.utils.FlatsFilterMatcher
 import kazarovets.flatspinger.utils.PreferenceUtils
-import java.util.*
+import kazarovets.flatspinger.viewmodel.FlatInfosViewModel
+import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
+import javax.inject.Inject
 
 
 class FlatsListFragment : Fragment() {
@@ -44,7 +45,8 @@ class FlatsListFragment : Fragment() {
         val VIEW_FLIPPER_MAP_POS = 1
     }
 
-    protected var disposable: Disposable? = null
+    @Inject
+    lateinit var flatsFactory: FlatInfosViewModelFactory
 
     private var recyclerView: RecyclerView? = null
     private var adapter: FlatsRecyclerAdapter? = null
@@ -59,6 +61,8 @@ class FlatsListFragment : Fragment() {
 
     private var listMapSwitcher: ViewFlipper? = null
 
+    private lateinit var flatsViewModel: FlatInfosViewModel
+
     private val filterClickListener = View.OnClickListener { v ->
         val mode = v?.tag as MODE
         currentMode = mode
@@ -67,6 +71,13 @@ class FlatsListFragment : Fragment() {
         listMapSwitcher?.displayedChild = getDisplayedPagePos(mode)
     }
 
+    override fun onAttach(context: Context?) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+
+        flatsViewModel = ViewModelProviders.of(this, flatsFactory).get(FlatInfosViewModel::class.java)
+        flatsViewModel.init()
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_flats_list, container, false)
@@ -76,7 +87,9 @@ class FlatsListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         swipeRefreshLayout = view?.findViewById(R.id.swipe_refresh)
-        swipeRefreshLayout?.setOnRefreshListener { loadData() }
+        swipeRefreshLayout?.setOnRefreshListener {
+            flatsViewModel.loadFlats()
+        }
 
         recyclerView = view?.findViewById(R.id.recycler)
         recyclerView?.layoutManager = LinearLayoutManager(context)
@@ -94,7 +107,14 @@ class FlatsListFragment : Fragment() {
         fillFloatingMenu()
 
         swipeRefreshLayout?.isRefreshing = true
-        loadData()
+
+        flatsViewModel.getFlats().observe(this, Observer<List<FlatInfo>> {
+            onFlatsReceived(it)
+        })
+
+        flatsViewModel.getIsLoading().observe(this, Observer<Boolean> {
+            swipeRefreshLayout?.isRefreshing = it ?: swipeRefreshLayout?.isRefreshing ?: false
+        })
 
         flatsMapFragment = FlatsMapFragment()
         childFragmentManager
@@ -105,39 +125,6 @@ class FlatsListFragment : Fragment() {
         listMapSwitcher = view?.findViewById(R.id.list_map_switcher)
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadData()
-    }
-
-    private fun loadData() {
-        val minCost = PreferenceUtils.minCost
-        val maxCost = PreferenceUtils.maxCost
-        val allowAgency = PreferenceUtils.allowAgency
-        val roomNumbers = PreferenceUtils.roomNumbers
-        val flatsFilter = PreferenceUtils.flatFilter
-        disposable = ApiManager.iNeedAFlatApi
-                .getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, roomNumbers)
-                .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, roomNumbers))
-                .toObservable()
-                .flatMap { Observable.fromIterable(it) }
-                .filter { FlatsFilterMatcher.matches(flatsFilter, it) }
-                .toSortedList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<List<Flat>>() {
-                    override fun onError(e: Throwable) {
-                        Log.e("FlatsListFragment", "Error receiving flats", e)
-                        onFlatsReceived(null)
-                        swipeRefreshLayout?.isRefreshing = false
-                    }
-
-                    override fun onSuccess(flats: List<Flat>) {
-                        onFlatsReceived(flats)
-                        swipeRefreshLayout?.isRefreshing = false
-                    }
-
-                })
-    }
 
     private fun onFlatsReceived(flats: List<Flat>?) {
         val list = ArrayList<Flat>()
@@ -218,7 +205,7 @@ class FlatsListFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun getFilteredFlats() : List<Flat> {
+    private fun getFilteredFlats(): List<Flat> {
         return flats.filter {
             if (context == null) {
                 return flats
@@ -282,16 +269,6 @@ class FlatsListFragment : Fragment() {
         vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
         vectorDrawable.draw(canvas)
         return bitmap
-    }
-
-
-    override fun onDestroyView() {
-        if (disposable != null) {
-            disposable?.dispose()
-            disposable = null
-        }
-
-        super.onDestroyView()
     }
 
     enum class MODE(val statuses: List<FlatStatus>) {

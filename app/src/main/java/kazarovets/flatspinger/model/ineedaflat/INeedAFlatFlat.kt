@@ -1,9 +1,6 @@
 package kazarovets.flatspinger.model.ineedaflat
 
-import android.arch.persistence.room.Embedded
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.*
 import android.support.annotation.NonNull
 import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
@@ -15,7 +12,7 @@ import java.io.Serializable
 
 
 @Entity
-data class INeedAFlatFlat(@PrimaryKey @SerializedName("id") @NonNull var idText: String = "",
+data class INeedAFlatFlat(@PrimaryKey @SerializedName("id") @ColumnInfo(name = "id") @NonNull var idText: String = "",
                           @SerializedName("url") var url: String? = null,
                           @SerializedName("created") var createdAt: Long? = null,
                           @SerializedName("posted") var postedAt: Long? = null,
@@ -23,8 +20,8 @@ data class INeedAFlatFlat(@PrimaryKey @SerializedName("id") @NonNull var idText:
                           @SerializedName("active") var active: Boolean? = null,
                           @SerializedName("valid") var valid: Boolean? = null,
                           @SerializedName("regionId") var regionId: Int? = null,
-                          @Embedded @SerializedName("attributes") var attributes: Attributes? = null,
-                          @Embedded @SerializedName("agent") var agent: Agent? = null) : Flat, FlatDetails {
+                          @Embedded(prefix = "attr") @SerializedName("attributes") var attributes: Attributes? = null,
+                          @Embedded(prefix = "agent") @SerializedName("agent") var agent: Agent? = null) : Flat, FlatDetails {
 
 
     override fun getId() = idText
@@ -90,7 +87,7 @@ data class INeedAFlatFlat(@PrimaryKey @SerializedName("id") @NonNull var idText:
 
     data class Attributes(@SerializedName("title") var title: String? = null,
                           @SerializedName("previewImg") var previewImg: String? = null,
-                          @Embedded @SerializedName("price") var price: Price? = null,
+                          @Embedded(prefix = "price") @SerializedName("price") var price: Price? = null,
                           @SerializedName("rooms") var rooms: Int? = null,
                           @SerializedName("city") var city: String? = null,
                           @SerializedName("source") var source: String? = null,

@@ -21,6 +21,7 @@ import kazarovets.flatspinger.activity.MainActivity
 import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.FlatsFilterMatcher
 import kazarovets.flatspinger.utils.PreferenceUtils
@@ -56,6 +57,7 @@ class JobSchedulerService : JobService() {
         val flatsFilter = PreferenceUtils.flatFilter
         disposable = ApiManager.iNeedAFlatApi
                 .getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, rooms)
+                .map { it as List<Flat> }
                 .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, rooms))
                 .toObservable()
                 .flatMap { Observable.fromIterable(it) }
