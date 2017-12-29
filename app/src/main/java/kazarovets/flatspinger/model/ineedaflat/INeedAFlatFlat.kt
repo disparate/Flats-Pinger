@@ -1,11 +1,13 @@
 package kazarovets.flatspinger.model.ineedaflat
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Embedded
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.support.annotation.NonNull
 import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatDetails
 import kazarovets.flatspinger.model.Provider
 import kazarovets.flatspinger.model.RentType
 import java.io.Serializable
@@ -21,7 +23,7 @@ data class INeedAFlatFlat(@PrimaryKey @SerializedName("id") @ColumnInfo(name = "
                           @SerializedName("valid") var valid: Boolean? = null,
                           @SerializedName("regionId") var regionId: Int? = null,
                           @Embedded(prefix = "attr") @SerializedName("attributes") var attributes: Attributes? = null,
-                          @Embedded(prefix = "agent") @SerializedName("agent") var agent: Agent? = null) : Flat, FlatDetails {
+                          @Embedded(prefix = "agent") @SerializedName("agent") var agent: Agent? = null) : Flat {
 
 
     override fun getId() = idText
@@ -78,7 +80,7 @@ data class INeedAFlatFlat(@PrimaryKey @SerializedName("id") @ColumnInfo(name = "
 
     override fun getImages(): List<String> = attributes?.images ?: emptyList()
 
-    override fun getDescription(): String? = attributes?.description
+    override fun getDescription(): String = attributes?.description ?: ""
 
     override fun getPhones(): List<String> = attributes?.phones.orEmpty()
 

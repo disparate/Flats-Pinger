@@ -2,7 +2,6 @@ package kazarovets.flatspinger.utils
 
 import android.text.format.DateUtils
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatDetails
 import kazarovets.flatspinger.model.FlatFilter
 
 
@@ -30,19 +29,16 @@ class FlatsFilterMatcher {
                 return true
             }
 
-            var matchedAll = false
+            var matchedAny = false
             for (word in keywords) {
-                val matchedAdress = flat.getAddress().contains(word.trim(), true)
+                val matchedAddress = flat.getAddress().contains(word.trim(), true)
 
-                var matchedDescription = false
-                if (flat is FlatDetails) {
-                    matchedDescription = flat.getDescription()?.contains(word.trim(), true) ?: false
-                }
+                var matchedDescription = flat.getDescription().contains(word.trim(), true)
 
-                matchedAll = matchedAll or (matchedAdress or matchedDescription)
+                matchedAny = matchedAny or (matchedAddress or matchedDescription)
             }
 
-            return matchedAll
+            return matchedAny
 
         }
 

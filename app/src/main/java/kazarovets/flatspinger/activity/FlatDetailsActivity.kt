@@ -22,7 +22,6 @@ import kazarovets.flatspinger.R
 import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.fragments.MovableMapsFragment
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatDetails
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.views.FlatTagsView
@@ -147,22 +146,18 @@ class FlatDetailsActivity : AppCompatActivity() {
         val phoneTextView = findViewById<TextView>(R.id.phone)
 
         val flat = flat
-        if (flat is FlatDetails) {
-            if (!flat.getDescription().isNullOrEmpty()) {
-                descriptionTextView.text = flat.getDescription()
-            } else {
-                descriptionContainer.visibility = View.GONE
-            }
-            if (flat.getPhones().isNotEmpty()) {
-                phoneTextView.text = flat.getPhones()[0]
-            } else {
-                phoneContainer.visibility = View.GONE
-            }
+        if (!flat.getDescription().isNullOrEmpty()) {
+            descriptionTextView.text = flat.getDescription()
         } else {
             descriptionContainer.visibility = View.GONE
+        }
+        if (flat.getPhones().isNotEmpty()) {
+            phoneTextView.text = flat.getPhones()[0]
+        } else {
             phoneContainer.visibility = View.GONE
         }
     }
+    
 
     private fun openInBrowser() {
         if (!TextUtils.isEmpty(flat.getOriginalUrl())) {

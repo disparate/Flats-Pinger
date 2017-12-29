@@ -63,6 +63,10 @@ interface Flat : Comparable<Flat>, Serializable {
             StringTag(getSource())
     )
 
+    fun getDescription(): String = ""
+
+    fun getPhones(): List<String> = emptyList()
+
     override fun compareTo(other: Flat): Int {
         if (getUpdatedTime() < other.getUpdatedTime()) {
             return 1
