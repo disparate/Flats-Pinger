@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion Integer.parseInt(ANDROID_BUILD_TARGET_SDK_VERSION)
+    buildToolsVersion ANDROID_BUILD_TOOLS_VERSION
     defaultConfig {
         applicationId "kazarovets.flatspinger"
-        minSdkVersion 21
-        targetSdkVersion 26
+        minSdkVersion Integer.parseInt(ANDROID_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode 2
-        versionName "0.2"
+        versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -26,9 +26,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
 
 
     compile "com.squareup.retrofit2:retrofit:${project.RETROFIT_VERSION}"

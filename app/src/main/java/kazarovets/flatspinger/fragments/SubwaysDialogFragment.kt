@@ -34,15 +34,12 @@ class SubwaysDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.dialog_subways, container)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.dialog_subways, container)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (view == null) {
-            return
-        }
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

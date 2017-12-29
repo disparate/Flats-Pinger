@@ -30,7 +30,7 @@ class FlatsMapFragment : SupportMapFragment() {
     var infoWindowAdapter: FlatInfoWindowAdapter? = null
     var iconGenerator: IconGenerator? = null
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         infoWindowAdapter = FlatInfoWindowAdapter(layoutInflater)
@@ -45,7 +45,7 @@ class FlatsMapFragment : SupportMapFragment() {
             it.setOnInfoWindowClickListener {
                 val flat = infoWindowAdapter?.getFlat(it)
                 if (flat != null) {
-                    val intent = FlatDetailsActivity.getCallingIntent(context, flat)
+                    val intent = FlatDetailsActivity.getCallingIntent(context!!, flat)
                     startActivity(intent)
                 }
             }
@@ -76,7 +76,7 @@ class FlatsMapFragment : SupportMapFragment() {
     fun setFlats(flats: List<Flat>?) {
         map?.clear()
 
-        val flatsDB = FlatsDatabase.getInstance(context)
+        val flatsDB = FlatsDatabase.getInstance(context!!)
 
         if (flats == null)
             return

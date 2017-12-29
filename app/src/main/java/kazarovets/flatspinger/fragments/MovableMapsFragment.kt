@@ -17,7 +17,7 @@ class MovableMapsFragment : SupportMapFragment() {
     override fun onCreateView(layoutInflater: LayoutInflater, viewGroup: ViewGroup?, savedInstance: Bundle?): View? {
         val layout = super.onCreateView(layoutInflater, viewGroup, savedInstance)
 
-        val frameLayout = TouchableWrapper(activity)
+        val frameLayout = TouchableWrapper(activity!!)
 
         frameLayout.setBackgroundColor(resources.getColor(android.R.color.transparent))
 

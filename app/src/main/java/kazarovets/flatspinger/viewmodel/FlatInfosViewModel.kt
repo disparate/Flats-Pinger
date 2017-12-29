@@ -18,8 +18,8 @@ public class FlatInfosViewModel(val repository: FlatsRepository,
     private var flats = MutableLiveData<List<FlatInfo>>()
     private var isLoading = MutableLiveData<Boolean>()
 
-    private var showSeen: Boolean = PreferenceUtils.showSeenFlats
-    private var flatsMode: FlatsListFragment.MODE? = null
+    var showSeen: Boolean = PreferenceUtils.showSeenFlats
+    var flatsMode: FlatsListFragment.MODE? = null
 
     private var localDisposable: Disposable? = null
 

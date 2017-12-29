@@ -24,7 +24,6 @@ import android.widget.ViewFlipper
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
 import dagger.android.support.AndroidSupportInjection
-import io.reactivex.disposables.Disposable
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.FlatDetailsActivity
 import kazarovets.flatspinger.db.FlatsDatabase
@@ -66,6 +65,7 @@ class FlatsListFragment : Fragment() {
     private val filterClickListener = View.OnClickListener { v ->
         val mode = v?.tag as MODE
         currentMode = mode
+        flatsViewModel.flatsMode = mode
         fillFloatingMenu()
         updateAdapterData()
         listMapSwitcher?.displayedChild = getDisplayedPagePos(mode)
@@ -77,13 +77,14 @@ class FlatsListFragment : Fragment() {
 
         flatsViewModel = ViewModelProviders.of(this, flatsFactory).get(FlatInfosViewModel::class.java)
         flatsViewModel.init()
+        flatsViewModel.flatsMode = currentMode
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_flats_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_flats_list, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         swipeRefreshLayout = view?.findViewById(R.id.swipe_refresh)
@@ -96,7 +97,7 @@ class FlatsListFragment : Fragment() {
         adapter = FlatsRecyclerAdapter(ArrayList())
         adapter?.onClickListener = object : FlatsRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(item: Flat) {
-                val intent = FlatDetailsActivity.getCallingIntent(context, item)
+                val intent = FlatDetailsActivity.getCallingIntent(context!!, item)
                 startActivity(intent)
             }
         }
@@ -160,7 +161,7 @@ class FlatsListFragment : Fragment() {
                 if (flat != null) {
                     if (direction == ItemTouchHelper.LEFT) {
                         adapter?.removeItem(position)
-                        FlatsDatabase.getInstance(context).setHiddenFlat(flat.getId(), flat.getProvider())
+                        FlatsDatabase.getInstance(context!!).setHiddenFlat(flat.getId(), flat.getProvider())
 //                    } else {
 //                        adapter?.removeItem(position)
 //                        FlatsDatabase.getInstance(context).setRegularFlat(flat.getId(), flat.getProvider())
@@ -188,10 +189,10 @@ class FlatsListFragment : Fragment() {
 //                                itemView.left.toFloat() + width / 2 + dX / 2, itemView.bottom.toFloat() - width)
 //                        c.drawBitmap(icon, null, icon_dest, paint)
                     } else {
-                        paint.setColor(ContextCompat.getColor(context, R.color.colorFlatDelete))
+                        paint.setColor(ContextCompat.getColor(context!!, R.color.colorFlatDelete))
                         val background = RectF(itemView.right.toFloat() + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
                         c.drawRect(background, paint)
-                        val vectorDrawable = context.getDrawable(R.drawable.ic_delete_white) as VectorDrawable
+                        val vectorDrawable = context?.getDrawable(R.drawable.ic_delete_white) as VectorDrawable
                         icon = getBitmap(vectorDrawable)
                         val icon_dest = RectF(itemView.right.toFloat() - width / 2 + dX / 2, itemView.top.toFloat() + width,
                                 itemView.right.toFloat() + width / 2 + dX / 2, itemView.bottom.toFloat() - width)
@@ -211,7 +212,7 @@ class FlatsListFragment : Fragment() {
                 return flats
             }
 
-            val db = FlatsDatabase.getInstance(context)
+            val db = FlatsDatabase.getInstance(context!!)
             val status = db.getFlatStatus(it.getId(), it.getProvider())
             val seen = db.isSeenFlat(it.getId(), it.getProvider())
             val showSeen = PreferenceUtils.showSeenFlats

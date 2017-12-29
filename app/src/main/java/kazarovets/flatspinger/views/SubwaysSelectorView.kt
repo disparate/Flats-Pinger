@@ -64,7 +64,7 @@ class SubwaysSelectorView : FrameLayout {
             typedArray.recycle()
         } else {
             color = Color.RED
-            checkboxDrawable = ContextCompat.getDrawable(context, R.drawable.selector_check_subway_red)
+            checkboxDrawable = ContextCompat.getDrawable(context, R.drawable.selector_check_subway_red)!!
         }
         verticalLine.setBackgroundColor(color)
     }

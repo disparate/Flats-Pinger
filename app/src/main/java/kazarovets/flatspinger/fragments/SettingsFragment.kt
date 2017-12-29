@@ -22,31 +22,31 @@ class SettingsFragment : Fragment() {
     private var daysAdIsActualView: TextView? = null
 
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_settings, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        enableNotificationsCheckbox = view?.findViewById(R.id.enable_notifications_checkbox)
+        enableNotificationsCheckbox = view.findViewById(R.id.enable_notifications_checkbox)
         enableNotificationsCheckbox?.isChecked = PreferenceUtils.enableNotifications
         enableNotificationsCheckbox?.setOnCheckedChangeListener { compoundButton, checked ->
             PreferenceUtils.enableNotifications = checked
             if (checked) {
-                ScheduleUtils.scheduleFlatsNotificationsJob(context)
+                ScheduleUtils.scheduleFlatsNotificationsJob(context!!)
             } else {
-                ScheduleUtils.cancelScheduledJob(context)
+                ScheduleUtils.cancelScheduledJob(context!!)
             }
         }
 
-        showSeenFlatsCheckbox = view?.findViewById(R.id.show_seen_flats_checkbox)
+        showSeenFlatsCheckbox = view.findViewById(R.id.show_seen_flats_checkbox)
         showSeenFlatsCheckbox?.isChecked = PreferenceUtils.showSeenFlats
         showSeenFlatsCheckbox?.setOnCheckedChangeListener { compoundButton, checked ->
             PreferenceUtils.showSeenFlats = checked
         }
 
-        daysAdIsActualView = view?.findViewById(R.id.edit_text_days_ad_actual)
+        daysAdIsActualView = view.findViewById(R.id.edit_text_days_ad_actual)
         daysAdIsActualView?.text = PreferenceUtils.updateDaysAgo.toString()
         daysAdIsActualView?.addTextChangedListener(object : OnNumberChangedTextWatcher {
             override fun parseText(text: String) {
