@@ -10,6 +10,8 @@ interface Flat : Comparable<Flat>, Serializable {
 
     fun getImageUrl(): String?
 
+    fun getImages(): List<String>
+
     fun getAddress(): String
 
     fun getNearestSubway(): Subway? {

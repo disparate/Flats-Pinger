@@ -102,6 +102,11 @@ data class OnlinerFlat(@PrimaryKey
 
     override fun getSource(): String = "onliner.by"
 
+    override fun getImages(): List<String> {
+        val imageUrl = getImageUrl()
+        return if(imageUrl == null) emptyList() else listOf(imageUrl)
+    }
+
 
     data class Price(@SerializedName("amount")
                      var amount: Double? = null,

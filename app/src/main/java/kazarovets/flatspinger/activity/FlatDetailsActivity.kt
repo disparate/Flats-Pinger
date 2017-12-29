@@ -24,7 +24,6 @@ import kazarovets.flatspinger.fragments.MovableMapsFragment
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatDetails
 import kazarovets.flatspinger.model.FlatStatus
-import kazarovets.flatspinger.model.ineedaflat.INeedAFlatFlat
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.views.FlatTagsView
 
@@ -84,9 +83,8 @@ class FlatDetailsActivity : AppCompatActivity() {
         if (!flat.getImageUrl().isNullOrBlank()) {
             Glide.with(this).load(flat.getImageUrl()).centerCrop().into(flatImage)
         }
-        if (flat is INeedAFlatFlat) {
-            flatImage?.setOnClickListener { startActivity(ImagesActivity.getCallingIntent(this, flat.getImages())) }
-        }
+
+        flatImage?.setOnClickListener { startActivity(ImagesActivity.getCallingIntent(this, flat.getImages())) }
 
         createdAtTextView = findViewById(R.id.created_time_ago)
         createdAtTextView?.text = "${getString(R.string.created)} ${StringsUtils.getTimeAgoString(flat.getCreatedTime(), this)}"

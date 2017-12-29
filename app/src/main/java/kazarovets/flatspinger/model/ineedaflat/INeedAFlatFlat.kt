@@ -76,7 +76,7 @@ data class INeedAFlatFlat(@PrimaryKey @SerializedName("id") @ColumnInfo(name = "
 
     override fun hashCode(): Int = getOriginalUrl()?.hashCode() ?: 0
 
-    fun getImages(): List<String> = attributes?.images ?: emptyList()
+    override fun getImages(): List<String> = attributes?.images ?: emptyList()
 
     override fun getDescription(): String? = attributes?.description
 
