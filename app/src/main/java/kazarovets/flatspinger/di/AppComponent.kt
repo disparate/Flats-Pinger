@@ -1,17 +1,22 @@
 package kazarovets.flatspinger.di
 
 import dagger.Component
-import dagger.android.support.AndroidSupportInjectionModule
+import kazarovets.flatspinger.activity.MainActivity
+import kazarovets.flatspinger.flats.FlatsJobSchedulerService
+import kazarovets.flatspinger.fragments.FlatsListFragment
+import kazarovets.flatspinger.fragments.FlatsMapFragment
 import javax.inject.Singleton
-import dagger.BindsInstance
-import dagger.android.AndroidInjectionModule
-import kazarovets.flatspinger.FlatsApplication
 
 
 @Singleton
-@Component(modules = arrayOf(AndroidInjectionModule::class, AndroidSupportInjectionModule::class,
-        AppModule::class, BinderModule::class, FlatsModule::class))
+@Component(modules = arrayOf(AppModule::class, FlatsModule::class))
 interface AppComponent {
 
-    fun inject(app: FlatsApplication)
+    fun inject(fragment: FlatsListFragment)
+
+    fun inject(fragment: FlatsMapFragment)
+
+    fun inject(service: FlatsJobSchedulerService)
+
+    fun inject(activity: MainActivity)
 }

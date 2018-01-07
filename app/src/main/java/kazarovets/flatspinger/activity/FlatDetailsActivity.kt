@@ -157,7 +157,7 @@ class FlatDetailsActivity : AppCompatActivity() {
             phoneContainer.visibility = View.GONE
         }
     }
-    
+
 
     private fun openInBrowser() {
         if (!TextUtils.isEmpty(flat.getOriginalUrl())) {

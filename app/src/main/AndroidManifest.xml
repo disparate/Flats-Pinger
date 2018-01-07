@@ -39,7 +39,7 @@
             android:theme="@style/FullscreenTheme" />
 
         <service
-            android:name=".service.JobSchedulerService"
+            android:name=".flats.FlatsJobSchedulerService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 

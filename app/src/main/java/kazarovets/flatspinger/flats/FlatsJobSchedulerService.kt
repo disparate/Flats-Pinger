@@ -1,4 +1,4 @@
-package kazarovets.flatspinger.service
+package kazarovets.flatspinger.flats
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -18,16 +18,17 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.MainActivity
-import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatStatus
+import kazarovets.flatspinger.repository.FlatsRepository
 import kazarovets.flatspinger.utils.FlatsFilterMatcher
 import kazarovets.flatspinger.utils.PreferenceUtils
+import kazarovets.flatspinger.utils.getAppComponent
+import javax.inject.Inject
 
 
-class JobSchedulerService : JobService() {
+class FlatsJobSchedulerService : JobService() {
 
     companion object {
         val NOTIFICATION_ID = 314
@@ -35,7 +36,16 @@ class JobSchedulerService : JobService() {
         val NOTIFICATION_CHANNEL_NAME = "New flats"
     }
 
+    @Inject
+    lateinit var flatsRepository: FlatsRepository
+
     private var disposable: Disposable? = null
+
+    override fun onCreate() {
+        super.onCreate()
+
+        getAppComponent().inject(this)
+    }
 
 
     override fun onStopJob(p0: JobParameters?): Boolean {
@@ -50,15 +60,8 @@ class JobSchedulerService : JobService() {
     }
 
     private fun loadData(params: JobParameters?) {
-        val minCost = PreferenceUtils.minCost
-        val maxCost = PreferenceUtils.maxCost
-        val allowAgency = PreferenceUtils.allowAgency
-        val rooms = PreferenceUtils.roomNumbers
         val flatsFilter = PreferenceUtils.flatFilter
-        disposable = ApiManager.iNeedAFlatApi
-                .getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, rooms)
-                .map { it as List<Flat> }
-                .mergeWith(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, rooms))
+        disposable = flatsRepository.getRemoteFlats()
                 .toObservable()
                 .flatMap { Observable.fromIterable(it) }
                 .filter { FlatsFilterMatcher.matches(flatsFilter, it) }
@@ -66,7 +69,6 @@ class JobSchedulerService : JobService() {
                     val db = FlatsDatabase.getInstance(applicationContext)
                     !db.isSeenFlat(it.getId(), it.getProvider())
                             && db.getFlatStatus(it.getId(), it.getProvider()) == FlatStatus.REGULAR
-
                 }
                 .toSortedList()
                 .observeOn(AndroidSchedulers.mainThread())

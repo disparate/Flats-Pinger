@@ -3,7 +3,6 @@ package kazarovets.flatspinger.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.Singles
 import kazarovets.flatspinger.fragments.FlatsListFragment
 import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.repository.FlatsRepository
@@ -12,8 +11,8 @@ import kazarovets.flatspinger.utils.PreferenceUtils
 import kazarovets.flatspinger.utils.filterFlats
 
 
-public class FlatInfosViewModel(val repository: FlatsRepository,
-                                val schedulersFacade: SchedulersFacade) : ViewModel() {
+class FlatInfosViewModel(val repository: FlatsRepository,
+                         val schedulersFacade: SchedulersFacade) : ViewModel() {
 
     private var flats = MutableLiveData<List<FlatInfo>>()
     private var isLoading = MutableLiveData<Boolean>()
@@ -23,10 +22,9 @@ public class FlatInfosViewModel(val repository: FlatsRepository,
 
     private var localDisposable: Disposable? = null
 
-
     private var remoteDisposable: Disposable? = null
 
-    public fun init() {
+    fun init() {
 
         localDisposable = repository.getLocalFlats()
                 .map {
@@ -48,11 +46,11 @@ public class FlatInfosViewModel(val repository: FlatsRepository,
         remoteDisposable?.dispose()
     }
 
-    public fun getFlats() = flats
+    fun getFlats() = flats
 
-    public fun getIsLoading() = isLoading
+    fun getIsLoading() = isLoading
 
-    public fun loadFlats() {
+    fun loadFlats() {
         remoteDisposable = repository.getRemoteFlats()
                 .subscribeOn(schedulersFacade.io())
                 .observeOn(schedulersFacade.ui())

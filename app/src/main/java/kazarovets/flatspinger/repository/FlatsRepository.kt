@@ -21,10 +21,10 @@ class FlatsRepository(val flatsDao: FlatsDao) {
         res
     }
 
-    public fun getLocalFlats(): Flowable<List<FlatInfo>> = flatsObservable
+    fun getLocalFlats(): Flowable<List<FlatInfo>> = flatsObservable
 
 
-    public fun getRemoteFlats(): Single<List<Flat>> {
+    fun getRemoteFlats(): Single<List<Flat>> {
 
         val minCost = PreferenceUtils.minCost
         val maxCost = PreferenceUtils.maxCost

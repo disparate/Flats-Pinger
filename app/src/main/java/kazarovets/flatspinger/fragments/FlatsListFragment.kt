@@ -23,7 +23,6 @@ import android.view.ViewGroup
 import android.widget.ViewFlipper
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
-import dagger.android.support.AndroidSupportInjection
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.FlatDetailsActivity
 import kazarovets.flatspinger.db.FlatsDatabase
@@ -32,6 +31,7 @@ import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
 import kazarovets.flatspinger.utils.PreferenceUtils
+import kazarovets.flatspinger.utils.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModel
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
 import javax.inject.Inject
@@ -72,7 +72,7 @@ class FlatsListFragment : Fragment() {
     }
 
     override fun onAttach(context: Context?) {
-        AndroidSupportInjection.inject(this)
+        context!!.getAppComponent().inject(this)
         super.onAttach(context)
 
         flatsViewModel = ViewModelProviders.of(this, flatsFactory).get(FlatInfosViewModel::class.java)

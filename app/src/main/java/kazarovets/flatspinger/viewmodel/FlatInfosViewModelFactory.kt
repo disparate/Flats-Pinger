@@ -15,4 +15,6 @@ class FlatInfosViewModelFactory(val flatsRepository: FlatsRepository, val schedu
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
+
+
 }

@@ -30,6 +30,7 @@ class FlatsModule {
     @Provides
     fun provideFlatsRepository(flatsDao: FlatsDao): FlatsRepository = FlatsRepository(flatsDao)
 
+    @Singleton
     @Provides
     fun provideFlatInfosViewModelFactory(flatsRepository: FlatsRepository,
                                          schedulersFacade: SchedulersFacade): FlatInfosViewModelFactory =

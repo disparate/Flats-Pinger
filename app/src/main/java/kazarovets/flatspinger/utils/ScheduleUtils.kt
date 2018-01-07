@@ -5,7 +5,7 @@ import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
 import android.text.format.DateUtils
-import kazarovets.flatspinger.service.JobSchedulerService
+import kazarovets.flatspinger.flats.FlatsJobSchedulerService
 
 
 class ScheduleUtils {
@@ -17,7 +17,7 @@ class ScheduleUtils {
 
         fun scheduleFlatsNotificationsJob(context: Context) {
             val periodMs = DateUtils.HOUR_IN_MILLIS / 2
-            val serviceName = ComponentName(context, JobSchedulerService::class.java)
+            val serviceName = ComponentName(context, FlatsJobSchedulerService::class.java)
             val job = JobInfo.Builder(FLAT_NOTIFICATIONS_JOB_ID, serviceName)
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .setPeriodic(periodMs)
