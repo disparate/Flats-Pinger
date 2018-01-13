@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scroll_view"
+    android:id="@+id/filterScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -15,14 +14,14 @@
         android:paddingTop="@dimen/activity_vertical_margin">
 
         <CheckBox
-            android:id="@+id/allow_agency_checkbox"
+            android:id="@+id/filterAllowAgency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/filter_allow_agency" />
 
 
         <CheckBox
-            android:id="@+id/allow_only_with_photos_checkbox"
+            android:id="@+id/filterAllowOnlyWithPhotos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/filter_allow_with_photos_only" />
@@ -30,8 +29,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="4dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -44,28 +43,28 @@
                 android:orientation="horizontal">
 
                 <CheckBox
-                    android:id="@+id/rent_1k"
+                    android:id="@+id/filterRent1k"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/rent_1k" />
 
                 <CheckBox
-                    android:id="@+id/rent_2k"
+                    android:id="@+id/filterRent2k"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/rent_2k" />
 
                 <CheckBox
-                    android:id="@+id/rent_3k"
+                    android:id="@+id/filterRent3k"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/rent_3k" />
 
                 <CheckBox
-                    android:id="@+id/rent_4k_and_more"
+                    android:id="@+id/filterRent4kAndMore"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
@@ -89,7 +88,7 @@
                 android:text="@string/filter_min_cost" />
 
             <EditText
-                android:id="@+id/edit_text_min_cost"
+                android:id="@+id/filterMinCostEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="numberSigned"
@@ -111,7 +110,7 @@
                 android:text="@string/filter_max_cost" />
 
             <EditText
-                android:id="@+id/edit_text_max_cost"
+                android:id="@+id/filterMaxCostEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="numberSigned"
@@ -133,7 +132,7 @@
                 android:text="@string/filter_keywords_title" />
 
             <FrameLayout
-                android:id="@+id/edit_keywords_button"
+                android:id="@+id/filterEditKeywordsButton"
                 android:layout_width="50dp"
                 android:layout_height="32dp"
                 android:background="@drawable/rectangle_circular_bg">
@@ -163,7 +162,7 @@
                 android:text="@string/filter_subway_title" />
 
             <FrameLayout
-                android:id="@+id/edit_subways_button"
+                android:id="@+id/filterEditSubwaysButton"
                 android:layout_width="50dp"
                 android:layout_height="32dp"
                 android:background="@drawable/rectangle_circular_bg">

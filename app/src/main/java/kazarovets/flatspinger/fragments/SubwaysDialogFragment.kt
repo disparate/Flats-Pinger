@@ -8,23 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.EditText
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.model.Subway
 import kazarovets.flatspinger.utils.PreferenceUtils
 import kazarovets.flatspinger.utils.SubwayUtils
 import kazarovets.flatspinger.views.SubwaysSelectorView
 import kazarovets.flatspinger.widgets.OnNumberChangedTextWatcher
+import kotlinx.android.synthetic.main.dialog_subways.*
 
 class SubwaysDialogFragment : DialogFragment() {
 
-    private var exitButton: View? = null
 
     private var selectedSubwaysIds: MutableSet<Int> = HashSet()
-
-    private var maxDistanceToSubway: EditText? = null
-    private var redSubwaysSelector: SubwaysSelectorView? = null
-    private var blueSubwaysSelector: SubwaysSelectorView? = null
 
 
     private val onSubwaySelectedListener = object : SubwaysSelectorView.OnSubwayCheckedListener {
@@ -45,25 +40,20 @@ class SubwaysDialogFragment : DialogFragment() {
         dialog.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         setStyle(DialogFragment.STYLE_NO_FRAME, android.R.style.Theme)
 
-        exitButton = view.findViewById(R.id.close_button)
-        exitButton?.setOnClickListener { dismiss() }
+        dialogSubwaysClose.setOnClickListener { dismiss() }
 
         selectedSubwaysIds = PreferenceUtils.subwayIds
 
-        redSubwaysSelector = view.findViewById(R.id.red_line_subway_selector)
-        blueSubwaysSelector = view.findViewById(R.id.blue_line_subway_selector)
+        dialogSubwaysRedSubwaySelector.subways = SubwayUtils.RED_LINE_SUBWAYS
+        dialogSubwaysRedSubwaySelector.updateCheckedSubways(selectedSubwaysIds)
+        dialogSubwaysRedSubwaySelector.onCheckedChangedListener = onSubwaySelectedListener
 
-        redSubwaysSelector?.subways = SubwayUtils.RED_LINE_SUBWAYS
-        redSubwaysSelector?.updateCheckedSubways(selectedSubwaysIds)
-        redSubwaysSelector?.onCheckedChangedListener = onSubwaySelectedListener
+        dialogSubwaysBlueSubwaySelector.subways = SubwayUtils.BLUE_LINE_SUBWAYS
+        dialogSubwaysBlueSubwaySelector.updateCheckedSubways(selectedSubwaysIds)
+        dialogSubwaysBlueSubwaySelector.onCheckedChangedListener = onSubwaySelectedListener
 
-        blueSubwaysSelector?.subways = SubwayUtils.BLUE_LINE_SUBWAYS
-        blueSubwaysSelector?.updateCheckedSubways(selectedSubwaysIds)
-        blueSubwaysSelector?.onCheckedChangedListener = onSubwaySelectedListener
-
-        maxDistanceToSubway = view.findViewById(R.id.edit_text_distance_to_subway)
-        maxDistanceToSubway?.setText(PreferenceUtils.maxDistToSubway?.toString() ?: "")
-        maxDistanceToSubway?.addTextChangedListener(object : OnNumberChangedTextWatcher {
+        dialogSubwaysDistance.setText(PreferenceUtils.maxDistToSubway?.toString() ?: "")
+        dialogSubwaysDistance.addTextChangedListener(object : OnNumberChangedTextWatcher {
             override fun parseText(text: String) {
                 val value = if (text.isNotEmpty()) text.toDouble() else null
                 PreferenceUtils.maxDistToSubway = value

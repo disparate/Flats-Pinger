@@ -12,9 +12,8 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.chrisbanes.photoview.PhotoViewAttacher
-import com.viewpagerindicator.CirclePageIndicator
-import com.viewpagerindicator.PageIndicator
 import kazarovets.flatspinger.R
+import kotlinx.android.synthetic.main.activity_images.*
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -37,8 +36,6 @@ class ImagesActivity : AppCompatActivity() {
         }
     }
 
-    private var viewPager: ViewPager? = null
-    private var pageIndicator: PageIndicator? = null
     private var gallery: ArrayList<String> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,13 +49,11 @@ class ImagesActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE)
 
         setContentView(R.layout.activity_images)
-        viewPager = findViewById(R.id.view_pager)
-        pageIndicator = findViewById<CirclePageIndicator>(R.id.page_indicator)
 
         val extras = intent.extras
         gallery = extras.getStringArrayList(KEY_GALLERY)
-        viewPager?.adapter = GalleryPhotoPagerAdapter(gallery, this)
-        pageIndicator?.setViewPager(viewPager)
+        imagesViewPager.adapter = GalleryPhotoPagerAdapter(gallery, this)
+        imagesPageIndicator.setViewPager(imagesViewPager)
     }
 
 
@@ -75,7 +70,7 @@ class ImagesActivity : AppCompatActivity() {
             mAttacher?.setOnClickListener {
                 mActivity.finish()
             }
-            Glide.with(image.getContext()).load(mGallery[position]).into(image)
+            Glide.with(image.context).load(mGallery[position]).into(image)
             container.addView(view)
             return view
         }

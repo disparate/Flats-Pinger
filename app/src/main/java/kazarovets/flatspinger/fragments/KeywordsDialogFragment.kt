@@ -11,18 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
 import android.widget.TextView
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.utils.PreferenceUtils
+import kotlinx.android.synthetic.main.dialog_keywords.*
 
 
 class KeywordsDialogFragment : DialogFragment() {
-
-    private var exitButton: View? = null
-    private var addButton: View? = null
-    private var editText: EditText? = null
-    private var recycler: RecyclerView? = null
 
     private var adapter: KeywordsAdapter? = null
 
@@ -37,30 +32,26 @@ class KeywordsDialogFragment : DialogFragment() {
         dialog.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         setStyle(DialogFragment.STYLE_NO_FRAME, android.R.style.Theme)
 
-        exitButton = view.findViewById(R.id.close_button)
-        exitButton?.setOnClickListener { dismiss() }
+        dialogKeywordClose.setOnClickListener { dismiss() }
 
-        addButton = view.findViewById(R.id.add_keyword_button)
-        addButton?.setOnClickListener {
-            addKeyword(editText?.text?.toString())
-            editText?.setText("")
+        dialogKeywordAdd.setOnClickListener {
+            addKeyword(dialogKeywordEditText.text?.toString())
+            dialogKeywordEditText.setText("")
         }
 
-        editText = view.findViewById(R.id.new_keyword_edit_text)
-        editText?.setOnEditorActionListener { textView, actionId, keyEvent ->
+        dialogKeywordEditText?.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                addKeyword(editText?.text?.toString())
-                editText?.setText("")
+                addKeyword(dialogKeywordEditText.text?.toString())
+                dialogKeywordEditText.setText("")
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
         }
 
-        recycler = view.findViewById(R.id.keywords_recycler)
-        recycler?.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        dialogKeywordsRecycler.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
 
         adapter = KeywordsAdapter()
-        recycler?.adapter = adapter
+        dialogKeywordsRecycler.adapter = adapter
         adapter?.setData(PreferenceUtils.keywords)
     }
 

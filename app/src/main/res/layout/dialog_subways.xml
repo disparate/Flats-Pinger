@@ -34,7 +34,7 @@
                     android:text="@string/filter_distance_to_subway" />
 
                 <EditText
-                    android:id="@+id/edit_text_distance_to_subway"
+                    android:id="@+id/dialogSubwaysDistance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="numberSigned"
@@ -42,7 +42,7 @@
             </LinearLayout>
 
             <kazarovets.flatspinger.views.SubwaysSelectorView
-                android:id="@+id/red_line_subway_selector"
+                android:id="@+id/dialogSubwaysRedSubwaySelector"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -50,7 +50,7 @@
                 app:selectedColor="@color/colorSubwayRed" />
 
             <kazarovets.flatspinger.views.SubwaysSelectorView
-                android:id="@+id/blue_line_subway_selector"
+                android:id="@+id/dialogSubwaysBlueSubwaySelector"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -61,7 +61,7 @@
 
 
     <ImageView
-        android:id="@+id/close_button"
+        android:id="@+id/dialogSubwaysClose"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_alignParentRight="true"

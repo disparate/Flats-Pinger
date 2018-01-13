@@ -14,14 +14,14 @@
             android:paddingLeft="@dimen/subway_selector_checkbox_width_with_padding_half">
 
             <View
-                android:id="@+id/vertical_line"
+                android:id="@+id/subwaysSelectorVerticalLine"
                 android:layout_width="4dp"
                 android:layout_height="match_parent" />
         </FrameLayout>
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/main_container"
+        android:id="@+id/subwaysSelectorMainContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" />

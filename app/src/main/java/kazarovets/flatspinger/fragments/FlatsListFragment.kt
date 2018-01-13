@@ -13,16 +13,13 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ViewFlipper
 import com.github.clans.fab.FloatingActionButton
-import com.github.clans.fab.FloatingActionMenu
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.FlatDetailsActivity
 import kazarovets.flatspinger.db.FlatsDatabase
@@ -34,6 +31,7 @@ import kazarovets.flatspinger.utils.PreferenceUtils
 import kazarovets.flatspinger.utils.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModel
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
+import kotlinx.android.synthetic.main.fragment_flats_list.*
 import javax.inject.Inject
 
 
@@ -47,18 +45,14 @@ class FlatsListFragment : Fragment() {
     @Inject
     lateinit var flatsFactory: FlatInfosViewModelFactory
 
-    private var recyclerView: RecyclerView? = null
     private var adapter: FlatsRecyclerAdapter? = null
-    private var swipeRefreshLayout: SwipeRefreshLayout? = null
     private var paint: Paint = Paint()
     private var currentMode: MODE = MODE.LIST
 
-    private var floatingActionMenu: FloatingActionMenu? = null
     private var flats: MutableList<Flat> = ArrayList()
 
     private var flatsMapFragment: FlatsMapFragment? = null
 
-    private var listMapSwitcher: ViewFlipper? = null
 
     private lateinit var flatsViewModel: FlatInfosViewModel
 
@@ -68,7 +62,7 @@ class FlatsListFragment : Fragment() {
         flatsViewModel.flatsMode = mode
         fillFloatingMenu()
         updateAdapterData()
-        listMapSwitcher?.displayedChild = getDisplayedPagePos(mode)
+        flatsListMapSwitcher.displayedChild = getDisplayedPagePos(mode)
     }
 
     override fun onAttach(context: Context?) {
@@ -87,13 +81,11 @@ class FlatsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        swipeRefreshLayout = view?.findViewById(R.id.swipe_refresh)
-        swipeRefreshLayout?.setOnRefreshListener {
+        flatsListSwipeRefresh.setOnRefreshListener {
             flatsViewModel.loadFlats()
         }
 
-        recyclerView = view?.findViewById(R.id.recycler)
-        recyclerView?.layoutManager = LinearLayoutManager(context)
+        flatsListRecycler.layoutManager = LinearLayoutManager(context)
         adapter = FlatsRecyclerAdapter(ArrayList())
         adapter?.onClickListener = object : FlatsRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(item: Flat) {
@@ -101,29 +93,26 @@ class FlatsListFragment : Fragment() {
                 startActivity(intent)
             }
         }
-        recyclerView?.adapter = adapter
+        flatsListRecycler.adapter = adapter
         initSwipe()
 
-        floatingActionMenu = view?.findViewById(R.id.fab_menu)
         fillFloatingMenu()
 
-        swipeRefreshLayout?.isRefreshing = true
+        flatsListSwipeRefresh.isRefreshing = true
 
         flatsViewModel.getFlats().observe(this, Observer<List<FlatInfo>> {
             onFlatsReceived(it)
         })
 
         flatsViewModel.getIsLoading().observe(this, Observer<Boolean> {
-            swipeRefreshLayout?.isRefreshing = it ?: swipeRefreshLayout?.isRefreshing ?: false
+            flatsListSwipeRefresh.isRefreshing = it ?: flatsListSwipeRefresh.isRefreshing ?: false
         })
 
         flatsMapFragment = FlatsMapFragment()
         childFragmentManager
                 .beginTransaction()
-                .replace(R.id.map_container, flatsMapFragment)
+                .replace(R.id.flatsListsMapContainer, flatsMapFragment)
                 .commit()
-
-        listMapSwitcher = view?.findViewById(R.id.list_map_switcher)
     }
 
 
@@ -203,7 +192,7 @@ class FlatsListFragment : Fragment() {
             }
         }
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+        itemTouchHelper.attachToRecyclerView(flatsListRecycler)
     }
 
     private fun getFilteredFlats(): List<Flat> {
@@ -227,10 +216,10 @@ class FlatsListFragment : Fragment() {
     }
 
     private fun fillFloatingMenu() {
-        floatingActionMenu?.removeAllMenuButtons()
+        flatsListFabMenu?.removeAllMenuButtons()
 
-        floatingActionMenu?.menuIconView?.setImageResource(getFabImage(currentMode))
-        floatingActionMenu?.close(true)
+        flatsListFabMenu.menuIconView?.setImageResource(getFabImage(currentMode))
+        flatsListFabMenu.close(true)
         for (mode in MODE.values()) {
             if (mode == currentMode) {
                 continue
@@ -241,7 +230,7 @@ class FlatsListFragment : Fragment() {
             fab.tag = mode
             fab.labelText = getString(getFabText(mode))
             fab.setOnClickListener(filterClickListener)
-            floatingActionMenu?.addMenuButton(fab)
+            flatsListFabMenu.addMenuButton(fab)
         }
     }
 

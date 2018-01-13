@@ -25,6 +25,7 @@ import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.views.FlatTagsView
+import kotlinx.android.synthetic.main.activity_flat_details.*
 
 
 class FlatDetailsActivity : AppCompatActivity() {
@@ -41,16 +42,6 @@ class FlatDetailsActivity : AppCompatActivity() {
 
         val MAP_ZOOM = 15.0f
     }
-
-    private var flatImage: ImageView? = null
-    private var costView: TextView? = null
-
-    private var createdAtTextView: TextView? = null
-    private var updatedAtTextView: TextView? = null
-    private var flatTagsView: FlatTagsView? = null
-
-    private var scrollView: NestedScrollView? = null
-
 
     private lateinit var flat: Flat
 
@@ -70,32 +61,25 @@ class FlatDetailsActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_flat_details)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(detailsToolbar)
         supportActionBar?.title = flat.getAddress()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        scrollView = findViewById(R.id.scroll_view)
 
-        flatImage = findViewById(R.id.flat_image)
-        flatImage?.visibility = if (flat.hasImages()) View.VISIBLE else View.GONE
+        detailsFlatImage.visibility = if (flat.hasImages()) View.VISIBLE else View.GONE
         if (!flat.getImageUrl().isNullOrBlank()) {
-            Glide.with(this).load(flat.getImageUrl()).centerCrop().into(flatImage)
+            Glide.with(this).load(flat.getImageUrl()).centerCrop().into(detailsFlatImage)
         }
 
-        flatImage?.setOnClickListener { startActivity(ImagesActivity.getCallingIntent(this, flat.getImages())) }
+        detailsFlatImage.setOnClickListener { startActivity(ImagesActivity.getCallingIntent(this, flat.getImages())) }
 
-        createdAtTextView = findViewById(R.id.created_time_ago)
-        createdAtTextView?.text = "${getString(R.string.created)} ${StringsUtils.getTimeAgoString(flat.getCreatedTime(), this)}"
+        detailsCreatedTimeAgo.text = "${getString(R.string.created)} ${StringsUtils.getTimeAgoString(flat.getCreatedTime(), this)}"
 
-        updatedAtTextView = findViewById(R.id.updated_time_ago)
-        updatedAtTextView?.text = "${getString(R.string.updated)} ${StringsUtils.getTimeAgoString(flat.getUpdatedTime(), this)}"
+        detailsUpdatedTimeAgo.text = "${getString(R.string.updated)} ${StringsUtils.getTimeAgoString(flat.getUpdatedTime(), this)}"
 
-        costView = findViewById(R.id.cost)
-        costView?.text = "${flat.getCostInDollars()}$"
+        detailsCost.text = "${flat.getCostInDollars()}$"
 
-        flatTagsView = findViewById(R.id.flat_tags)
-        flatTagsView?.tags = flat.getTags()
+        detailsFlatTags.tags = flat.getTags()
 
         isFavorite = FlatsDatabase.getInstance(this)
                 .getFlatStatus(flat.getId(), flat.getProvider()) == FlatStatus.FAVORITE
@@ -116,7 +100,7 @@ class FlatDetailsActivity : AppCompatActivity() {
         mapFragment = supportFragmentManager.findFragmentById(R.id.map_fragment) as MovableMapsFragment?
         mapFragment?.setListener(object : MovableMapsFragment.OnTouchListener {
             override fun onTouch() {
-                scrollView?.requestDisallowInterceptTouchEvent(true)
+                detailsScrollView.requestDisallowInterceptTouchEvent(true)
             }
 
         })
@@ -139,22 +123,16 @@ class FlatDetailsActivity : AppCompatActivity() {
     }
 
     private fun fillDetails() {
-        val descriptionContainer = findViewById<ViewGroup>(R.id.description_container)
-        val descriptionTextView = findViewById<TextView>(R.id.description)
-
-        val phoneContainer = findViewById<ViewGroup>(R.id.phone_container)
-        val phoneTextView = findViewById<TextView>(R.id.phone)
-
         val flat = flat
         if (!flat.getDescription().isNullOrEmpty()) {
-            descriptionTextView.text = flat.getDescription()
+            detailsDescription.text = flat.getDescription()
         } else {
-            descriptionContainer.visibility = View.GONE
+            detailsDescriptionContainer.visibility = View.GONE
         }
         if (flat.getPhones().isNotEmpty()) {
-            phoneTextView.text = flat.getPhones()[0]
+            detailsPhone.text = flat.getPhones()[0]
         } else {
-            phoneContainer.visibility = View.GONE
+            detailsPhoneContainer.visibility = View.GONE
         }
     }
 

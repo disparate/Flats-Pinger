@@ -3,18 +3,15 @@ package kazarovets.flatspinger.views
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.os.Bundle
-import android.os.Parcelable
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.model.Subway
+import kotlinx.android.synthetic.main.view_subways_selector.view.*
 
 
 class SubwaysSelectorView : FrameLayout {
@@ -37,9 +34,6 @@ class SubwaysSelectorView : FrameLayout {
     //    private var viewsBetweenCheckboxes: MutableList<View> = ArrayList()
     private var checkboxesViews: MutableMap<Int, CheckBox> = HashMap()
 
-    private val mainContainer: ViewGroup
-    private val verticalLine: View
-
     var onCheckedChangedListener: OnSubwayCheckedListener? = null
 
     constructor(context: Context) :
@@ -52,9 +46,6 @@ class SubwaysSelectorView : FrameLayout {
             : super(context, attrs, defStyleAttr) {
         inflate(context, R.layout.view_subways_selector, this)
 
-        mainContainer = findViewById(R.id.main_container)
-        verticalLine = findViewById(R.id.vertical_line)
-
         colorNeutral = ContextCompat.getColor(context, R.color.colorSubwayNeutral)
 
         if (attrs != null) {
@@ -66,13 +57,13 @@ class SubwaysSelectorView : FrameLayout {
             color = Color.RED
             checkboxDrawable = ContextCompat.getDrawable(context, R.drawable.selector_check_subway_red)!!
         }
-        verticalLine.setBackgroundColor(color)
+        subwaysSelectorVerticalLine.setBackgroundColor(color)
     }
 
     private fun addChildViews() {
         checkboxesViews.clear()
 
-        mainContainer.removeAllViews()
+        subwaysSelectorMainContainer.removeAllViews()
 
         for (i in subways.indices) {
             addItemView(subways.get(i))
@@ -109,7 +100,7 @@ class SubwaysSelectorView : FrameLayout {
         checkBox.isSaveEnabled = false
 
         checkboxesViews.put(subway.id, checkBox)
-        mainContainer.addView(checkBox)
+        subwaysSelectorMainContainer.addView(checkBox)
     }
 
     private fun addLineView() {

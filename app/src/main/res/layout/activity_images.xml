@@ -5,12 +5,12 @@
     android:background="#000000">
 
     <kazarovets.flatspinger.ui.HackyViewPager
-        android:id="@+id/view_pager"
+        android:id="@+id/imagesViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <com.viewpagerindicator.CirclePageIndicator
-        android:id="@+id/page_indicator"
+        android:id="@+id/imagesPageIndicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
