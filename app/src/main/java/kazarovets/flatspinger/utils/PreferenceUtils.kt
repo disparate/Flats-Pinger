@@ -159,7 +159,7 @@ object PreferenceUtils {
             prefs.edit().putStringSet(FILTER_ROOM_NUMBER, set).apply()
         }
 
-    var updateDaysAgo: Int = FlatsApplication.DEFAULT_NUMBER_OF_DAYS_AD_IS_ACTUAL
+    var updateDaysAgo: Int? = null
         get() {
             field = prefs.getInt(SETTINGS_DAYS_AD_IS_ACTUAL,
                     FlatsApplication.DEFAULT_NUMBER_OF_DAYS_AD_IS_ACTUAL)
@@ -167,7 +167,7 @@ object PreferenceUtils {
         }
         set(value) {
             field = value
-            prefs.edit().putInt(SETTINGS_DAYS_AD_IS_ACTUAL, value).apply()
+            putNullableValue(SETTINGS_DAYS_AD_IS_ACTUAL, value)
         }
 
     var flatFilter: FlatFilter? = null

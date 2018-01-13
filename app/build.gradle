@@ -23,6 +23,11 @@ android {
     kapt {
         generateStubs = true
     }
+
+    sourceSets {
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
 }
 
 dependencies {
@@ -74,7 +79,10 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:${project.DAGGER_VERSION}"
 
     testCompile 'junit:junit:4.12'
+    testCompile "com.nhaarman:mockito-kotlin:1.5.0"
+    testCompile "io.kotlintest:kotlintest:2.0.7"
 }
+
 repositories {
     mavenCentral()
 }

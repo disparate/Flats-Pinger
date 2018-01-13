@@ -14,7 +14,6 @@ interface OnNumberChangedTextWatcher : TextWatcher {
             parseText(p0.toString())
         } catch (ex: NumberFormatException) {
             Log.d("OnNumberChangedWatcher", "Exception parsing text in number", ex)
-
         }
     }
 

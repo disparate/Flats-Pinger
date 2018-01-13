@@ -20,7 +20,7 @@ class FlatsFilterMatcher {
                     (filter.maxDistToSubway == null || filter.maxDistToSubway > flat.getDistanceToSubwayInMeters()) and
                     (!filter.allowWithPhotosOnly || flat.hasImages()) and
                     matchesKeywords(flat, filter.keywords) and
-                    (flat.getUpdatedTime() > System.currentTimeMillis() - filter.updateDatesAgo * DateUtils.DAY_IN_MILLIS) and
+                    matchesUpdateDate(flat, filter.updateDatesAgo) and
                     (filter.roomNumbers.isEmpty() || filter.roomNumbers.contains(flat.getRentType().name))
         }
 
@@ -40,6 +40,11 @@ class FlatsFilterMatcher {
 
             return matchedAny
 
+        }
+
+        fun matchesUpdateDate(flat: Flat, updateDatesAgo: Int?): Boolean {
+            return updateDatesAgo == null
+                    || flat.getUpdatedTime() > System.currentTimeMillis() - updateDatesAgo * DateUtils.DAY_IN_MILLIS
         }
 
     }

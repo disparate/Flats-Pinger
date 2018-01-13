@@ -15,9 +15,6 @@ android:
     # Used for support library
     - extra-android-m2repository
 
-script:
-  - ./gradlew build
-
 before_install:
   - chmod +x gradlew
   - yes | sdkmanager "platforms;android-27"

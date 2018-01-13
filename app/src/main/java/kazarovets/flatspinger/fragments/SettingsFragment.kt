@@ -47,7 +47,7 @@ class SettingsFragment : Fragment() {
         }
 
         daysAdIsActualView = view.findViewById(R.id.edit_text_days_ad_actual)
-        daysAdIsActualView?.text = PreferenceUtils.updateDaysAgo.toString()
+        daysAdIsActualView?.text = PreferenceUtils.updateDaysAgo?.toString() ?: ""
         daysAdIsActualView?.addTextChangedListener(object : OnNumberChangedTextWatcher {
             override fun parseText(text: String) {
                 if (text.isNotEmpty()) {
