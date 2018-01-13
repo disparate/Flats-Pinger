@@ -53,6 +53,6 @@ class FlatsMatcherUnitTest {
 
         flats.filter {
             FlatsFilterMatcher.matches(notAllowedFilter, it)
-        } shouldBe listOf(flat2, flat3, flat5)
+        } shouldBe listOf(flat2, flat3)
     }
 }
