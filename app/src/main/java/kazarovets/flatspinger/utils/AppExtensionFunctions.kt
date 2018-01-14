@@ -3,14 +3,14 @@ package kazarovets.flatspinger.utils
 import android.content.Context
 import kazarovets.flatspinger.FlatsApplication
 import kazarovets.flatspinger.di.AppComponent
-import kazarovets.flatspinger.model.FlatInfo
+import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.FlatFilter
 
 
-public fun Iterable<FlatInfo>.filterFlats() = filter {
-    val flatsFilter = PreferenceUtils.flatFilter
+fun <T : Flat> Iterable<T>.filterFlats(flatsFilter: FlatFilter?) = filter {
     FlatsFilterMatcher.matches(flatsFilter, it)
 }
 
-public fun Context.getAppComponent(): AppComponent {
+fun Context.getAppComponent(): AppComponent {
     return (this.applicationContext as FlatsApplication).appComponent
 }

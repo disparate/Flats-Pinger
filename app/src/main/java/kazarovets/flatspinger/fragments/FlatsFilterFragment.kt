@@ -21,13 +21,13 @@ class FlatsFilterFragment : Fragment() {
 
         class OnRentTypeCheckedListener(private val rentType: RentType) : CompoundButton.OnCheckedChangeListener {
             override fun onCheckedChanged(button: CompoundButton?, checked: Boolean) {
-                val set = HashSet(PreferenceUtils.roomNumbers)
+                val set = HashSet(PreferenceUtils.rentTypes)
                 if (checked) {
-                    set.add(rentType.name)
+                    set.add(rentType)
                 } else {
-                    set.remove(rentType.name)
+                    set.remove(rentType)
                 }
-                PreferenceUtils.roomNumbers = set
+                PreferenceUtils.rentTypes = set
             }
         }
     }
@@ -74,16 +74,16 @@ class FlatsFilterFragment : Fragment() {
             SubwaysDialogFragment().show(childFragmentManager, SUBWAYS_FRAGMENT_TAG)
         }
 
-        filterRent1k.isChecked = PreferenceUtils.roomNumbers.contains(RentType.FLAT_1_ROOM.name)
+        filterRent1k.isChecked = PreferenceUtils.rentTypes.contains(RentType.FLAT_1_ROOM)
         filterRent1k.setOnCheckedChangeListener(OnRentTypeCheckedListener(RentType.FLAT_1_ROOM))
 
-        filterRent2k.isChecked = PreferenceUtils.roomNumbers.contains(RentType.FLAT_2_ROOM.name)
+        filterRent2k.isChecked = PreferenceUtils.rentTypes.contains(RentType.FLAT_2_ROOM)
         filterRent2k.setOnCheckedChangeListener(OnRentTypeCheckedListener(RentType.FLAT_2_ROOM))
 
-        filterRent3k.isChecked = PreferenceUtils.roomNumbers.contains(RentType.FLAT_3_ROOM.name)
+        filterRent3k.isChecked = PreferenceUtils.rentTypes.contains(RentType.FLAT_3_ROOM)
         filterRent3k.setOnCheckedChangeListener(OnRentTypeCheckedListener(RentType.FLAT_3_ROOM))
 
-        filterRent4kAndMore.isChecked = PreferenceUtils.roomNumbers.contains(RentType.FLAT_4_ROOM_OR_MORE.name)
+        filterRent4kAndMore.isChecked = PreferenceUtils.rentTypes.contains(RentType.FLAT_4_ROOM_OR_MORE)
         filterRent4kAndMore.setOnCheckedChangeListener(OnRentTypeCheckedListener(RentType.FLAT_4_ROOM_OR_MORE))
     }
 }

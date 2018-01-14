@@ -37,7 +37,7 @@ class OnlinerApi constructor(context: Context) {
 
     val onlinerApiService by lazy { createService() }
 
-    fun getLatestFlats(minCost: Int?, maxCost: Int?, onlyOwner: Boolean, rentTypes: Set<String>): Single<List<OnlinerFlat>> {
+    fun getLatestFlats(minCost: Int?, maxCost: Int?, onlyOwner: Boolean, rentTypes: Set<RentType>): Single<List<OnlinerFlat>> {
         val currency = "USD"
         val owner = if (onlyOwner) true else null //weird onliner api
 
@@ -93,13 +93,13 @@ class OnlinerApi constructor(context: Context) {
 
     }
 
-    private fun getRentTypes(rentTypes: Set<String>): OnlinerRentTypes {
+    private fun getRentTypes(rentTypes: Set<RentType>): OnlinerRentTypes {
         val noRoomsFilter = rentTypes.isEmpty()
 
-        val has1Room = rentTypes.contains(RentType.FLAT_1_ROOM.name) || noRoomsFilter
-        val has2Rooms = rentTypes.contains(RentType.FLAT_2_ROOM.name) || noRoomsFilter
-        val has3Rooms = rentTypes.contains(RentType.FLAT_3_ROOM.name) || noRoomsFilter
-        val has4Rooms = rentTypes.contains(RentType.FLAT_4_ROOM_OR_MORE.name) || noRoomsFilter
+        val has1Room = rentTypes.contains(RentType.FLAT_1_ROOM) || noRoomsFilter
+        val has2Rooms = rentTypes.contains(RentType.FLAT_2_ROOM) || noRoomsFilter
+        val has3Rooms = rentTypes.contains(RentType.FLAT_3_ROOM) || noRoomsFilter
+        val has4Rooms = rentTypes.contains(RentType.FLAT_4_ROOM_OR_MORE) || noRoomsFilter
 
 
         return OnlinerRentTypes(if (has1Room) ONE_ROOM else null,

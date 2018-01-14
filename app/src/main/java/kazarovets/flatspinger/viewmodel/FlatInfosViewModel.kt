@@ -28,7 +28,7 @@ class FlatInfosViewModel(val repository: FlatsRepository,
 
         localDisposable = repository.getLocalFlats()
                 .map {
-                    val filtered = it.filterFlats()
+                    val filtered = it.filterFlats(PreferenceUtils.flatFilter)
                     filtered.filter { flatInfo ->
                         (!flatInfo.isSeen or showSeen) and (flatsMode?.statuses?.contains(flatInfo.status) ?: true)
                     }

@@ -29,11 +29,11 @@ class FlatsRepository(val flatsDao: FlatsDao) {
         val minCost = PreferenceUtils.minCost
         val maxCost = PreferenceUtils.maxCost
         val allowAgency = PreferenceUtils.allowAgency
-        val rooms = PreferenceUtils.roomNumbers
+        val rentTypes = PreferenceUtils.rentTypes
 
-        return Singles.zip(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, rooms)
+        return Singles.zip(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, rentTypes)
                 .doOnSuccess { flatsDao.addOnlinerFlats(it) },
-                ApiManager.iNeedAFlatApi.getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, rooms)
+                ApiManager.iNeedAFlatApi.getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, rentTypes)
                         .doOnSuccess { flatsDao.addINeedAFlatFlats(it) }) { onlinerFlats, iNeedAFlatFlats ->
 
             val res = ArrayList<Flat>()

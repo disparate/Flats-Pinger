@@ -7,6 +7,38 @@ import kazarovets.flatspinger.model.Subway
 class SubwayUtils {
 
     companion object {
+
+        val KAMENNAYA_GORKA_ID = 223
+        val KUNCEVSHINA_ID = 222
+        val SPORTIVNAYA_ID = 221
+        val PUSHKINSKAYA_ID = 220
+        val MOLODEZHNAYA_ID = 219
+        val FRUNZENSKAYA_ID = 218
+        val NEMIGA_ID = 217
+        val KUPALOVSKAYA_ID = 216
+        val PERVOMAYSKAYA_ID = 215
+        val PROLETARSKAYA_ID = 214
+        val TRAKTORNIY_ZAVOD_ID = 213
+        val PARTIZANSKAYA_ID = 212
+        val AVTOZAVODSKAYA_ID = 211
+        val MOGILEVSKAYA_ID = 210
+
+        val MALINOVKA_ID = 110
+        val PETROVSHINA_ID = 111
+        val MIHALOVA_ID = 112
+        val GRUSHEVKA_ID = 113
+        val INSTITUT_KULTURY_ID = 114
+        val PLOSHAD_LENINA_ID = 115
+        val OKTYABRSKAYA_ID = 116
+        val PLOSHAD_POBEDY_ID = 117
+        val PLOSHAD_YAKUBA_KOLASA_ID = 118
+        val AKADEMIYA_NAUK_ID = 119
+        val PARK_CHELUSKINCEV_ID = 120
+        val MOSKOVSKAYA_ID = 121
+        val VOSTOK_ID = 122
+        val BORISOVSKII_TRAKT_ID = 123
+        val URUCIE_ID = 124
+
         val RED_LINE_SUBWAYS = arrayOf(
                 Subway("Каменная Горка", 53.906876, 27.437716, 223),
                 Subway("Кунцевщина", 53.906537, 27.454189, 222),

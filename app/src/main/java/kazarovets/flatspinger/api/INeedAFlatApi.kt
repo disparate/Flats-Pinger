@@ -3,7 +3,6 @@ package kazarovets.flatspinger.api
 import android.util.Log
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.ineedaflat.INeedAFlatListResponse
 import kazarovets.flatspinger.model.RentType
 import kazarovets.flatspinger.model.ineedaflat.INeedAFlatFlat
@@ -34,7 +33,7 @@ class INeedAFlatApi {
 
     val iNeedAFlatApiService by lazy { createApiService() }
 
-    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rooms: Set<String>): Single<List<INeedAFlatFlat>> {
+    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rentTypes: Set<RentType>): Single<List<INeedAFlatFlat>> {
         val min = if (minCost != null) minCost else 0.0
         val max = if (maxCost != null) maxCost else 100000.0
         var query = "{\"attributes.price.value\":{\"\$gte\":$min,\"\$lte\":$max}," +
@@ -60,7 +59,7 @@ class INeedAFlatApi {
 //                "[27.522090040147308,53.929109668408316]," +
 //                "[27.52436690032482,53.925279425063465]," +
 //                "[27.534565664827824,53.91715641692136]]}}," +
-                getRoomsParam(rooms)
+                getRoomsParam(rentTypes)
         query = query.replace("{", "%7B").replace("}", "%7D")
                 .replace("[", "%5B").replace("]", "%5D")
 //        val createdAt = System.currentTimeMillis() - daysUpdatedAgo * DateUtils.DAY_IN_MILLIS
@@ -75,18 +74,17 @@ class INeedAFlatApi {
                 }
     }
 
-    private fun getRoomsParam(rooms: Set<String>): String {
+    private fun getRoomsParam(rentTypes: Set<RentType>): String {
         var list = ArrayList<String?>()
-        if (rooms.isEmpty()) {
+        if (rentTypes.isEmpty()) {
             list = ArrayList(rentTypesMap.values)
         }
-        for (room in rooms) {
-            val rentType = RentType.valueOf(room)
+        for (rentType in rentTypes) {
             if (rentTypesMap.containsKey(rentType)) {
                 list.add(rentTypesMap.get(rentType))
             }
         }
-        return "\"attributes.rooms\":{\"\$in\":[${list.joinToString(separator = ",")}]}}"
+        return "\"attributes.rentTypes\":{\"\$in\":[${list.joinToString(separator = ",")}]}}"
     }
 
 
