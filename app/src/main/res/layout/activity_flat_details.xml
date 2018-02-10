@@ -136,10 +136,24 @@
                 <TextView
                     android:id="@+id/detailsPhone"
                     android:layout_width="match_parent"
+                    android:textSize="16sp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:textColor="@color/colorPrimary"
                     tools:text="+375(29)292-87-04" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonOpenInBrowser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/rectangle_circular_bg"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:text="@string/open_link"
+                android:textColor="@color/colorWhite" />
 
             <fragment
                 android:id="@+id/map_fragment"

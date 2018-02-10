@@ -2,6 +2,7 @@ package kazarovets.flatspinger.flats
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -78,7 +79,7 @@ class FlatDetailsActivity : AppCompatActivity() {
         isFavorite = FlatsDatabase.getInstance(this)
                 .getFlatStatus(flat.getId(), flat.getProvider()) == FlatStatus.FAVORITE
 
-        fillDetails()
+        setupDetails()
 
         setupMap()
 
@@ -109,16 +110,16 @@ class FlatDetailsActivity : AppCompatActivity() {
                 it.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), MAP_ZOOM))
                 it.uiSettings.isZoomControlsEnabled = true
             }
-        } else {
-            if (mapFragment != null) {
-                supportFragmentManager.beginTransaction().remove(mapFragment).commit()
-            }
+        } else if (mapFragment != null) {
+            supportFragmentManager.beginTransaction().remove(mapFragment).commit()
         }
+
     }
 
-    private fun fillDetails() {
+    private fun setupDetails() {
         val flat = flat
-        if (!flat.getDescription().isNullOrEmpty()) {
+        detailsPhone.paintFlags = detailsPhone.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        if (!flat.getDescription().isEmpty()) {
             detailsDescription.text = flat.getDescription()
         } else {
             detailsDescriptionContainer.visibility = View.GONE
@@ -128,6 +129,8 @@ class FlatDetailsActivity : AppCompatActivity() {
         } else {
             detailsPhoneContainer.visibility = View.GONE
         }
+
+        buttonOpenInBrowser.setOnClickListener { openInBrowser() }
     }
 
 
@@ -135,6 +138,19 @@ class FlatDetailsActivity : AppCompatActivity() {
         if (!TextUtils.isEmpty(flat.getOriginalUrl())) {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(flat.getOriginalUrl()))
             startActivity(intent)
+        }
+    }
+
+    private fun shareFlatLink() {
+        val url = flat.getOriginalUrl()
+        if (url == null) {
+            //todo: show no url dialog (can it be possible?)
+        } else {
+            val share = Intent(Intent.ACTION_SEND)
+            share.type = "text/plain"
+            share.putExtra(Intent.EXTRA_TEXT, url)
+
+            startActivity(Intent.createChooser(share, getString(R.string.share_link_title)))
         }
     }
 
@@ -160,7 +176,7 @@ class FlatDetailsActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.web -> openInBrowser()
+            R.id.share -> shareFlatLink()
             R.id.favorite -> {
                 changeIsFavorite()
                 invalidateOptionsMenu()
