@@ -84,7 +84,7 @@ class INeedAFlatApi {
                 list.add(rentTypesMap.get(rentType))
             }
         }
-        return "\"attributes.rentTypes\":{\"\$in\":[${list.joinToString(separator = ",")}]}}"
+        return "\"attributes.rooms\":{\"\$in\":[${list.joinToString(separator = ",")}]}}"
     }
 
 
