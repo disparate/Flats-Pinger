@@ -19,7 +19,7 @@
             app:contentScrim="?attr/colorPrimaryDark"
             app:expandedTitleTextAppearance="@style/TextAppearance.FlatDetails.CollapsingToolbar.Expanded"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            tools:context="kazarovets.flatspinger.activity.FlatDetailsActivity">
+            tools:context="kazarovets.flatspinger.flats.FlatDetailsActivity">
 
             <ImageView
                 android:id="@+id/detailsFlatImage"
@@ -143,7 +143,7 @@
 
             <fragment
                 android:id="@+id/map_fragment"
-                android:name="kazarovets.flatspinger.fragments.MovableMapsFragment"
+                android:name="kazarovets.flatspinger.flats.MovableMapsFragment"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
                 android:layout_marginTop="24dp"

@@ -31,7 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.FlatDetailsActivity" />
+        <activity android:name=".flats.FlatDetailsActivity" />
         <activity
             android:name=".activity.ImagesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

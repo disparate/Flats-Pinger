@@ -1,4 +1,4 @@
-package kazarovets.flatspinger.fragments
+package kazarovets.flatspinger.flats
 
 import android.graphics.Point
 import android.os.Bundle
@@ -10,7 +10,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
-import kazarovets.flatspinger.activity.FlatDetailsActivity
 import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatStatus

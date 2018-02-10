@@ -1,4 +1,4 @@
-package kazarovets.flatspinger.fragments
+package kazarovets.flatspinger.flats
 
 import android.content.Context
 import com.google.android.gms.maps.SupportMapFragment

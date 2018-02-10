@@ -15,7 +15,6 @@ import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableSingleObserver
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.MainActivity
 import kazarovets.flatspinger.db.FlatsDatabase
@@ -34,6 +33,8 @@ class FlatsJobSchedulerService : JobService() {
         val NOTIFICATION_ID = 314
         val NOTIFICATION_CHANNEL_ID = "new_flats"
         val NOTIFICATION_CHANNEL_NAME = "New flats"
+
+        val TAG = "FlatsJob"
     }
 
     @Inject
@@ -60,6 +61,7 @@ class FlatsJobSchedulerService : JobService() {
     }
 
     private fun loadData(params: JobParameters?) {
+        Log.d("FlatsJob", "Starting job")
         val flatsFilter = PreferenceUtils.flatFilter
         disposable = flatsRepository.getRemoteFlats()
                 .toObservable()
@@ -72,21 +74,21 @@ class FlatsJobSchedulerService : JobService() {
                 }
                 .toSortedList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<List<Flat>>() {
-                    override fun onError(e: Throwable) {
-                        Log.e("FlatsListFragment", "Error receiving flats", e)
-                        onFlatsReceived(null)
-                        releaseSubscription()
-                        jobFinished(params, true)
-                    }
+                .subscribe(
+                        {
+                            onFlatsReceived(it)
+                            Log.d(TAG, "Received ${it.size} flats")
+                            releaseSubscription()
+                            jobFinished(params, false)
+                        },
+                        { e ->
+                            Log.e(TAG, "Error receiving flats", e)
+                            onFlatsReceived(null)
+                            releaseSubscription()
+                            jobFinished(params, true)
+                        }
 
-                    override fun onSuccess(flats: List<Flat>) {
-                        onFlatsReceived(flats)
-                        releaseSubscription()
-                        jobFinished(params, false)
-                    }
-
-                })
+                )
     }
 
     private fun onFlatsReceived(flats: List<Flat>?) {
@@ -99,7 +101,7 @@ class FlatsJobSchedulerService : JobService() {
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.notification_title_new_flats))
-//                .setContentText("${flats.size} ${getString(R.string)}")
+                .setContentText(getString(R.string.notification_text_format, flats.size.toString()))
                 .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

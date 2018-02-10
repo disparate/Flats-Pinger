@@ -1,4 +1,4 @@
-package kazarovets.flatspinger.fragments
+package kazarovets.flatspinger.flats
 
 import android.annotation.TargetApi
 import android.arch.lifecycle.Observer
@@ -21,7 +21,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionButton
 import kazarovets.flatspinger.R
-import kazarovets.flatspinger.activity.FlatDetailsActivity
 import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatInfo

@@ -1,30 +1,24 @@
-package kazarovets.flatspinger.activity
+package kazarovets.flatspinger.flats
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kazarovets.flatspinger.R
+import kazarovets.flatspinger.activity.ImagesActivity
 import kazarovets.flatspinger.db.FlatsDatabase
-import kazarovets.flatspinger.fragments.MovableMapsFragment
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.StringsUtils
-import kazarovets.flatspinger.views.FlatTagsView
 import kotlinx.android.synthetic.main.activity_flat_details.*
 
 

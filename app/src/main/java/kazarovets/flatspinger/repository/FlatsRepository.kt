@@ -1,8 +1,8 @@
 package kazarovets.flatspinger.repository
 
-import io.reactivex.Flowable
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Transformations
 import io.reactivex.Single
-import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.Singles
 import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.db.dao.FlatsDao
@@ -10,18 +10,26 @@ import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatInfoImpl
 import kazarovets.flatspinger.utils.PreferenceUtils
+import kazarovets.flatspinger.utils.mergeWith
 
 
 class FlatsRepository(val flatsDao: FlatsDao) {
 
-    private val flatsObservable: Flowable<List<FlatInfo>> = Flowables.zip(flatsDao.getOnlinerFlats(), flatsDao.getINeedAFlatFlats()) { list1, list2 ->
-        val res = ArrayList<FlatInfo>()
-        list1.mapTo(res) { FlatInfoImpl(it.flat, it.status, it.isSeen) }
-        list2.mapTo(res) { FlatInfoImpl(it.flat, it.status, it.isSeen) }
-        res
+    private val onlinerFlatInfos = Transformations.map(flatsDao.getOnlinerFlats()) {
+        val dest = ArrayList<FlatInfo>()
+        it.mapTo(dest) { FlatInfoImpl(it.flat, it.status, it.isSeen)}
     }
 
-    fun getLocalFlats(): Flowable<List<FlatInfo>> = flatsObservable
+
+    private val iNeedAFlatFlatInfos = Transformations.map(flatsDao.getINeedAFlatFlats()) {
+        val dest = ArrayList<FlatInfo>()
+        it.mapTo(dest) { FlatInfoImpl(it.flat, it.status, it.isSeen)}
+    }
+
+    private val flatsLiveData: LiveData<List<FlatInfo>> = onlinerFlatInfos.mergeWith(
+            iNeedAFlatFlatInfos)
+
+    fun getLocalFlats(): LiveData<List<FlatInfo>> = flatsLiveData
 
 
     fun getRemoteFlats(): Single<List<Flat>> {

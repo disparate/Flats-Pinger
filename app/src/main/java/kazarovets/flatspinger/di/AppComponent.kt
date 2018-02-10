@@ -3,8 +3,8 @@ package kazarovets.flatspinger.di
 import dagger.Component
 import kazarovets.flatspinger.activity.MainActivity
 import kazarovets.flatspinger.flats.FlatsJobSchedulerService
-import kazarovets.flatspinger.fragments.FlatsListFragment
-import kazarovets.flatspinger.fragments.FlatsMapFragment
+import kazarovets.flatspinger.flats.FlatsListFragment
+import kazarovets.flatspinger.flats.FlatsMapFragment
 import javax.inject.Singleton
 
 
