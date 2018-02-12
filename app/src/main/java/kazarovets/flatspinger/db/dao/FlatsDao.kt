@@ -21,13 +21,23 @@ interface FlatsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun addFlatStatus(dbFlatInfo: DBFlatInfo)
 
-    //    @Query("UPDATE DBFlatInfo SET status = :status WHERE flat_id = :id AND provider = :provider")
-    @Query("UPDATE DBFlatInfo SET status = :arg1 WHERE flat_id = :arg0 AND provider = :arg2")
+    @Query("UPDATE DBFlatInfo SET status = :status WHERE flat_id = :id AND provider = :provider")
     fun updateFlatStatus(id: String, status: FlatStatus, provider: Provider)
 
-    //    @Query("UPDATE DBFlatInfo SET is_seen = :isSeen WHERE flat_id = :id AND provider = :provider")
-    @Query("UPDATE DBFlatInfo SET is_seen = :arg1 WHERE flat_id = :arg0 AND provider = :arg2")
+    @Query("UPDATE DBFlatInfo SET is_seen = :isSeen WHERE flat_id = :id AND provider = :provider")
     fun updateFlatIsSeen(id: String, isSeen: Boolean, provider: Provider)
+
+    @Query("SELECT * FROM DBFlatInfo WHERE flat_id = :id AND provider = :provider")
+    fun getFlatInfo(id: String, provider: Provider): LiveData<DBFlatInfo>
+
+    @Query("SELECT * FROM DBFlatInfo WHERE status = :status")
+    fun getFlatsByStatus(status: FlatStatus): LiveData<List<DBFlatInfo>>
+
+    @Query("SELECT * FROM DBFlatInfo WHERE status <> :status")
+    fun getFlatsExcludingStatusFlowable(status: FlatStatus): Flowable<List<DBFlatInfo>>
+
+    @Query("SELECT * FROM DBFlatInfo WHERE is_seen = :isSeen")
+    fun getSeenFlatsFlowable(isSeen: Boolean): Flowable<List<DBFlatInfo>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addOnlinerFlats(flats: List<OnlinerFlat>)

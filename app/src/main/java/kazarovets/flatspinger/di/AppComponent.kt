@@ -2,6 +2,7 @@ package kazarovets.flatspinger.di
 
 import dagger.Component
 import kazarovets.flatspinger.activity.MainActivity
+import kazarovets.flatspinger.flats.FlatDetailsActivity
 import kazarovets.flatspinger.flats.FlatsJobSchedulerService
 import kazarovets.flatspinger.flats.FlatsListFragment
 import kazarovets.flatspinger.flats.FlatsMapFragment
@@ -19,4 +20,6 @@ interface AppComponent {
     fun inject(service: FlatsJobSchedulerService)
 
     fun inject(activity: MainActivity)
+
+    fun inject(activity: FlatDetailsActivity)
 }

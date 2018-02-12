@@ -10,8 +10,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
-import kazarovets.flatspinger.db.FlatsDatabase
-import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.widgets.FlatInfoWindowAdapter
 
@@ -72,19 +71,18 @@ class FlatsMapFragment : SupportMapFragment() {
         }
     }
 
-    fun setFlats(flats: List<Flat>?) {
+    fun setFlats(flats: List<FlatInfo>?) {
         map?.clear()
 
-        val flatsDB = FlatsDatabase.getInstance(context!!)
 
         if (flats == null)
             return
 
-        fun getIconGeneratorStyle(flat: Flat): Int {
-            if (flatsDB.getFlatStatus(flat.getId(), flat.getProvider()) == FlatStatus.FAVORITE) {
+        fun getIconGeneratorStyle(flat: FlatInfo): Int {
+            if (flat.status == FlatStatus.FAVORITE) {
                 return IconGenerator.STYLE_ORANGE
             }
-            if (flatsDB.isSeenFlat(flat.getId(), flat.getProvider())) {
+            if (flat.isSeen) {
                 return IconGenerator.STYLE_DEFAULT
             }
             return if (flat.isOwner()) IconGenerator.STYLE_BLUE else IconGenerator.STYLE_RED

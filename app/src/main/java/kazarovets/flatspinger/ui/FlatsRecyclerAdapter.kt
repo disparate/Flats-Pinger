@@ -9,14 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import kazarovets.flatspinger.R
-import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.utils.SubwayUtils
 
 
-class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
+class FlatsRecyclerAdapter(var flats: MutableList<FlatInfo>, private val onFavoriteChangedListener: (Flat, Boolean) -> Unit)
     : RecyclerView.Adapter<FlatsRecyclerAdapter.FlatsViewHolder>() {
 
     var onClickListener: OnItemClickListener? = null
@@ -45,20 +45,13 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
 
             holder.updatedTime?.text = StringsUtils.getTimeAgoString(flat.getUpdatedTime(), context)
 
-            val isFavorite = FlatsDatabase.getInstance(context)
-                    .getFlatStatus(flat.getId(), flat.getProvider()) == FlatStatus.FAVORITE
+            val isFavorite = flat.status == FlatStatus.FAVORITE
             setFavoriteIcon(holder.favoriteIcon, isFavorite)
             holder.favoriteIcon?.isSelected = isFavorite
             holder.favoriteIcon?.setOnClickListener {
                 val imageView = it as ImageView
-                val db = FlatsDatabase.getInstance(context)
                 imageView.isSelected = !imageView.isSelected
-                if (imageView.isSelected) {
-                    db.setFavoriteFlat(flat.getId(), flat.getProvider())
-                } else {
-                    db.setRegularFlat(flat.getId(), flat.getProvider())
-                }
-                imageView.isSelected
+                onFavoriteChangedListener.invoke(flat, imageView.isSelected)
                 setFavoriteIcon(imageView, imageView.isSelected)
             }
         }
@@ -84,7 +77,7 @@ class FlatsRecyclerAdapter(var flats: MutableList<Flat>)
         return flats.size
     }
 
-    fun setData(data: List<Flat>?) {
+    fun setData(data: List<FlatInfo>?) {
         if (data != null) {
             flats.clear()
             flats.addAll(data)

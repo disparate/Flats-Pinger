@@ -21,12 +21,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionButton
 import kazarovets.flatspinger.R
-import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
-import kazarovets.flatspinger.utils.PreferenceUtils
 import kazarovets.flatspinger.utils.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModel
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
@@ -48,7 +46,7 @@ class FlatsListFragment : Fragment() {
     private var paint: Paint = Paint()
     private var currentMode: MODE = MODE.LIST
 
-    private var flats: MutableList<Flat> = ArrayList()
+    private var flats: MutableList<FlatInfo> = ArrayList()
 
     private var flatsMapFragment: FlatsMapFragment? = null
 
@@ -60,7 +58,6 @@ class FlatsListFragment : Fragment() {
         currentMode = mode
         flatsViewModel.flatsMode = mode
         fillFloatingMenu()
-        updateAdapterData()
         flatsListMapSwitcher.displayedChild = getDisplayedPagePos(mode)
     }
 
@@ -85,7 +82,10 @@ class FlatsListFragment : Fragment() {
         }
 
         flatsListRecycler.layoutManager = LinearLayoutManager(context)
-        adapter = FlatsRecyclerAdapter(ArrayList())
+        adapter = FlatsRecyclerAdapter(ArrayList(),
+                onFavoriteChangedListener = { flat, isFav ->
+                    flatsViewModel.updateIsFavorite(flat, isFav)
+                })
         adapter?.onClickListener = object : FlatsRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(item: Flat) {
                 val intent = FlatDetailsActivity.getCallingIntent(context!!, item)
@@ -115,15 +115,15 @@ class FlatsListFragment : Fragment() {
     }
 
 
-    private fun onFlatsReceived(flats: List<Flat>?) {
-        val list = ArrayList<Flat>()
+    private fun onFlatsReceived(flats: List<FlatInfo>?) {
+        val list = ArrayList<FlatInfo>()
         if (flats != null) {
             list.addAll(flats)
         }
         this.flats = list
         updateAdapterData()
 
-        flatsMapFragment?.setFlats(getFilteredFlats())
+        flatsMapFragment?.setFlats(flats ?: emptyList())
     }
 
     private fun initSwipe() {
@@ -138,21 +138,15 @@ class FlatsListFragment : Fragment() {
             }
 
 
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                return false
-            }
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
 
-                val flat = adapter?.getItem(position)
-                if (flat != null) {
+                adapter?.getItem(position)?.let { flat ->
                     if (direction == ItemTouchHelper.LEFT) {
                         adapter?.removeItem(position)
-                        FlatsDatabase.getInstance(context!!).setHiddenFlat(flat.getId(), flat.getProvider())
-//                    } else {
-//                        adapter?.removeItem(position)
-//                        FlatsDatabase.getInstance(context).setRegularFlat(flat.getId(), flat.getProvider())
+                        flatsViewModel.setHiddenFlat(flat)
                     }
                 }
             }
@@ -167,24 +161,15 @@ class FlatsListFragment : Fragment() {
                     val height = itemView.bottom.toFloat() - itemView.top.toFloat()
                     val width = height / 3
 
-                    if (dX > 0) {
-//                        paint.setColor(ContextCompat.getColor(context, R.color.colorFlatSeen))
-//                        val background = RectF(itemView.left.toFloat(), itemView.top.toFloat(), dX, itemView.bottom.toFloat())
-//                        c.drawRect(background, paint)
-//                        val vectorDrawable = context.getDrawable(R.drawable.ic_seen_white) as VectorDrawable
-//                        icon = getBitmap(vectorDrawable)
-//                        val icon_dest = RectF(itemView.left.toFloat() - width / 2 + dX / 2, itemView.top.toFloat() + width,
-//                                itemView.left.toFloat() + width / 2 + dX / 2, itemView.bottom.toFloat() - width)
-//                        c.drawBitmap(icon, null, icon_dest, paint)
-                    } else {
-                        paint.setColor(ContextCompat.getColor(context!!, R.color.colorFlatDelete))
+                    if (dX <= 0) {
+                        paint.color = ContextCompat.getColor(context!!, R.color.colorFlatDelete)
                         val background = RectF(itemView.right.toFloat() + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
                         c.drawRect(background, paint)
                         val vectorDrawable = context?.getDrawable(R.drawable.ic_delete_white) as VectorDrawable
                         icon = getBitmap(vectorDrawable)
-                        val icon_dest = RectF(itemView.right.toFloat() - width / 2 + dX / 2, itemView.top.toFloat() + width,
+                        val iconDest = RectF(itemView.right.toFloat() - width / 2 + dX / 2, itemView.top.toFloat() + width,
                                 itemView.right.toFloat() + width / 2 + dX / 2, itemView.bottom.toFloat() - width)
-                        c.drawBitmap(icon, null, icon_dest, paint)
+                        c.drawBitmap(icon, null, iconDest, paint)
                     }
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
@@ -194,24 +179,8 @@ class FlatsListFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(flatsListRecycler)
     }
 
-    private fun getFilteredFlats(): List<Flat> {
-        return flats.filter {
-            if (context == null) {
-                return flats
-            }
-
-            val db = FlatsDatabase.getInstance(context!!)
-            val status = db.getFlatStatus(it.getId(), it.getProvider())
-            val seen = db.isSeenFlat(it.getId(), it.getProvider())
-            val showSeen = PreferenceUtils.showSeenFlats
-
-            //todo: seen flats
-            currentMode.statuses.contains(status) && (showSeen || !seen)
-        }
-    }
-
     private fun updateAdapterData() {
-        adapter?.setData(getFilteredFlats())
+        adapter?.setData(flats)
     }
 
     private fun fillFloatingMenu() {

@@ -12,6 +12,8 @@ class FlatInfosViewModelFactory(val flatsRepository: FlatsRepository, val schedu
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(FlatInfosViewModel::class.java)) {
             return FlatInfosViewModel(flatsRepository, schedulersFacade) as T
+        } else if (modelClass.isAssignableFrom(FlatDetailsViewModel::class.java)) {
+            return FlatDetailsViewModel(flatsRepository, schedulersFacade) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

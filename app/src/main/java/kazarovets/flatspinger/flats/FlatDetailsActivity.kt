@@ -1,5 +1,7 @@
 package kazarovets.flatspinger.flats
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
@@ -16,11 +18,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.ImagesActivity
-import kazarovets.flatspinger.db.FlatsDatabase
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.StringsUtils
+import kazarovets.flatspinger.utils.getAppComponent
+import kazarovets.flatspinger.viewmodel.FlatDetailsViewModel
+import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
 import kotlinx.android.synthetic.main.activity_flat_details.*
+import javax.inject.Inject
 
 
 class FlatDetailsActivity : AppCompatActivity() {
@@ -38,7 +42,11 @@ class FlatDetailsActivity : AppCompatActivity() {
         val MAP_ZOOM = 15.0f
     }
 
+    @Inject
+    lateinit var flatsFactory: FlatInfosViewModelFactory
+
     private lateinit var flat: Flat
+    private lateinit var detailsViewModel: FlatDetailsViewModel
 
     private var mapFragment: MovableMapsFragment? = null
 
@@ -51,9 +59,11 @@ class FlatDetailsActivity : AppCompatActivity() {
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
+
         val flat = intent.extras.getSerializable(EXTRA_FLAT) as Flat
         this.flat = flat
 
+        setupViewModel(flat)
         setContentView(R.layout.activity_flat_details)
 
         setSupportActionBar(detailsToolbar)
@@ -76,14 +86,26 @@ class FlatDetailsActivity : AppCompatActivity() {
 
         detailsFlatTags.tags = flat.getTags()
 
-        isFavorite = FlatsDatabase.getInstance(this)
-                .getFlatStatus(flat.getId(), flat.getProvider()) == FlatStatus.FAVORITE
 
         setupDetails()
 
         setupMap()
+    }
 
-        FlatsDatabase.getInstance(this).setSeenFlat(flat.getId(), flat.getProvider())
+    private fun setupViewModel(flat: Flat) {
+
+        getAppComponent().inject(this)
+
+        detailsViewModel = ViewModelProviders.of(this, flatsFactory)
+                .get(FlatDetailsViewModel::class.java)
+        detailsViewModel.init(flat)
+
+        detailsViewModel.flatIsFavoriteLiveData.observe(this, Observer {
+            this.isFavorite = it == true
+            invalidateOptionsMenu()
+        })
+
+        detailsViewModel.setSeenFlat(flat)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -133,7 +155,6 @@ class FlatDetailsActivity : AppCompatActivity() {
         buttonOpenInBrowser.setOnClickListener { openInBrowser() }
     }
 
-
     private fun openInBrowser() {
         if (!TextUtils.isEmpty(flat.getOriginalUrl())) {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(flat.getOriginalUrl()))
@@ -155,22 +176,19 @@ class FlatDetailsActivity : AppCompatActivity() {
     }
 
     private fun changeIsFavorite() {
-        isFavorite = !isFavorite
-        if (isFavorite) {
-            FlatsDatabase.getInstance(this).setFavoriteFlat(flat.getId(), flat.getProvider())
-        } else {
-            FlatsDatabase.getInstance(this).setRegularFlat(flat.getId(), flat.getProvider())
-        }
+        detailsViewModel.updateIsFavorite(flat, !isFavorite)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.details_menu, menu)
         val favoriteItem = menu?.findItem(R.id.favorite)
-        if (isFavorite) {
-            favoriteItem?.setIcon(R.drawable.ic_star_white_24dp)
+
+        favoriteItem?.setIcon(if (isFavorite) {
+            R.drawable.ic_star_white_24dp
         } else {
-            favoriteItem?.setIcon(R.drawable.ic_star_border_white_24dp)
-        }
+            R.drawable.ic_star_border_white_24dp
+        })
+
         return true
     }
 
@@ -179,7 +197,6 @@ class FlatDetailsActivity : AppCompatActivity() {
             R.id.share -> shareFlatLink()
             R.id.favorite -> {
                 changeIsFavorite()
-                invalidateOptionsMenu()
             }
             else -> return false
         }

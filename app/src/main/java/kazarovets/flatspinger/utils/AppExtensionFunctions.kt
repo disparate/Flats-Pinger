@@ -36,3 +36,35 @@ fun <A> LiveData<out List<A>>.mergeWith(other: LiveData<out List<A>>): LiveData<
         }
     }
 }
+
+fun <A, B, C, D, T> zip(liveDataA: LiveData<A>, liveDataB: LiveData<B>,
+                        liveDataC: LiveData<C>, liveDataD: LiveData<D>,
+                        zipFunction: (A?, B?, C?, D?) -> T?): LiveData<T> {
+    return MediatorLiveData<T>().apply {
+        var lastA: A? = null
+        var lastB: B? = null
+        var lastC: C? = null
+        var lastD: D? = null
+
+        fun update() {
+            this.value = zipFunction(lastA, lastB, lastC, lastD)
+        }
+
+        addSource(liveDataA) {
+            lastA = it
+            update()
+        }
+        addSource(liveDataB) {
+            lastB = it
+            update()
+        }
+        addSource(liveDataC) {
+            lastC = it
+            update()
+        }
+        addSource(liveDataD) {
+            lastD = it
+            update()
+        }
+    }
+}

@@ -15,11 +15,12 @@ import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.Observables
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.MainActivity
-import kazarovets.flatspinger.db.FlatsDatabase
+import kazarovets.flatspinger.db.model.DBFlatInfo
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatStatus
+import kazarovets.flatspinger.model.FlatFilter
 import kazarovets.flatspinger.repository.FlatsRepository
 import kazarovets.flatspinger.utils.FlatsFilterMatcher
 import kazarovets.flatspinger.utils.PreferenceUtils
@@ -62,17 +63,8 @@ class FlatsJobSchedulerService : JobService() {
 
     private fun loadData(params: JobParameters?) {
         Log.d("FlatsJob", "Starting job")
-        val flatsFilter = PreferenceUtils.flatFilter
-        disposable = flatsRepository.getRemoteFlats()
-                .toObservable()
-                .flatMap { Observable.fromIterable(it) }
-                .filter { FlatsFilterMatcher.matches(flatsFilter, it) }
-                .filter {
-                    val db = FlatsDatabase.getInstance(applicationContext)
-                    !db.isSeenFlat(it.getId(), it.getProvider())
-                            && db.getFlatStatus(it.getId(), it.getProvider()) == FlatStatus.REGULAR
-                }
-                .toSortedList()
+
+        disposable = getFilteredObservable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         {
@@ -89,6 +81,26 @@ class FlatsJobSchedulerService : JobService() {
                         }
 
                 )
+    }
+
+    private fun getFilteredObservable(): Observable<List<Flat>> {
+        val flatsFilter = PreferenceUtils.flatFilter
+        val seenFlats = flatsRepository.getSeenFlatsFlowable().take(1).toObservable()
+        val notRegularFlats = flatsRepository.getNotRegularFlatsFlowable().take(1).toObservable()
+        return Observables.zip(flatsRepository.getRemoteFlats().toObservable(),
+                seenFlats,
+                notRegularFlats, { remoteFlats, seenDbFlats, notRegularDbFlats ->
+            remoteFlats.filter { filterFlat(it, seenDbFlats, notRegularDbFlats, flatsFilter) }
+        })
+    }
+
+    private fun filterFlat(flat: Flat,
+                           seenDbFlats: List<DBFlatInfo>,
+                           notRegularDbFlats: List<DBFlatInfo>,
+                           flatsFilter: FlatFilter): Boolean {
+        return FlatsFilterMatcher.matches(flatsFilter, flat)
+                && seenDbFlats.find { it.isInfoFor(flat) } == null
+                && notRegularDbFlats.find { it.isInfoFor(flat) } == null
     }
 
     private fun onFlatsReceived(flats: List<Flat>?) {
@@ -133,7 +145,7 @@ class FlatsJobSchedulerService : JobService() {
         notificationChannel.enableLights(true)
         notificationChannel.lightColor = Color.RED
         notificationChannel.enableVibration(true)
-        notificationChannel.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+        notificationChannel.vibrationPattern = longArrayOf(500, 400, 500)
         val notifManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notifManager.createNotificationChannel(notificationChannel)
     }

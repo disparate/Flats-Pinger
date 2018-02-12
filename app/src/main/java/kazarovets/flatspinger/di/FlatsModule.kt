@@ -19,7 +19,8 @@ class FlatsModule {
     @Provides
     fun provideFlatsDatabase(applicationContext: Context): AppDatabase {
         return Room.databaseBuilder(applicationContext,
-                AppDatabase::class.java, "flats.db").build()
+                AppDatabase::class.java, "flats.db")
+                .build()
     }
 
     @Singleton

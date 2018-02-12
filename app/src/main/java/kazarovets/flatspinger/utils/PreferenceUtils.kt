@@ -1,17 +1,24 @@
 package kazarovets.flatspinger.utils
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.LiveData
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.util.Log
+import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.FlatsApplication
 import kazarovets.flatspinger.model.FlatFilter
 import kazarovets.flatspinger.model.RentType
 
 
-@SuppressLint("StaticFieldLeak")
+@SuppressLint("StaticFieldLeak", "CommitPrefEdits")
 object PreferenceUtils {
+
+    /**
+     * Don't use apply() because it runs listeners on UI thread and blocks it.
+     * Use schedule() instead.
+     */
 
     lateinit var context: Context
     val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
@@ -30,9 +37,6 @@ object PreferenceUtils {
     val SETTINGS_ENABLE_NOTIFICATONS = "enable_notifications"
 
     val TAG = "PreferenceUtils"
-
-    val FLATS_FILTER_JSON = "flats_filter_json"
-
 
     fun init(context: Context) {
         this.context = context.applicationContext
@@ -66,7 +70,7 @@ object PreferenceUtils {
         }
         set(value) {
             field = value
-            prefs.edit().putBoolean(FILTER_AGENCY_ALLOWED, value).apply()
+            prefs.edit().putBoolean(FILTER_AGENCY_ALLOWED, value).schedule()
         }
 
     var allowPhotosOnly: Boolean = false
@@ -76,7 +80,7 @@ object PreferenceUtils {
         }
         set(value) {
             field = value
-            prefs.edit().putBoolean(FILTER_WITH_PHOTOS_ONLY, value).apply()
+            prefs.edit().putBoolean(FILTER_WITH_PHOTOS_ONLY, value).schedule()
         }
 
     var subwayIds: MutableSet<Int> = HashSet()
@@ -94,7 +98,7 @@ object PreferenceUtils {
             for (id in field) {
                 set.add(id.toString())
             }
-            prefs.edit().putStringSet(FILTER_SUBWAYS_IDS, set).apply()
+            prefs.edit().putStringSet(FILTER_SUBWAYS_IDS, set).schedule()
         }
 
     var rentTypes: MutableSet<RentType> = HashSet()
@@ -117,7 +121,7 @@ object PreferenceUtils {
             for (type in field) {
                 set.add(type.name)
             }
-            prefs.edit().putStringSet(FILTER_RENT_TYPES, set).apply()
+            prefs.edit().putStringSet(FILTER_RENT_TYPES, set).schedule()
         }
 
     var maxDistToSubway: Double? = null
@@ -142,7 +146,7 @@ object PreferenceUtils {
         set(value) {
             field = value
             val set = HashSet(value)
-            prefs.edit().putStringSet(FILTER_KEYWORDS, set).apply()
+            prefs.edit().putStringSet(FILTER_KEYWORDS, set).schedule()
         }
 
     var updateDaysAgo: Int? = null
@@ -156,7 +160,7 @@ object PreferenceUtils {
             putNullableValue(SETTINGS_DAYS_AD_IS_ACTUAL, value)
         }
 
-    var flatFilter: FlatFilter? = null
+    var flatFilter: FlatFilter = FlatFilter()
         get() {
             field = FlatFilter(minCost = minCost,
                     maxCost = maxCost,
@@ -171,18 +175,16 @@ object PreferenceUtils {
 
         }
         set(value) {
-            if (value != null) {
-                field = value
-                minCost = value.minCost
-                maxCost = value.maxCost
-                subwayIds = HashSet(value.subwaysIds)
-                allowAgency = value.agencyAllowed
-                rentTypes = HashSet(value.rentTypes)
-                maxDistToSubway = value.maxDistToSubway
-                allowPhotosOnly = value.allowWithPhotosOnly
-                keywords = HashSet(value.keywords)
-                updateDaysAgo = value.updateDatesAgo
-            }
+            field = value
+            minCost = value.minCost
+            maxCost = value.maxCost
+            subwayIds = HashSet(value.subwaysIds)
+            allowAgency = value.agencyAllowed
+            rentTypes = HashSet(value.rentTypes)
+            maxDistToSubway = value.maxDistToSubway
+            allowPhotosOnly = value.allowWithPhotosOnly
+            keywords = HashSet(value.keywords)
+            updateDaysAgo = value.updateDatesAgo
         }
 
     var enableNotifications: Boolean = false
@@ -191,7 +193,7 @@ object PreferenceUtils {
             return field
         }
         set(value) {
-            prefs.edit().putBoolean(SETTINGS_ENABLE_NOTIFICATONS, value).apply()
+            prefs.edit().putBoolean(SETTINGS_ENABLE_NOTIFICATONS, value).schedule()
         }
 
     var showSeenFlats: Boolean = false
@@ -200,7 +202,7 @@ object PreferenceUtils {
             return field
         }
         set(value) {
-            prefs.edit().putBoolean(SETTINGS_SHOW_SEEN_FLATS, value).apply()
+            prefs.edit().putBoolean(SETTINGS_SHOW_SEEN_FLATS, value).schedule()
         }
 
     private fun getNullableInt(fieldName: String): Int? {
@@ -215,17 +217,111 @@ object PreferenceUtils {
 
     private fun putNullableValue(fieldName: String, value: Int?) {
         if (value != null) {
-            prefs.edit().putInt(fieldName, value).apply()
+            prefs.edit().putInt(fieldName, value).schedule()
         } else {
-            prefs.edit().remove(fieldName).apply()
+            prefs.edit().remove(fieldName).schedule()
         }
     }
 
     private fun putNullableValue(fieldName: String, value: Double?) {
         if (value != null) {
-            prefs.edit().putFloat(fieldName, value.toFloat()).apply()
+            prefs.edit().putFloat(fieldName, value.toFloat()).schedule()
         } else {
-            prefs.edit().remove(fieldName).apply()
+            prefs.edit().remove(fieldName).schedule()
+        }
+    }
+
+    fun getFlatsFilterLiveData() = FlatsFilterLiveData(prefs)
+
+    class FlatsFilterLiveData(private val sharedPrefs: SharedPreferences) : LiveData<FlatFilter>() {
+        companion object {
+            val KEYS = arrayOf(FILTER_MIN_COST_USD, FILTER_MAX_COST_USD,
+                    FILTER_AGENCY_ALLOWED, FILTER_WITH_PHOTOS_ONLY, FILTER_SUBWAYS_IDS,
+                    FILTER_RENT_TYPES, FILTER_MAX_DISTANCE_TO_SUBWAY, FILTER_KEYWORDS)
+        }
+
+        private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (KEYS.contains(key)) {
+                value = getValueFromPreferences()
+            }
+        }
+
+        fun getValueFromPreferences(): FlatFilter = PreferenceUtils.flatFilter
+
+        override fun onActive() {
+            super.onActive()
+            value = getValueFromPreferences()
+            sharedPrefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+        }
+
+        override fun onInactive() {
+            sharedPrefs.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
+            super.onInactive()
+        }
+
+    }
+
+    fun getBooleanLiveData(key: String, defValue: Boolean): SharedPreferenceBooleanLiveData {
+        return SharedPreferenceBooleanLiveData(prefs, key, defValue)
+    }
+
+    abstract class SharedPreferenceLiveData<T>(val sharedPrefs: SharedPreferences,
+                                               private val key: String,
+                                               private val defValue: T) : LiveData<T>() {
+
+        private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == this.key) {
+                value = getValueFromPreferences(key, defValue)
+            }
+        }
+
+        abstract fun getValueFromPreferences(key: String, defValue: T): T
+
+        override fun onActive() {
+            super.onActive()
+            value = getValueFromPreferences(key, defValue)
+            sharedPrefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+        }
+
+        override fun onInactive() {
+            sharedPrefs.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
+            super.onInactive()
+        }
+    }
+
+    class SharedPreferenceIntLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Int) :
+            SharedPreferenceLiveData<Int>(sharedPrefs, key, defValue) {
+        override fun getValueFromPreferences(key: String, defValue: Int): Int = sharedPrefs.getInt(key, defValue)
+    }
+
+    class SharedPreferenceStringLiveData(sharedPrefs: SharedPreferences, key: String, defValue: String) :
+            SharedPreferenceLiveData<String>(sharedPrefs, key, defValue) {
+        override fun getValueFromPreferences(key: String, defValue: String): String = sharedPrefs.getString(key, defValue)
+    }
+
+    class SharedPreferenceBooleanLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Boolean) :
+            SharedPreferenceLiveData<Boolean>(sharedPrefs, key, defValue) {
+        override fun getValueFromPreferences(key: String, defValue: Boolean): Boolean = sharedPrefs.getBoolean(key, defValue)
+    }
+
+    class SharedPreferenceFloatLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Float) :
+            SharedPreferenceLiveData<Float>(sharedPrefs, key, defValue) {
+        override fun getValueFromPreferences(key: String, defValue: Float): Float = sharedPrefs.getFloat(key, defValue)
+    }
+
+    class SharedPreferenceLongLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Long) :
+            SharedPreferenceLiveData<Long>(sharedPrefs, key, defValue) {
+        override fun getValueFromPreferences(key: String, defValue: Long): Long = sharedPrefs.getLong(key, defValue)
+    }
+
+    class SharedPreferenceStringSetLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Set<String>) :
+            SharedPreferenceLiveData<Set<String>>(sharedPrefs, key, defValue) {
+        override fun getValueFromPreferences(key: String, defValue: Set<String>): Set<String> = sharedPrefs.getStringSet(key, defValue)
+    }
+
+    fun SharedPreferences.Editor.schedule() {
+        Schedulers.io().scheduleDirect {
+            this.apply()
         }
     }
 }
