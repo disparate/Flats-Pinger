@@ -2,6 +2,7 @@ package kazarovets.flatspinger.flats
 
 import android.graphics.Point
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -10,6 +11,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.widgets.FlatInfoWindowAdapter
@@ -87,6 +91,36 @@ class FlatsMapFragment : SupportMapFragment() {
             }
             return if (flat.isOwner()) IconGenerator.STYLE_BLUE else IconGenerator.STYLE_RED
         }
+
+        Observable.fromIterable(flats)
+                .map { flat ->
+                    val lat = flat.getLatitude()
+                    val long = flat.getLongitude()
+                    return@map if (lat != null && long != null) {
+                        val markerOptions = MarkerOptions()
+                                .icon(BitmapDescriptorFactory.fromBitmap(
+                                        iconGenerator?.makeIcon("${flat.getCostInDollars()}$")))
+                                .position(LatLng(lat, long))
+                        Pair(markerOptions, flat)
+                    } else {
+                        Pair(null, flat)
+                    }
+                }
+                .filter { it.first != null }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    val (markerOptions, flat) = it
+                    val flatsMarker = map?.addMarker(markerOptions)
+
+                    if (flatsMarker != null) {
+                        infoWindowAdapter?.addFlat(flatsMarker, flat)
+                    }
+                    iconGenerator?.setStyle(getIconGeneratorStyle(flat))
+
+                }, {
+                    Log.e("FlatsMap", "error setting icon for flat", it)
+                })
 
         for (flat in flats) {
             val lat = flat.getLatitude()
