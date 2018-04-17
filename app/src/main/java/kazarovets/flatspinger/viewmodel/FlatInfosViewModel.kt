@@ -2,6 +2,7 @@ package kazarovets.flatspinger.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.util.Log
 import io.reactivex.disposables.Disposable
 import kazarovets.flatspinger.flats.FlatsListFragment
 import kazarovets.flatspinger.model.Flat
@@ -23,10 +24,11 @@ class FlatInfosViewModel(val repository: FlatsRepository,
             showSeenLiveData, flatsModeLiveData) { flats, filter, seen, mode ->
         val showSeen = seen ?: false
         val filtered = flats?.filterFlats(filter)
-        filtered?.filter { flatInfo ->
+        val res = filtered?.filter { flatInfo ->
             (!flatInfo.isSeen or (flatInfo.status == FlatStatus.FAVORITE) or showSeen)
                     && (mode?.statuses?.contains(flatInfo.status) ?: true)
         }?.sorted()
+        res
     }
     private val favoriteFlatsLiveData = repository.getFavoriteFlats()
 

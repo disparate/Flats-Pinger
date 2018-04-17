@@ -13,6 +13,7 @@ import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.model.Provider
 import kazarovets.flatspinger.model.ineedaflat.INeedAFlatFlat
 import kazarovets.flatspinger.model.onliner.OnlinerFlat
+import retrofit2.http.DELETE
 
 
 @Dao

@@ -5,6 +5,7 @@ import android.arch.lifecycle.MediatorLiveData
 import android.content.Context
 import android.util.Log
 import io.reactivex.Single
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.FlatsApplication
 import kazarovets.flatspinger.di.AppComponent
@@ -46,15 +47,18 @@ fun <A> LiveData<out List<A>>.mergeWith(other: LiveData<out List<A>>): LiveData<
 
 fun <A, B, C, D, T> zip(liveDataA: LiveData<A>, liveDataB: LiveData<B>,
                         liveDataC: LiveData<C>, liveDataD: LiveData<D>,
-                        zipFunction: (A?, B?, C?, D?) -> T?): LiveData<T> {
+                         zipFunction: (A?, B?, C?, D?) -> T?): LiveData<T> {
     return MediatorLiveData<T>().apply {
         var lastA: A? = null
         var lastB: B? = null
         var lastC: C? = null
         var lastD: D? = null
 
+        var disposable: Disposable? = null
+
         fun update() {
-            Single.fromCallable { zipFunction(lastA, lastB, lastC, lastD) }
+            disposable?.dispose()
+            disposable = Single.fromCallable { zipFunction(lastA, lastB, lastC, lastD) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .subscribe({

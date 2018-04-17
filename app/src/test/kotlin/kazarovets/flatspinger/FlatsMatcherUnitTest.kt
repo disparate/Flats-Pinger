@@ -16,8 +16,8 @@ import org.junit.Test
 class FlatsMatcherUnitTest {
 
     companion object {
-        val KEYWORD_1 = "keyword1"
-        val KEYWORD_2 = "keyword2"
+        const val KEYWORD_1 = "keyword1"
+        const val KEYWORD_2 = "keyword2"
     }
 
     private val flat1 = mock<Flat> {

@@ -15,12 +15,12 @@ class FlatsFilterMatcher {
             return (filter.agencyAllowed || flat.isOwner()) and
                     (filter.minCost == null || filter.minCost <= flat.getCostInDollars()) and
                     (filter.maxCost == null || filter.maxCost >= flat.getCostInDollars()) and
+                    matchesUpdateDate(flat, filter.updateDatesAgo) and
                     (filter.rentTypes.isEmpty() || filter.rentTypes.contains(flat.getRentType())) and
                     (filter.subwaysIds.isEmpty() || filter.subwaysIds.contains(flat.getNearestSubway()?.id)) and
                     matchesMaxDistanceToSubway(flat, filter.maxDistToSubway, filter.closeToSubway) and
                     (!filter.allowWithPhotosOnly || flat.hasImages()) and
-                    matchesKeywords(flat, filter.keywords) and
-                    matchesUpdateDate(flat, filter.updateDatesAgo)
+                    matchesKeywords(flat, filter.keywords)
         }
 
         private fun matchesKeywords(flat: Flat, keywords: Set<String>): Boolean {

@@ -195,6 +195,8 @@ class FlatsListFragment : Fragment() {
 
             val fab = FloatingActionButton(context)
             fab.setImageResource(getFabImage(mode))
+            fab.setColorNormalResId(R.color.colorAccent)
+            fab.setColorPressedResId(R.color.colorAccent)
             fab.tag = mode
             fab.labelText = getString(getFabText(mode))
             fab.setOnClickListener(filterClickListener)
