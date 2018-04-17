@@ -1,11 +1,13 @@
 package kazarovets.flatspinger
 
 import android.app.Application
+import com.github.moduth.blockcanary.BlockCanary
 import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.di.AppComponent
 import kazarovets.flatspinger.di.AppModule
 import kazarovets.flatspinger.di.DaggerAppComponent
 import kazarovets.flatspinger.di.FlatsModule
+import kazarovets.flatspinger.utils.AppBlockCanaryContext
 import kazarovets.flatspinger.utils.PreferenceUtils
 
 
@@ -29,6 +31,8 @@ class FlatsApplication : Application() {
                 .appModule(AppModule(this))
                 .flatsModule(FlatsModule())
                 .build()
+
+        BlockCanary.install(this, AppBlockCanaryContext()).start()
     }
 }
 
