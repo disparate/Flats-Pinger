@@ -84,15 +84,15 @@ class KeywordsDialogFragment : DialogFragment() {
                 }
             }
 
-            override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): KeywordsHolder {
-                val v = LayoutInflater.from(parent?.context).inflate(R.layout.item_keyword_with_x, parent, false)
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KeywordsHolder {
+                val v = LayoutInflater.from(parent.context).inflate(R.layout.item_keyword_with_x, parent, false)
                 return KeywordsHolder(v)
             }
 
-            override fun onBindViewHolder(holder: KeywordsHolder?, position: Int) {
+            override fun onBindViewHolder(holder: KeywordsHolder, position: Int) {
                 val item = keywords[position]
-                holder?.name?.text = item
-                holder?.close?.setOnClickListener {
+                holder.name?.text = item
+                holder.close?.setOnClickListener {
                     keywords.remove(item)
                     val set = HashSet<String>(keywords)
                     PreferenceUtils.keywords = set
