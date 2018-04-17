@@ -26,7 +26,11 @@ fun <A> LiveData<out List<A>>.mergeWith(other: LiveData<out List<A>>): LiveData<
         var lastOther: List<A>? = null
 
         fun update() {
-            this.value = (lastThis.orEmpty()).plus(lastOther.orEmpty())
+            Single.just(lastThis.orEmpty())
+                    .map { it + lastOther.orEmpty() }
+                    .subscribe { list ->
+                        postValue(list)
+                    }
         }
 
         addSource(this@mergeWith) {

@@ -167,6 +167,7 @@ object PreferenceUtils {
                     subwaysIds = subwayIds,
                     agencyAllowed = allowAgency,
                     allowWithPhotosOnly = allowPhotosOnly,
+                    closeToSubway = maxDistToSubway != null && subwayIds.isNotEmpty(),
                     rentTypes = rentTypes,
                     maxDistToSubway = maxDistToSubway,
                     keywords = keywords,

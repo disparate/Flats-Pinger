@@ -92,36 +92,6 @@ class FlatsMapFragment : SupportMapFragment() {
             return if (flat.isOwner()) IconGenerator.STYLE_BLUE else IconGenerator.STYLE_RED
         }
 
-        Observable.fromIterable(flats)
-                .map { flat ->
-                    val lat = flat.getLatitude()
-                    val long = flat.getLongitude()
-                    return@map if (lat != null && long != null) {
-                        val markerOptions = MarkerOptions()
-                                .icon(BitmapDescriptorFactory.fromBitmap(
-                                        iconGenerator?.makeIcon("${flat.getCostInDollars()}$")))
-                                .position(LatLng(lat, long))
-                        Pair(markerOptions, flat)
-                    } else {
-                        Pair(null, flat)
-                    }
-                }
-                .filter { it.first != null }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    val (markerOptions, flat) = it
-                    val flatsMarker = map?.addMarker(markerOptions)
-
-                    if (flatsMarker != null) {
-                        infoWindowAdapter?.addFlat(flatsMarker, flat)
-                    }
-                    iconGenerator?.setStyle(getIconGeneratorStyle(flat))
-
-                }, {
-                    Log.e("FlatsMap", "error setting icon for flat", it)
-                })
-
         for (flat in flats) {
             val lat = flat.getLatitude()
             val long = flat.getLongitude()

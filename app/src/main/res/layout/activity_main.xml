@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
@@ -15,13 +16,13 @@
             app:titleTextColor="@color/toolbarTitleTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark"
             android:minHeight="?attr/actionBarSize" />
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
         android:id="@+id/mainContainer"
         android:layout_width="match_parent"
+        android:background="@color/colorWhite"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
