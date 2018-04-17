@@ -1,5 +1,6 @@
 package kazarovets.flatspinger.ui
 
+import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -21,39 +22,38 @@ class FlatsRecyclerAdapter(var flats: MutableList<FlatInfo>, private val onFavor
 
     var onClickListener: OnItemClickListener? = null
 
-    override fun onBindViewHolder(holder: FlatsViewHolder?, position: Int) {
-        val flat = flats.get(position)
-        if (holder != null) {
-            val context = holder.itemView.context
-            holder.flat = flat
+    @SuppressLint("SetTextI18n")
+    override fun onBindViewHolder(holder: FlatsViewHolder, position: Int) {
+        val flat = flats[position]
+        val context = holder.itemView.context
+        holder.flat = flat
 
-            Glide.clear(holder.imageView)
-            if (!TextUtils.isEmpty(flat.getImageUrl())) {
-                Glide.with(holder.itemView.context).load(flat.getImageUrl()).centerCrop().into(holder.imageView)
-            }
+        Glide.clear(holder.imageView)
+        if (!TextUtils.isEmpty(flat.getImageUrl())) {
+            Glide.with(holder.itemView.context).load(flat.getImageUrl()).centerCrop().into(holder.imageView)
+        }
 
-            holder.costView?.text = "${flat.getCostInDollars()}$"
-            val latitude = flat.getLatitude()
-            val longitude = flat.getLongitude()
-            if (latitude != null && longitude != null) {
-                holder.subwayView?.text = "${SubwayUtils.getNearestSubway(latitude, longitude).name}" +
-                        " (${flat.getDistanceToSubwayInMeters().toInt()}${context.getString(R.string.meter_small)})"
-            }
-            holder.agencyLine?.visibility = if (flat.isOwner()) View.INVISIBLE else View.VISIBLE
-            holder.provider?.setImageResource(flat.getProvider().drawableRes)
-            holder.source?.text = flat.getSource()
+        holder.costView?.text = "${flat.getCostInDollars()}$"
+        val latitude = flat.getLatitude()
+        val longitude = flat.getLongitude()
+        if (latitude != null && longitude != null) {
+            holder.subwayView?.text = SubwayUtils.getNearestSubway(latitude, longitude).name +
+                    " (${flat.getDistanceToSubwayInMeters().toInt()}${context.getString(R.string.meter_small)})"
+        }
+        holder.agencyLine?.visibility = if (flat.isOwner()) View.INVISIBLE else View.VISIBLE
+        holder.provider?.setImageResource(flat.getProvider().drawableRes)
+        holder.source?.text = flat.getSource()
 
-            holder.updatedTime?.text = StringsUtils.getTimeAgoString(flat.getUpdatedTime(), context)
+        holder.updatedTime?.text = StringsUtils.getTimeAgoString(flat.getUpdatedTime(), context)
 
-            val isFavorite = flat.status == FlatStatus.FAVORITE
-            setFavoriteIcon(holder.favoriteIcon, isFavorite)
-            holder.favoriteIcon?.isSelected = isFavorite
-            holder.favoriteIcon?.setOnClickListener {
-                val imageView = it as ImageView
-                imageView.isSelected = !imageView.isSelected
-                onFavoriteChangedListener.invoke(flat, imageView.isSelected)
-                setFavoriteIcon(imageView, imageView.isSelected)
-            }
+        val isFavorite = flat.status == FlatStatus.FAVORITE
+        setFavoriteIcon(holder.favoriteIcon, isFavorite)
+        holder.favoriteIcon?.isSelected = isFavorite
+        holder.favoriteIcon?.setOnClickListener {
+            val imageView = it as ImageView
+            imageView.isSelected = !imageView.isSelected
+            onFavoriteChangedListener.invoke(flat, imageView.isSelected)
+            setFavoriteIcon(imageView, imageView.isSelected)
         }
     }
 
@@ -61,8 +61,8 @@ class FlatsRecyclerAdapter(var flats: MutableList<FlatInfo>, private val onFavor
         favoriteIcon?.setImageResource(if (isFavorite) R.drawable.ic_star_24dp else R.drawable.ic_star_border_24dp)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): FlatsViewHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.list_item_flat, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlatsViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_flat, parent, false)
         val holder = FlatsViewHolder(view)
         holder.itemView.setOnClickListener {
             val flat = holder.flat

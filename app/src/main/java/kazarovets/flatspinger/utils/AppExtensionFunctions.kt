@@ -3,6 +3,9 @@ package kazarovets.flatspinger.utils
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.content.Context
+import android.util.Log
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.FlatsApplication
 import kazarovets.flatspinger.di.AppComponent
 import kazarovets.flatspinger.model.Flat
@@ -47,7 +50,14 @@ fun <A, B, C, D, T> zip(liveDataA: LiveData<A>, liveDataB: LiveData<B>,
         var lastD: D? = null
 
         fun update() {
-            this.value = zipFunction(lastA, lastB, lastC, lastD)
+            Single.fromCallable { zipFunction(lastA, lastB, lastC, lastD) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe({
+                        postValue(it)
+                    }, { error ->
+                        Log.d("ZipLiveData", "error zipping data", error)
+                    })
         }
 
         addSource(liveDataA) {
