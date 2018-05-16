@@ -13,4 +13,11 @@
         <attr name="metaButtonBarStyle" format="reference" />
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
+
+
+    <declare-styleable name="ContentViewFlipper">
+        <attr name="content_empty_text" format="string" />
+        <attr name="content_loading_progress" format="reference" />
+        <attr name="progress_auto_start" format="boolean" />
+    </declare-styleable>
 </resources>

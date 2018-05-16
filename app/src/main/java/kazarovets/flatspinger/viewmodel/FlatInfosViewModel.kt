@@ -61,7 +61,11 @@ class FlatInfosViewModel(val repository: FlatsRepository,
                 .observeOn(schedulersFacade.ui())
                 .doOnSubscribe { isLoading.value = true }
                 .doAfterTerminate { isLoading.value = false }
-                .subscribe()
+                .subscribe({
+
+                }, {
+                    Log.e("FlatInfosViewModel", "error loading flats", it)
+                })
     }
 
     fun setHiddenFlat(flat: Flat) {

@@ -59,4 +59,8 @@
     <string name="notification_text_format">%s новых</string>
 
     <string name="share_link_title">Поделиться ссылкой на квартиру с помощью:</string>
+
+    <string name="no_data">Данные отсутствуют.</string>
+    <string name="progress_loading">Загрузка…</string>
+    <string name="no_data_flats">Новых вариантов нету.</string>
 </resources>

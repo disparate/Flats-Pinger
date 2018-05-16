@@ -35,7 +35,7 @@ class OnlinerApi constructor(context: Context) {
                                        val fourRooms: String?, val fiveRooms: String?, val sixRooms: String?)
     }
 
-    val onlinerApiService by lazy { createService() }
+    private val onlinerApiService by lazy { createService() }
 
     fun getLatestFlats(minCost: Int?, maxCost: Int?, onlyOwner: Boolean, rentTypes: Set<RentType>): Single<List<OnlinerFlat>> {
         val currency = "USD"

@@ -1,20 +1,11 @@
 package kazarovets.flatspinger.flats
 
-import android.annotation.TargetApi
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.RectF
-import android.graphics.drawable.VectorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +19,7 @@ import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
 import kazarovets.flatspinger.utils.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModel
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
+import kazarovets.flatspinger.views.FlatTouchHelperCallback
 import kotlinx.android.synthetic.main.fragment_flats_list.*
 import javax.inject.Inject
 
@@ -43,7 +35,6 @@ class FlatsListFragment : Fragment() {
     lateinit var flatsFactory: FlatInfosViewModelFactory
 
     private var adapter: FlatsRecyclerAdapter? = null
-    private var paint: Paint = Paint()
     private var currentMode: MODE = MODE.LIST
 
     private var flats: MutableList<FlatInfo> = ArrayList()
@@ -86,12 +77,14 @@ class FlatsListFragment : Fragment() {
                 onFavoriteChangedListener = { flat, isFav ->
                     flatsViewModel.updateIsFavorite(flat, isFav)
                 })
+
         adapter?.onClickListener = object : FlatsRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(item: Flat) {
                 val intent = FlatDetailsActivity.getCallingIntent(context!!, item)
                 startActivity(intent)
             }
         }
+
         flatsListRecycler.adapter = adapter
         initSwipe()
 
@@ -99,12 +92,15 @@ class FlatsListFragment : Fragment() {
 
         flatsListSwipeRefresh.isRefreshing = true
 
-        flatsViewModel.getFlats().observe(this, Observer<List<FlatInfo>> {
+        flatsViewModel.getFlats().observe(this, Observer {
             onFlatsReceived(it)
         })
 
+
+        flatsContentViewFlipper.showLoader()
         flatsViewModel.getIsLoading().observe(this, Observer<Boolean> {
             flatsListSwipeRefresh.isRefreshing = it ?: flatsListSwipeRefresh.isRefreshing ?: false
+            flatsContentViewFlipper.showContentIfNotEmpty(flats)
         })
 
         flatsMapFragment = FlatsMapFragment()
@@ -127,54 +123,15 @@ class FlatsListFragment : Fragment() {
     }
 
     private fun initSwipe() {
-        val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-
-            override fun isItemViewSwipeEnabled(): Boolean = true
-
-            override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
-                val dragFlags = 0
-                val swipeFlags = ItemTouchHelper.LEFT
-                return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
-            }
-
-
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) = false
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-
-                adapter?.getItem(position)?.let { flat ->
-                    if (direction == ItemTouchHelper.LEFT) {
-                        adapter?.removeItem(position)
-                        flatsViewModel.setHiddenFlat(flat)
-                    }
+        val simpleItemTouchCallback = FlatTouchHelperCallback(context!!) { position, direction ->
+            adapter?.getItem(position)?.let { flat ->
+                if (direction == ItemTouchHelper.LEFT) {
+                    adapter?.removeItem(position)
+                    flatsViewModel.setHiddenFlat(flat)
                 }
-            }
-
-            override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-                                     dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
-
-                val icon: Bitmap
-                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-
-                    val itemView = viewHolder.itemView
-                    val height = itemView.bottom.toFloat() - itemView.top.toFloat()
-                    val width = height / 3
-
-                    if (dX <= 0) {
-                        paint.color = ContextCompat.getColor(context!!, R.color.colorFlatDelete)
-                        val background = RectF(itemView.right.toFloat() + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
-                        c.drawRect(background, paint)
-                        val vectorDrawable = context?.getDrawable(R.drawable.ic_delete_white) as VectorDrawable
-                        icon = getBitmap(vectorDrawable)
-                        val iconDest = RectF(itemView.right.toFloat() - width / 2 + dX / 2, itemView.top.toFloat() + width,
-                                itemView.right.toFloat() + width / 2 + dX / 2, itemView.bottom.toFloat() - width)
-                        c.drawBitmap(icon, null, iconDest, paint)
-                    }
-                }
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         }
+
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
         itemTouchHelper.attachToRecyclerView(flatsListRecycler)
     }
@@ -221,15 +178,6 @@ class FlatsListFragment : Fragment() {
         MODE.FAVORITES -> R.string.fab_favorites
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun getBitmap(vectorDrawable: VectorDrawable): Bitmap {
-        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth,
-                vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
-        vectorDrawable.draw(canvas)
-        return bitmap
-    }
 
     enum class MODE(val statuses: List<FlatStatus>) {
         LIST(listOf(FlatStatus.REGULAR, FlatStatus.FAVORITE)),

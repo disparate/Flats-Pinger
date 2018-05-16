@@ -2,6 +2,7 @@ package kazarovets.flatspinger
 
 import android.app.Application
 import com.github.moduth.blockcanary.BlockCanary
+import io.reactivex.plugins.RxJavaPlugins
 import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.di.AppComponent
 import kazarovets.flatspinger.di.AppModule
@@ -17,7 +18,7 @@ class FlatsApplication : Application() {
         private set
 
     companion object {
-        val DEFAULT_NUMBER_OF_DAYS_AD_IS_ACTUAL = 10
+        const val DEFAULT_NUMBER_OF_DAYS_AD_IS_ACTUAL = 10
     }
 
     override fun onCreate() {
@@ -32,7 +33,7 @@ class FlatsApplication : Application() {
                 .flatsModule(FlatsModule())
                 .build()
 
-        BlockCanary.install(this, AppBlockCanaryContext()).start()
+//        BlockCanary.install(this, AppBlockCanaryContext()).start()
     }
 }
 
