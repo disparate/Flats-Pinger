@@ -7,13 +7,10 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import kazarovets.flatspinger.db.model.DBFlatInfo
-import kazarovets.flatspinger.db.model.INeedAFlatFlatInfo
-import kazarovets.flatspinger.db.model.OnlinerFlatInfo
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.model.Provider
-import kazarovets.flatspinger.model.ineedaflat.INeedAFlatFlat
+import kazarovets.flatspinger.model.ineedaflat.DBFlat
 import kazarovets.flatspinger.model.onliner.OnlinerFlat
-import retrofit2.http.DELETE
 
 
 @Dao
@@ -41,14 +38,11 @@ interface FlatsDao {
     fun getSeenFlatsFlowable(isSeen: Boolean): Flowable<List<DBFlatInfo>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addOnlinerFlats(flats: List<OnlinerFlat>)
+    fun addFavoriteOnlinerFlat(flats: OnlinerFlat)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addINeedAFlatFlats(flats: List<INeedAFlatFlat>)
+    fun addFavoriteFlat(flat: DBFlat)
 
-    @Query("SELECT F.*, FI.status, FI.is_seen, FI.provider from OnlinerFlat F LEFT OUTER JOIN DBFlatInfo FI ON FI.flat_id = id WHERE FI.provider LIKE \"ONLINER\" OR FI.provider IS NULL")
-    fun getOnlinerFlats(): LiveData<List<OnlinerFlatInfo>>
-
-    @Query("SELECT F.*, FI.status, FI.is_seen, FI.provider from INeedAFlatFlat F LEFT OUTER JOIN DBFlatInfo FI ON FI.flat_id = id WHERE FI.provider LIKE \"I_NEED_A_FLAT\" OR FI.provider IS NULL")
-    fun getINeedAFlatFlats(): LiveData<List<INeedAFlatFlatInfo>>
+    @Query("SELECT DBFlat.*")
+    fun getFavoriteFlats(): Flowable<List<DBFlat>>
 }

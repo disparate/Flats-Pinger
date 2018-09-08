@@ -12,11 +12,11 @@ class FlatsFilterMatcher {
             if (filter == null) {
                 return true
             }
-            return (filter.agencyAllowed || flat.isOwner()) and
-                    (filter.minCost == null || filter.minCost <= flat.getCostInDollars()) and
-                    (filter.maxCost == null || filter.maxCost >= flat.getCostInDollars()) and
+            return (filter.agencyAllowed || flat.isOwner) and
+                    (filter.minCost == null || filter.minCost <= flat.costInDollars) and
+                    (filter.maxCost == null || filter.maxCost >= flat.costInDollars) and
                     matchesUpdateDate(flat, filter.updateDatesAgo) and
-                    (filter.rentTypes.isEmpty() || filter.rentTypes.contains(flat.getRentType())) and
+                    (filter.rentTypes.isEmpty() || filter.rentTypes.contains(flat.rentType)) and
                     (filter.subwaysIds.isEmpty() || filter.subwaysIds.contains(flat.getNearestSubway()?.id)) and
                     matchesMaxDistanceToSubway(flat, filter.maxDistToSubway, filter.closeToSubway) and
                     (!filter.allowWithPhotosOnly || flat.hasImages()) and
@@ -30,9 +30,9 @@ class FlatsFilterMatcher {
 
             var matchedAny = false
             for (word in keywords) {
-                val matchedAddress = flat.getAddress().contains(word.trim(), true)
+                val matchedAddress = flat.address.contains(word.trim(), true)
 
-                val matchedDescription = flat.getDescription().contains(word.trim(), true)
+                val matchedDescription = flat.description.contains(word.trim(), true)
 
                 matchedAny = matchedAny or (matchedAddress or matchedDescription)
             }
@@ -43,7 +43,7 @@ class FlatsFilterMatcher {
 
         private fun matchesUpdateDate(flat: Flat, updateDatesAgo: Int?): Boolean {
             return updateDatesAgo == null
-                    || flat.getUpdatedTime() > System.currentTimeMillis() - updateDatesAgo * DateUtils.DAY_IN_MILLIS
+                    || flat.updatedTime > System.currentTimeMillis() - updateDatesAgo * DateUtils.DAY_IN_MILLIS
         }
 
         private fun matchesMaxDistanceToSubway(flat: Flat,

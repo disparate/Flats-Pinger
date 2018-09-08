@@ -21,75 +21,75 @@ class FlatsMatcherUnitTest {
     }
 
     private val flat1 = mock<Flat> {
-        on { isOwner() } doReturn false
-        on { getCostInDollars() } doReturn 400
+        on { isOwner } doReturn false
+        on { costInDollars } doReturn 400
         on { hasImages() } doReturn false
         on { getDistanceToSubwayInMeters() } doReturn 350.0
         on { getNearestSubway() } doReturn Subway(id = SubwayUtils.KAMENNAYA_GORKA_ID)
-        on { getRentType() } doReturn RentType.FLAT_2_ROOM
-        on { getDescription() } doReturn "bla $KEYWORD_1"
-        on { getAddress() } doReturn "bla"
-        on { getUpdatedTime() } doReturn daysAgoMillis(4)
+        on { rentType } doReturn RentType.FLAT_2_ROOM
+        on { description } doReturn "bla $KEYWORD_1"
+        on { address } doReturn "bla"
+        on { updatedTime } doReturn daysAgoMillis(4)
     }
 
     private val flat2 = mock<Flat> {
-        on { isOwner() } doReturn true
-        on { getCostInDollars() } doReturn 1400
+        on { isOwner } doReturn true
+        on { costInDollars } doReturn 1400
         on { hasImages() } doReturn true
         on { getDistanceToSubwayInMeters() } doReturn 400.0
         on { getNearestSubway() } doReturn null as Subway?
-        on { getRentType() } doReturn RentType.FLAT_3_ROOM
-        on { getAddress() } doReturn ""
-        on { getDescription() } doReturn "bla $KEYWORD_1 bla $KEYWORD_2"
-        on { getUpdatedTime() } doReturn daysAgoMillis(0)
+        on { rentType } doReturn RentType.FLAT_3_ROOM
+        on { address } doReturn ""
+        on { description } doReturn "bla $KEYWORD_1 bla $KEYWORD_2"
+        on { updatedTime } doReturn daysAgoMillis(0)
     }
 
     private val flat3 = mock<Flat> {
-        on { isOwner() } doReturn true
-        on { getCostInDollars() } doReturn 200
+        on { isOwner } doReturn true
+        on { costInDollars } doReturn 200
         on { hasImages() } doReturn true
         on { getDistanceToSubwayInMeters() } doReturn 680.0
         on { getNearestSubway() } doReturn Subway(id = SubwayUtils.OKTYABRSKAYA_ID)
-        on { getRentType() } doReturn RentType.NONE
-        on { getAddress() } doReturn "bla $KEYWORD_2"
-        on { getDescription() } doReturn "bla $KEYWORD_1"
-        on { getUpdatedTime() } doReturn daysAgoMillis(14)
+        on { rentType } doReturn RentType.NONE
+        on { address } doReturn "bla $KEYWORD_2"
+        on { description } doReturn "bla $KEYWORD_1"
+        on { updatedTime} doReturn daysAgoMillis(14)
     }
 
     private val flat4 = mock<Flat> {
-        on { isOwner() } doReturn false
-        on { getCostInDollars() } doReturn 350
+        on { isOwner } doReturn false
+        on { costInDollars } doReturn 350
         on { hasImages() } doReturn true
         on { getDistanceToSubwayInMeters() } doReturn 250.0
         on { getNearestSubway() } doReturn Subway(id = SubwayUtils.PLOSHAD_YAKUBA_KOLASA_ID)
-        on { getRentType() } doReturn RentType.FLAT_1_ROOM
-        on { getAddress() } doReturn "bla $KEYWORD_2 bla $KEYWORD_1"
-        on { getDescription() } doReturn "bla"
-        on { getUpdatedTime() } doReturn daysAgoMillis(24)
+        on { rentType } doReturn RentType.FLAT_1_ROOM
+        on { address } doReturn "bla $KEYWORD_2 bla $KEYWORD_1"
+        on { description } doReturn "bla"
+        on { updatedTime } doReturn daysAgoMillis(24)
     }
 
     private val flat5 = mock<Flat> {
-        on { isOwner() } doReturn false
-        on { getCostInDollars() } doReturn 200
+        on { isOwner } doReturn false
+        on { costInDollars } doReturn 200
         on { hasImages() } doReturn false
         on { getDistanceToSubwayInMeters() } doReturn 950.0
         on { getNearestSubway() } doReturn Subway(id = SubwayUtils.KUPALOVSKAYA_ID)
-        on { getRentType() } doReturn RentType.FLAT_4_ROOM_OR_MORE
-        on { getAddress() } doReturn "bla"
-        on { getDescription() } doReturn "bla"
-        on { getUpdatedTime() } doReturn daysAgoMillis(5)
+        on { rentType} doReturn RentType.FLAT_4_ROOM_OR_MORE
+        on { address } doReturn "bla"
+        on { description } doReturn "bla"
+        on { updatedTime } doReturn daysAgoMillis(5)
     }
 
     private val flat6 = mock<Flat> {
-        on { isOwner() } doReturn false
-        on { getCostInDollars() } doReturn 300
+        on { isOwner } doReturn false
+        on { costInDollars} doReturn 300
         on { hasImages() } doReturn true
         on { getDistanceToSubwayInMeters() } doReturn 0.0
         on { getNearestSubway() } doReturn Subway(id = -1)
-        on { getRentType() } doReturn RentType.FLAT_2_ROOM
-        on { getAddress() } doReturn ""
-        on { getDescription() } doReturn ""
-        on { getUpdatedTime() } doReturn daysAgoMillis(23)
+        on { rentType} doReturn RentType.FLAT_2_ROOM
+        on { address } doReturn ""
+        on { description } doReturn ""
+        on { updatedTime } doReturn daysAgoMillis(23)
     }
 
     private val FLATS = listOf(flat1, flat2, flat3, flat4, flat5, flat6)

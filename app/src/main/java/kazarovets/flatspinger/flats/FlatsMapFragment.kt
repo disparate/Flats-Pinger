@@ -89,17 +89,17 @@ class FlatsMapFragment : SupportMapFragment() {
             if (flat.isSeen) {
                 return IconGenerator.STYLE_DEFAULT
             }
-            return if (flat.isOwner()) IconGenerator.STYLE_BLUE else IconGenerator.STYLE_RED
+            return if (flat.isOwner) IconGenerator.STYLE_BLUE else IconGenerator.STYLE_RED
         }
 
         for (flat in flats) {
-            val lat = flat.getLatitude()
-            val long = flat.getLongitude()
+            val lat = flat.latitude
+            val long = flat.longitude
             if (lat != null && long != null) {
                 iconGenerator?.setStyle(getIconGeneratorStyle(flat))
                 val markerOptions = MarkerOptions()
                         .icon(BitmapDescriptorFactory.fromBitmap(
-                                iconGenerator?.makeIcon("${flat.getCostInDollars()}$")))
+                                iconGenerator?.makeIcon("${flat.costInDollars}$")))
                         .position(LatLng(lat, long))
                 val flatsMarker = map?.addMarker(markerOptions)
 

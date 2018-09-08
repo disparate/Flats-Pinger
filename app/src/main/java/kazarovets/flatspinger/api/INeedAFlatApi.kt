@@ -3,9 +3,9 @@ package kazarovets.flatspinger.api
 import android.util.Log
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import kazarovets.flatspinger.model.ineedaflat.INeedAFlatListResponse
 import kazarovets.flatspinger.model.RentType
-import kazarovets.flatspinger.model.ineedaflat.INeedAFlatFlat
+import kazarovets.flatspinger.model.ineedaflat.DBFlat
+import kazarovets.flatspinger.model.ineedaflat.INeedAFlatListResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -33,7 +33,7 @@ class INeedAFlatApi {
 
     val iNeedAFlatApiService by lazy { createApiService() }
 
-    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rentTypes: Set<RentType>): Single<List<INeedAFlatFlat>> {
+    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rentTypes: Set<RentType>): Single<List<DBFlat>> {
         val min = if (minCost != null) minCost else 0.0
         val max = if (maxCost != null) maxCost else 100000.0
         var query = "{\"attributes.price.value\":{\"\$gte\":$min,\"\$lte\":$max}," +
@@ -97,18 +97,6 @@ class INeedAFlatApi {
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(1, TimeUnit.MINUTES)
                 .writeTimeout(1, TimeUnit.MINUTES)
-//                .addInterceptor { chain ->
-//                    val original = chain.request()
-//
-//                    //adding header info
-//                    val request = original.newBuilder()
-//                            .header("Content-Type", "application/json")
-//                            .header("Accept", "application/json")
-//                            .method(original.method(), original.body())
-//                            .build()
-//
-//                    return@addInterceptor chain.proceed(request)
-//                }
 
         val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)

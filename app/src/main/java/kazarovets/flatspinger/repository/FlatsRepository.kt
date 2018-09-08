@@ -13,7 +13,6 @@ import kazarovets.flatspinger.model.FlatInfo
 import kazarovets.flatspinger.model.FlatInfoImpl
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.PreferenceUtils
-import kazarovets.flatspinger.utils.mergeWith
 
 
 class FlatsRepository(private val flatsDao: FlatsDao) {
@@ -23,7 +22,7 @@ class FlatsRepository(private val flatsDao: FlatsDao) {
         it.mapTo(dest) { FlatInfoImpl(it.flat, it.status, it.isSeen) }
     }
 
-    private val iNeedAFlatFlatInfos = Transformations.map(flatsDao.getINeedAFlatFlats()) {
+    private val iNeedAFlatFlatInfos = Transformations.map(flatsDao.getFavoriteFlats()) {
         val dest = ArrayList<FlatInfo>()
         it.mapTo(dest) { FlatInfoImpl(it.flat, it.status, it.isSeen) }
     }
@@ -42,18 +41,18 @@ class FlatsRepository(private val flatsDao: FlatsDao) {
 
         fun addFlatStatuses(flats: List<Flat>) {
             flats.forEach {
-                flatsDao.addFlatStatus(DBFlatInfo(provider = it.getProvider(), flatId = it.getId()))
+                flatsDao.addFlatStatus(DBFlatInfo(provider = it.provider, flatId = it.id))
             }
         }
 
         return Singles.zip(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, rentTypes)
                 .doOnSuccess {
-                    flatsDao.addOnlinerFlats(it)
+                    flatsDao.addFavoriteOnlinerFlat(it)
                     addFlatStatuses(it)
                 },
                 ApiManager.iNeedAFlatApi.getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, rentTypes)
                         .doOnSuccess {
-                            flatsDao.addINeedAFlatFlats(it)
+                            flatsDao.addFavoriteFlat(it)
                             addFlatStatuses(it)
                         }) { onlinerFlats, iNeedAFlatFlats ->
             val res = ArrayList<Flat>()
@@ -65,20 +64,20 @@ class FlatsRepository(private val flatsDao: FlatsDao) {
 
     fun updateIsFlatFavorite(flat: Flat, isFavorite: Boolean) {
         val status = if (isFavorite) FlatStatus.FAVORITE else FlatStatus.REGULAR
-        flatsDao.updateFlatStatus(flat.getId(), status, flat.getProvider())
+        flatsDao.updateFlatStatus(flat.id, status, flat.provider)
     }
 
     fun setFlatSeen(flat: Flat, isSeen: Boolean) {
-        flatsDao.updateFlatIsSeen(flat.getId(), isSeen, flat.getProvider())
+        flatsDao.updateFlatIsSeen(flat.id, isSeen, flat.provider)
     }
 
     fun setFlatHidden(flat: Flat) {
-        flatsDao.updateFlatStatus(flat.getId(), FlatStatus.HIDDEN, flat.getProvider())
+        flatsDao.updateFlatStatus(flat.id, FlatStatus.HIDDEN, flat.provider)
     }
 
     fun getIsFlatFavoriteLiveData(flat: Flat): LiveData<Boolean> {
         return Transformations.map(
-                flatsDao.getFlatInfo(flat.getId(), flat.getProvider())) {
+                flatsDao.getFlatInfo(flat.id, flat.provider)) {
             it?.status == FlatStatus.FAVORITE
         }
     }

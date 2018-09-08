@@ -17,7 +17,9 @@ import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.utils.SubwayUtils
 
 
-class FlatsRecyclerAdapter(var flats: MutableList<FlatInfo>, private val onFavoriteChangedListener: (Flat, Boolean) -> Unit)
+class FlatsRecyclerAdapter(var flats: MutableList<FlatInfo>,
+                           private val onFavoriteChangedListener: (Flat, Boolean) -> Unit,
+                           private val onRemoveClickListener: (Flat) -> Unit)
     : RecyclerView.Adapter<FlatsRecyclerAdapter.FlatsViewHolder>() {
 
     var onClickListener: OnItemClickListener? = null
@@ -29,22 +31,22 @@ class FlatsRecyclerAdapter(var flats: MutableList<FlatInfo>, private val onFavor
         holder.flat = flat
 
         Glide.clear(holder.imageView)
-        if (!TextUtils.isEmpty(flat.getImageUrl())) {
-            Glide.with(holder.itemView.context).load(flat.getImageUrl()).centerCrop().into(holder.imageView)
+        if (!TextUtils.isEmpty(flat.imageUrl)) {
+            Glide.with(holder.itemView.context).load(flat.imageUrl).centerCrop().into(holder.imageView)
         }
 
-        holder.costView?.text = "${flat.getCostInDollars()}$"
-        val latitude = flat.getLatitude()
-        val longitude = flat.getLongitude()
+        holder.costView?.text = "${flat.costInDollars}$"
+        val latitude = flat.latitude
+        val longitude = flat.longitude
         if (latitude != null && longitude != null) {
             holder.subwayView?.text = SubwayUtils.getNearestSubway(latitude, longitude).name +
                     " (${flat.getDistanceToSubwayInMeters().toInt()}${context.getString(R.string.meter_small)})"
         }
-        holder.agencyLine?.visibility = if (flat.isOwner()) View.INVISIBLE else View.VISIBLE
-        holder.provider?.setImageResource(flat.getProvider().drawableRes)
-        holder.source?.text = flat.getSource()
+        holder.agencyLine?.visibility = if (flat.isOwner) View.INVISIBLE else View.VISIBLE
+        holder.provider?.setImageResource(flat.provider.drawableRes)
+        holder.source?.text = flat.source
 
-        holder.updatedTime?.text = StringsUtils.getTimeAgoString(flat.getUpdatedTime(), context)
+        holder.updatedTime?.text = StringsUtils.getTimeAgoString(flat.updatedTime, context)
 
         val isFavorite = flat.status == FlatStatus.FAVORITE
         setFavoriteIcon(holder.favoriteIcon, isFavorite)
@@ -65,10 +67,12 @@ class FlatsRecyclerAdapter(var flats: MutableList<FlatInfo>, private val onFavor
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_flat, parent, false)
         val holder = FlatsViewHolder(view)
         holder.itemView.setOnClickListener {
-            val flat = holder.flat
-            if (flat != null) {
-                onClickListener?.onItemClick(flat)
-            }
+            holder.flat?.let { onClickListener?.onItemClick(it) }
+        }
+
+        holder.itemView.findViewById<View>(R.id.close).setOnClickListener {
+            holder.flat?.let { onRemoveClickListener.invoke(it) }
+            removeItem(holder.adapterPosition)
         }
         return holder
     }

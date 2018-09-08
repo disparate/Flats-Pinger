@@ -6,7 +6,6 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,6 @@ import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
 import kazarovets.flatspinger.utils.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModel
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
-import kazarovets.flatspinger.views.FlatTouchHelperCallback
 import kotlinx.android.synthetic.main.fragment_flats_list.*
 import javax.inject.Inject
 
@@ -76,7 +74,8 @@ class FlatsListFragment : Fragment() {
         adapter = FlatsRecyclerAdapter(ArrayList(),
                 onFavoriteChangedListener = { flat, isFav ->
                     flatsViewModel.updateIsFavorite(flat, isFav)
-                })
+                },
+                onRemoveClickListener = { flatsViewModel.setHiddenFlat(it) })
 
         adapter?.onClickListener = object : FlatsRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(item: Flat) {
@@ -86,7 +85,6 @@ class FlatsListFragment : Fragment() {
         }
 
         flatsListRecycler.adapter = adapter
-        initSwipe()
 
         fillFloatingMenu()
 
@@ -120,20 +118,6 @@ class FlatsListFragment : Fragment() {
         updateAdapterData()
 
         flatsMapFragment?.setFlats(flats ?: emptyList())
-    }
-
-    private fun initSwipe() {
-        val simpleItemTouchCallback = FlatTouchHelperCallback(context!!) { position, direction ->
-            adapter?.getItem(position)?.let { flat ->
-                if (direction == ItemTouchHelper.LEFT) {
-                    adapter?.removeItem(position)
-                    flatsViewModel.setHiddenFlat(flat)
-                }
-            }
-        }
-
-        val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
-        itemTouchHelper.attachToRecyclerView(flatsListRecycler)
     }
 
     private fun updateAdapterData() {

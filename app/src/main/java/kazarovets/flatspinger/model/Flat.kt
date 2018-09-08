@@ -6,17 +6,41 @@ import java.io.Serializable
 
 interface Flat : Comparable<Flat>, Serializable {
 
-    fun getId(): String
+    val id: String
 
-    fun getImageUrl(): String?
+    val imageUrl: String?
 
-    fun getImages(): List<String>
+    val images: List<String>
 
-    fun getAddress(): String
+    val address: String
+
+    val costInDollars: Int
+
+    val originalUrl: String?
+
+    val latitude: Double?
+
+    val longitude: Double?
+
+    val isOwner: Boolean
+
+    val rentType: RentType
+
+    val provider: Provider
+
+    val updatedTime: Long
+
+    val createdTime: Long
+
+    val source: String
+
+    val description: String
+
+    val phones: List<String>
 
     fun getNearestSubway(): Subway? {
-        val latitude = getLatitude()
-        val longitude = getLongitude()
+        val latitude = latitude
+        val longitude = longitude
         if (latitude != null && longitude != null) {
             return SubwayUtils.getNearestSubway(latitude, longitude)
         }
@@ -25,52 +49,29 @@ interface Flat : Comparable<Flat>, Serializable {
 
     fun getDistanceToSubwayInMeters(): Double {
         val nearest = getNearestSubway()
-        val lat = getLatitude()
-        val long = getLongitude()
-        if (nearest != null && lat != null && long != null) {
-            return SubwayUtils.distanceBetweenInMeters(lat, long, nearest.latitude, nearest.longitude)
+        val lat = latitude
+        val long = longitude
+        return if (nearest != null && lat != null && long != null) {
+            SubwayUtils.distanceBetweenInMeters(lat, long, nearest.latitude, nearest.longitude)
         } else {
-            return Double.MAX_VALUE
+            Double.MAX_VALUE
         }
     }
 
-    fun getCostInDollars(): Int
 
-    fun getOriginalUrl(): String?
-
-    fun getLatitude(): Double?
-
-    fun getLongitude(): Double?
-
-    fun isOwner(): Boolean
-
-    fun getRentType(): RentType
-
-    fun getProvider(): Provider
-
-    fun getUpdatedTime(): Long
-
-    fun getCreatedTime(): Long
-
-    fun hasImages(): Boolean = !getImageUrl().isNullOrBlank()
-
-    fun getSource(): String
+    fun hasImages(): Boolean = !imageUrl.isNullOrBlank()
 
     fun getTags(): List<Tag> = listOf(
-            RentTypeTag(getRentType()),
-            OwnerTag(isOwner()),
+            RentTypeTag(rentType),
+            OwnerTag(isOwner),
             SubwayTag(getNearestSubway()),
-            StringTag(getSource())
+            StringTag(source)
     )
 
-    fun getDescription(): String = ""
-
-    fun getPhones(): List<String> = emptyList()
-
     override fun compareTo(other: Flat): Int {
-        if (getUpdatedTime() < other.getUpdatedTime()) {
+        if (updatedTime < other.updatedTime) {
             return 1
-        } else if (getUpdatedTime() == other.getUpdatedTime()) {
+        } else if (updatedTime == other.updatedTime) {
             return 0
         } else {
             return -1

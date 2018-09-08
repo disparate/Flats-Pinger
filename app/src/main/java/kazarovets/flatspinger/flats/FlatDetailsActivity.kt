@@ -67,22 +67,22 @@ class FlatDetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_flat_details)
 
         setSupportActionBar(detailsToolbar)
-        supportActionBar?.title = flat.getAddress()
+        supportActionBar?.title = flat.address
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
         detailsFlatImage.visibility = if (flat.hasImages()) View.VISIBLE else View.GONE
-        if (!flat.getImageUrl().isNullOrBlank()) {
-            Glide.with(this).load(flat.getImageUrl()).centerCrop().into(detailsFlatImage)
+        if (!flat.imageUrl.isNullOrBlank()) {
+            Glide.with(this).load(flat.imageUrl).centerCrop().into(detailsFlatImage)
         }
 
-        detailsFlatImage.setOnClickListener { startActivity(ImagesActivity.getCallingIntent(this, flat.getImages())) }
+        detailsFlatImage.setOnClickListener { startActivity(ImagesActivity.getCallingIntent(this, flat.images)) }
 
-        detailsCreatedTimeAgo.text = "${getString(R.string.created)} ${StringsUtils.getTimeAgoString(flat.getCreatedTime(), this)}"
+        detailsCreatedTimeAgo.text = "${getString(R.string.created)} ${StringsUtils.getTimeAgoString(flat.createdTime, this)}"
 
-        detailsUpdatedTimeAgo.text = "${getString(R.string.updated)} ${StringsUtils.getTimeAgoString(flat.getUpdatedTime(), this)}"
+        detailsUpdatedTimeAgo.text = "${getString(R.string.updated)} ${StringsUtils.getTimeAgoString(flat.updatedTime, this)}"
 
-        detailsCost.text = "${flat.getCostInDollars()}$"
+        detailsCost.text = "${flat.costInDollars}$"
 
         detailsFlatTags.tags = flat.getTags()
 
@@ -121,13 +121,13 @@ class FlatDetailsActivity : AppCompatActivity() {
             }
 
         })
-        val lat = flat.getLatitude()
-        val long = flat.getLongitude()
+        val lat = flat.latitude
+        val long = flat.longitude
         if (lat != null && long != null) {
             mapFragment?.getMapAsync {
                 val flatsMarker = MarkerOptions()
                         .position(LatLng(lat, long))
-                        .title(flat.getAddress())
+                        .title(flat.address)
                 it.addMarker(flatsMarker)
                 it.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, long), MAP_ZOOM))
                 it.uiSettings.isZoomControlsEnabled = true
@@ -141,13 +141,13 @@ class FlatDetailsActivity : AppCompatActivity() {
     private fun setupDetails() {
         val flat = flat
         detailsPhone.paintFlags = detailsPhone.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-        if (!flat.getDescription().isEmpty()) {
-            detailsDescription.text = flat.getDescription()
+        if (!flat.description.isEmpty()) {
+            detailsDescription.text = flat.description
         } else {
             detailsDescriptionContainer.visibility = View.GONE
         }
-        if (flat.getPhones().isNotEmpty()) {
-            detailsPhone.text = flat.getPhones()[0]
+        if (flat.phones.isNotEmpty()) {
+            detailsPhone.text = flat.phones[0]
         } else {
             detailsPhoneContainer.visibility = View.GONE
         }
@@ -156,14 +156,14 @@ class FlatDetailsActivity : AppCompatActivity() {
     }
 
     private fun openInBrowser() {
-        if (!TextUtils.isEmpty(flat.getOriginalUrl())) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(flat.getOriginalUrl()))
+        if (!TextUtils.isEmpty(flat.originalUrl)) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(flat.originalUrl))
             startActivity(intent)
         }
     }
 
     private fun shareFlatLink() {
-        val url = flat.getOriginalUrl()
+        val url = flat.originalUrl
         if (url == null) {
             //todo: show no url dialog (can it be possible?)
         } else {

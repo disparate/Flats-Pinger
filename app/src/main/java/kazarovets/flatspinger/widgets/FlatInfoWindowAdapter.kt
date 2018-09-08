@@ -42,21 +42,21 @@ class FlatInfoWindowAdapter(layoutInflater: LayoutInflater) : GoogleMap.InfoWind
 
         val imageView = contentsView.findViewById<ImageView>(R.id.image)
         Glide.clear(imageView)
-        if (!TextUtils.isEmpty(flat.getImageUrl())) {
+        if (!TextUtils.isEmpty(flat.imageUrl)) {
             Glide.with(context)
-                    .load(flat.getImageUrl())
+                    .load(flat.imageUrl)
                     .centerCrop()
                     .listener(MarkerListener(marker)).into(imageView)
         }
 
         val provider = contentsView.findViewById<ImageView>(R.id.provider)
-        provider?.setImageResource(flat.getProvider().drawableRes)
+        provider?.setImageResource(flat.provider.drawableRes)
 
         val source = contentsView.findViewById<TextView>(R.id.site)
-        source?.text = flat.getSource()
+        source?.text = flat.source
 
         val address = contentsView.findViewById<TextView>(R.id.address)
-        address?.text = flat.getAddress()
+        address?.text = flat.address
 
         return contentsView
     }

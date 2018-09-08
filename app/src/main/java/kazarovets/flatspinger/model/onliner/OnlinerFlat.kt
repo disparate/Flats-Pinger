@@ -1,10 +1,5 @@
 package kazarovets.flatspinger.model.onliner
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Embedded
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
-import android.support.annotation.NonNull
 import android.text.TextUtils
 import com.google.gson.annotations.SerializedName
 import kazarovets.flatspinger.api.OnlinerApi
@@ -16,116 +11,102 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-@Entity
-data class OnlinerFlat(@PrimaryKey
-                       @SerializedName("id")
-                       @NonNull
-                       @ColumnInfo(name = "id")
-                       var idText: String = "",
+data class OnlinerFlat(@SerializedName("id")
+                       override val id: String = "",
 
-                       @Embedded
                        @SerializedName("price")
-                       var price: Price? = null,
+                       val price: Price? = null,
 
                        @SerializedName("rent_type")
-                       var rentTypeString: String? = null,
+                       val rentTypeString: String? = null,
 
-                       @Embedded
                        @SerializedName("location")
-                       var location: Location? = null,
+                       val location: Location? = null,
 
                        @SerializedName("photo")
-                       var photoUrl: String? = null,
+                       override val imageUrl: String? = null,
 
                        @SerializedName("created_at")
-                       var createAt: String? = null,
+                       val createAt: String? = null,
 
                        @SerializedName("last_time_up")
-                       var lastTimeUp: String? = null,
+                       val lastTimeUp: String? = null,
 
                        @SerializedName("url")
-                       var siteUrl: String? = null,
+                       override val originalUrl: String? = null,
 
-                       @Embedded
                        @SerializedName("contact")
-                       var contact: Contact? = null) : Flat {
+                       val contact: Contact? = null) : Flat {
 
     companion object {
         val FORMAT_TIME = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH)
     }
 
 
-    override fun toString(): String = "OnlinerFlat: address = ${getAddress()}"
+    override fun toString(): String = "OnlinerFlat: address = $address"
 
     override fun equals(other: Any?): Boolean {
         if (other is Flat?) {
-            return TextUtils.equals(other?.getOriginalUrl(), getOriginalUrl())
+            return TextUtils.equals(other?.originalUrl, originalUrl)
         }
         return false
     }
 
-    override fun hashCode(): Int = getOriginalUrl()?.hashCode() ?: 0
+    override fun hashCode(): Int = originalUrl?.hashCode() ?: 0
 
-    override fun getId(): String = idText
+    override val address = location?.address ?: ""
 
-    override fun getImageUrl(): String? = photoUrl
+    override val costInDollars = price?.amount?.toInt() ?: 0
 
-    override fun getAddress(): String = location?.address ?: ""
+    override val latitude = location?.latitude
 
-    override fun getCostInDollars(): Int = price?.amount?.toInt() ?: 0
+    override val longitude = location?.longitude
 
-    override fun getOriginalUrl(): String? = siteUrl
+    override val isOwner = contact?.isOwner ?: false
 
-    override fun getLatitude(): Double? = location?.latitude
+    override val rentType: RentType
+        get() {
+            return when (rentTypeString) {
+                OnlinerApi.ONE_ROOM -> RentType.FLAT_1_ROOM
+                OnlinerApi.TWO_ROOMS -> RentType.FLAT_2_ROOM
+                OnlinerApi.THREE_ROOMS -> RentType.FLAT_3_ROOM
+                OnlinerApi.FOUR_ROOMS, OnlinerApi.FIVE_ROOMS, OnlinerApi.SIX_ROOMS -> RentType.FLAT_4_ROOM_OR_MORE
+                else -> RentType.NONE
+            }
+        }
 
-    override fun getLongitude(): Double? = location?.longitude
+    override val provider = Provider.ONLINER
 
-    override fun isOwner(): Boolean = contact?.isOwner ?: false
+    override val updatedTime by lazy { lastTimeUp?.let { FORMAT_TIME.parse(it).time } ?: 0 }
 
-    override fun getRentType(): RentType = when (rentTypeString) {
-        OnlinerApi.ONE_ROOM -> RentType.FLAT_1_ROOM
-        OnlinerApi.TWO_ROOMS -> RentType.FLAT_2_ROOM
-        OnlinerApi.THREE_ROOMS -> RentType.FLAT_3_ROOM
-        OnlinerApi.FOUR_ROOMS, OnlinerApi.FIVE_ROOMS, OnlinerApi.SIX_ROOMS -> RentType.FLAT_4_ROOM_OR_MORE
-        else -> RentType.NONE
-    }
+    override val createdTime by lazy { createAt?.let { FORMAT_TIME.parse(it).time } ?: 0 }
 
-    override fun getProvider(): Provider = Provider.ONLINER
+    override val source = "onliner.by"
 
-    override fun getUpdatedTime(): Long {
-        return FORMAT_TIME.parse(lastTimeUp ?: return 0).time
-    }
+    override val images = listOfNotNull(imageUrl)
 
-    override fun getCreatedTime(): Long {
-        return FORMAT_TIME.parse(createAt ?: return 0).time
-    }
+    override val description = ""
 
-    override fun getSource(): String = "onliner.by"
-
-    override fun getImages(): List<String> {
-        val imageUrl = getImageUrl()
-        return if(imageUrl == null) emptyList() else listOf(imageUrl)
-    }
-
+    override val phones = emptyList<String>()
 
     data class Price(@SerializedName("amount")
-                     var amount: Double? = null,
+                     val amount: Double? = null,
 
                      @SerializedName("currency")
-                     var currency: String? = null) : Serializable
+                     val currency: String? = null) : Serializable
 
     data class Location(@SerializedName("address")
-                        var address: String? = null,
+                        val address: String? = null,
 
                         @SerializedName("user_address")
-                        var userAddress: String? = null,
+                        val userAddress: String? = null,
 
                         @SerializedName("latitude")
-                        var latitude: Double? = null,
+                        val latitude: Double? = null,
 
                         @SerializedName("longitude")
-                        var longitude: Double? = null) : Serializable
+                        val longitude: Double? = null) : Serializable
 
     data class Contact(@SerializedName("owner")
-                       var isOwner: Boolean? = null) : Serializable
+                       val isOwner: Boolean? = null) : Serializable
 }

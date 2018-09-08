@@ -38,7 +38,7 @@ class RentTypeTag(private val type: RentType) : Tag {
 
     override fun isFilter() = true
 
-    override fun matches(flat: Flat): Boolean = flat.getRentType() == type
+    override fun matches(flat: Flat): Boolean = flat.rentType == type
 }
 
 class SubwayTag(private val subway: Subway?) : Tag {
@@ -56,7 +56,7 @@ class OwnerTag(private val isOwner: Boolean) : Tag {
 
     override fun isFilter(): Boolean = true
 
-    override fun matches(flat: Flat): Boolean = flat.isOwner() == isOwner
+    override fun matches(flat: Flat): Boolean = flat.isOwner == isOwner
 
 }
 

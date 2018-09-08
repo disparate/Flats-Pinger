@@ -1,157 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="5dp">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.constraint.ConstraintLayout
+    <data>
+
+        <variable
+            name="item"
+            type="String" />
+    </data>
+
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="5dp">
 
-        <ImageView
-            android:id="@+id/image"
-            tools:background="@drawable/rectangle_circular_bg"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@+id/site"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/favorite_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:padding="4dp"
-            tools:src="@drawable/ic_star_24dp"
-            app:layout_constraintRight_toRightOf="@+id/agent_line"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/cost"
-            android:layout_width="0dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginStart="8dp"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            tools:text="350$"
-            app:layout_constraintLeft_toRightOf="@+id/guideline"
-            app:layout_constraintRight_toLeftOf="@+id/favorite_icon"
-            app:layout_constraintTop_toTopOf="@+id/favorite_icon" />
-
-        <LinearLayout
-            android:id="@+id/subway_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintLeft_toLeftOf="@id/cost"
-            app:layout_constraintRight_toRightOf="@+id/agent_line"
-            app:layout_constraintTop_toBottomOf="@id/cost">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginRight="6dp"
-                android:src="@drawable/ic_subway_24dp" />
+                android:id="@+id/image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/site"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@drawable/rectangle_circular_bg" />
+
+            <ImageView
+                android:id="@+id/favorite_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="4dp"
+                app:layout_constraintRight_toRightOf="@+id/agent_line"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_star_24dp" />
 
             <TextView
-                android:id="@+id/subway_name"
+                android:id="@+id/cost"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@+id/guideline"
+                app:layout_constraintRight_toLeftOf="@+id/favorite_icon"
+                app:layout_constraintTop_toTopOf="@+id/favorite_icon"
+                tools:text="350$" />
+
+            <LinearLayout
+                android:id="@+id/subway_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                tools:text="Уручье (538м)"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="@id/cost"
+                app:layout_constraintRight_toRightOf="@+id/agent_line"
+                app:layout_constraintTop_toBottomOf="@id/cost">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginRight="6dp"
+                    android:src="@drawable/ic_subway_24dp" />
+
+                <TextView
+                    android:id="@+id/subway_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/colorTextPrimary"
+                    tools:text="Уручье (538м)" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/provider"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_margin="4dp"
+                android:adjustViewBounds="true"
+                app:layout_constraintBottom_toBottomOf="@id/image"
+                app:layout_constraintRight_toRightOf="@id/image" />
+
+
+            <LinearLayout
+                android:id="@+id/time_ago_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintRight_toLeftOf="@+id/agent_line"
+                app:layout_constraintTop_toBottomOf="@+id/subway_container">
+
+
+                <ImageView
+                    android:id="@+id/update_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginRight="2dp"
+                    android:src="@drawable/ic_access_time_white_24dp"
+                    android:tint="@color/colorTextSecondary" />
+
+                <TextView
+                    android:id="@+id/update_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="12sp"
+                    tools:text="23ч. назад" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/site"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="16dp"
+                android:gravity="left"
                 android:maxLines="1"
-                android:textColor="@color/colorTextPrimary" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/provider"
-            android:layout_width="wrap_content"
-            android:layout_height="18dp"
-            android:layout_margin="4dp"
-            android:adjustViewBounds="true"
-            app:layout_constraintBottom_toBottomOf="@id/image"
-            app:layout_constraintRight_toRightOf="@id/image" />
+                android:paddingTop="4dp"
+                android:textColor="@color/colorTextSecondary"
+                app:layout_constraintLeft_toLeftOf="@+id/cost"
+                app:layout_constraintRight_toRightOf="@+id/time_ago_container"
+                app:layout_constraintTop_toBottomOf="@+id/subway_container"
+                tools:text="r.onliner.by" />
 
 
-        <LinearLayout
-            android:id="@+id/time_ago_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="16dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layout_constraintRight_toLeftOf="@+id/agent_line"
-            app:layout_constraintTop_toBottomOf="@+id/subway_container">
+            <View
+                android:id="@+id/agent_line"
+                android:layout_width="3dp"
+                android:layout_height="0dp"
+                android:background="#ff0000"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/site"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.4" />
 
 
             <ImageView
-                android:id="@+id/update_icon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginRight="2dp"
-                android:src="@drawable/ic_access_time_white_24dp"
-                android:tint="@color/colorTextSecondary" />
-
-            <TextView
-                android:id="@+id/update_time"
-                android:layout_width="wrap_content"
-                tools:text="23ч. назад"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:textColor="@color/colorTextSecondary"
-                android:textSize="12sp" />
-
-        </LinearLayout>
+                android:id="@+id/close"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_close_black_24dp"
+                android:tint="@color/colorAccent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-        <TextView
-            android:id="@+id/site"
-            android:layout_width="0dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="16dp"
-            android:gravity="left"
-            android:maxLines="1"
-            android:layout_marginBottom="4dp"
-            android:paddingTop="4dp"
-            android:textColor="@color/colorTextSecondary"
-            tools:text="r.onliner.by"
-            app:layout_constraintLeft_toLeftOf="@+id/cost"
-            app:layout_constraintRight_toRightOf="@+id/time_ago_container"
-            app:layout_constraintTop_toBottomOf="@+id/subway_container" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
 
-
-        <View
-            android:id="@+id/agent_line"
-            android:layout_width="3dp"
-            android:layout_height="0dp"
-            android:background="#ff0000"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@id/site"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.4" />
-
-
-    </android.support.constraint.ConstraintLayout>
-</android.support.v7.widget.CardView>
+</layout>

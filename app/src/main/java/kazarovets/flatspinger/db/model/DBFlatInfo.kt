@@ -14,6 +14,6 @@ class DBFlatInfo(@ColumnInfo(name = "status") var status: FlatStatus = FlatStatu
                  @ColumnInfo(name = "flat_id") var flatId: String = "") {
 
     fun isInfoFor(flat: Flat): Boolean {
-        return flat.getId() == flatId && flat.getProvider() == provider
+        return flat.id == flatId && flat.provider == provider
     }
 }

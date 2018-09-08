@@ -30,6 +30,10 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -86,6 +90,9 @@ dependencies {
 
     debugImplementation 'com.github.markzhai:blockcanary-android:1.5.0'
     releaseImplementation 'com.github.markzhai:blockcanary-no-op:1.5.0'
+
+
+    kapt "com.android.databinding:compiler:$gradle_plugin_version"
 
 }
 
