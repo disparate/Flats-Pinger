@@ -1,16 +1,12 @@
 package kazarovets.flatspinger.db.dao
 
 import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import io.reactivex.Flowable
+import kazarovets.flatspinger.db.model.DBFlat
 import kazarovets.flatspinger.db.model.DBFlatInfo
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.model.Provider
-import kazarovets.flatspinger.model.ineedaflat.DBFlat
-import kazarovets.flatspinger.model.onliner.OnlinerFlat
 
 
 @Dao
@@ -28,21 +24,21 @@ interface FlatsDao {
     @Query("SELECT * FROM DBFlatInfo WHERE flat_id = :id AND provider = :provider")
     fun getFlatInfo(id: String, provider: Provider): LiveData<DBFlatInfo>
 
-    @Query("SELECT * FROM DBFlatInfo WHERE status = :status")
-    fun getFlatsByStatus(status: FlatStatus): LiveData<List<DBFlatInfo>>
-
     @Query("SELECT * FROM DBFlatInfo WHERE status <> :status")
     fun getFlatsExcludingStatusFlowable(status: FlatStatus): Flowable<List<DBFlatInfo>>
 
     @Query("SELECT * FROM DBFlatInfo WHERE is_seen = :isSeen")
     fun getSeenFlatsFlowable(isSeen: Boolean): Flowable<List<DBFlatInfo>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addFavoriteOnlinerFlat(flats: OnlinerFlat)
+    @Query("SELECT * FROM DBFlatInfo")
+    fun getDBFlatInfosFlowable(): Flowable<List<DBFlatInfo>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addFavoriteFlat(flat: DBFlat)
 
-    @Query("SELECT DBFlat.*")
+    @Delete
+    fun removeFavoriteFlat(flat: DBFlat)
+
+    @Query("SELECT * FROM DBFlat")
     fun getFavoriteFlats(): Flowable<List<DBFlat>>
 }

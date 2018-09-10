@@ -11,9 +11,24 @@ import kazarovets.flatspinger.model.Provider
 class DBFlatInfo(@ColumnInfo(name = "status") var status: FlatStatus = FlatStatus.REGULAR,
                  @ColumnInfo(name = "is_seen") var isSeen: Boolean = false,
                  @ColumnInfo(name = "provider") var provider: Provider = Provider.I_NEED_A_FLAT,
-                 @ColumnInfo(name = "flat_id") var flatId: String = "") {
+                 @ColumnInfo(name = "flat_id") var flatId: String = "",
+                 @ColumnInfo(name = "image_url") var imageUrl: String = "") {
 
-    fun isInfoFor(flat: Flat): Boolean {
-        return flat.id == flatId && flat.provider == provider
+    fun isSameIdAndProvider(flat: Flat): Boolean {
+        return (flat.id == flatId && flat.provider == provider)
+    }
+
+    fun isSameImageUrl(flat: Flat): Boolean {
+        return imageUrl.isNotBlank() && imageUrl == flat.imageUrl
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun createFromFlat(flat: Flat): DBFlatInfo {
+            return DBFlatInfo(provider = flat.provider,
+                    flatId = flat.id,
+                    imageUrl = flat.imageUrl ?: "")
+        }
     }
 }

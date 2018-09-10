@@ -9,7 +9,7 @@ import kazarovets.flatspinger.model.FlatFilter
 import kazarovets.flatspinger.model.RentType
 import kazarovets.flatspinger.model.Subway
 import kazarovets.flatspinger.utils.SubwayUtils
-import kazarovets.flatspinger.utils.filterFlats
+import kazarovets.flatspinger.utils.extensions.filterFlats
 import org.junit.Test
 
 

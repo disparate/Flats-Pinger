@@ -23,9 +23,9 @@ data class INeedAFlatFlat(@SerializedName("id") @NonNull override val id: String
     override val imageUrl: String?
         get() = if (attributes?.images.orEmpty().isNotEmpty()) attributes?.images?.get(0) else null
 
-    override val address = attributes?.address ?: ""
+    override val address by lazy { attributes?.address ?: "" }
 
-    override val costInDollars = attributes?.price?.value ?: 0
+    override val costInDollars by lazy { attributes?.price?.value ?: 0 }
 
     override val latitude: Double?
         get() {
@@ -43,7 +43,7 @@ data class INeedAFlatFlat(@SerializedName("id") @NonNull override val id: String
             return null
         }
 
-    override val isOwner = agent == null && attributes?.agencyName.isNullOrEmpty()
+    override val isOwner by lazy { agent == null && attributes?.agencyName.isNullOrEmpty() }
 
     override val rentType: RentType
         get() {
@@ -58,13 +58,13 @@ data class INeedAFlatFlat(@SerializedName("id") @NonNull override val id: String
 
     override val provider = Provider.I_NEED_A_FLAT
 
-    override val source = attributes?.source ?: "ineedaflat.by"
+    override val source by lazy { attributes?.source ?: "ineedaflat.by" }
 
-    override val images = attributes?.images ?: emptyList()
+    override val images by lazy { attributes?.images ?: emptyList() }
 
-    override val description = attributes?.description ?: ""
+    override val description by lazy { attributes?.description ?: "" }
 
-    override val phones = attributes?.phones.orEmpty()
+    override val phones by lazy { attributes?.phones.orEmpty() }
 
     override fun equals(other: Any?): Boolean {
         if (other is Flat?) {
@@ -91,7 +91,6 @@ data class INeedAFlatFlat(@SerializedName("id") @NonNull override val id: String
                           @SerializedName("address") val address: String? = null,
                           @SerializedName("images") val images: List<String> = emptyList(),
                           @SerializedName("agencyName") val agencyName: String? = null) : Serializable {
-
 
         data class Price(@SerializedName("value") val value: Int? = null,
                          @SerializedName("currency") val currency: String? = null) : Serializable

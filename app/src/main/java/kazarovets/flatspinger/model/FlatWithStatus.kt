@@ -1,7 +1,7 @@
 package kazarovets.flatspinger.model
 
 
-interface FlatInfo : Flat {
+interface FlatWithStatus : Flat {
 
     val status : FlatStatus
 

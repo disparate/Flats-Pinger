@@ -4,7 +4,7 @@ import android.util.Log
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.model.RentType
-import kazarovets.flatspinger.model.ineedaflat.DBFlat
+import kazarovets.flatspinger.model.ineedaflat.INeedAFlatFlat
 import kazarovets.flatspinger.model.ineedaflat.INeedAFlatListResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,7 +33,7 @@ class INeedAFlatApi {
 
     val iNeedAFlatApiService by lazy { createApiService() }
 
-    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rentTypes: Set<RentType>): Single<List<DBFlat>> {
+    fun getFlats(minCost: Double?, maxCost: Double?, agencyAllowed: Boolean, rentTypes: Set<RentType>): Single<List<INeedAFlatFlat>> {
         val min = if (minCost != null) minCost else 0.0
         val max = if (maxCost != null) maxCost else 100000.0
         var query = "{\"attributes.price.value\":{\"\$gte\":$min,\"\$lte\":$max}," +

@@ -6,31 +6,27 @@ import android.util.Log
 import io.reactivex.disposables.Disposable
 import kazarovets.flatspinger.flats.FlatsListFragment
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatStatus
+import kazarovets.flatspinger.model.FlatWithStatus
 import kazarovets.flatspinger.repository.FlatsRepository
 import kazarovets.flatspinger.rx.SchedulersFacade
-import kazarovets.flatspinger.utils.PreferenceUtils
-import kazarovets.flatspinger.utils.filterFlats
-import kazarovets.flatspinger.utils.zip
+import kazarovets.flatspinger.usecase.GetHomeFlatsInteractor
+import kazarovets.flatspinger.utils.extensions.combineLatest
 
 
 class FlatInfosViewModel(val repository: FlatsRepository,
                          private val schedulersFacade: SchedulersFacade) : ViewModel() {
 
-    private val showSeenLiveData = PreferenceUtils.getBooleanLiveData(PreferenceUtils.SETTINGS_SHOW_SEEN_FLATS, false)
-    private val flatsFilterLiveData = PreferenceUtils.getFlatsFilterLiveData()
+    private val getHomeFlatsInteractor = GetHomeFlatsInteractor(repository)
+
     private val flatsModeLiveData = MutableLiveData<FlatsListFragment.MODE>()
-    private var flats = zip(repository.getLocalFlats(), flatsFilterLiveData,
-            showSeenLiveData, flatsModeLiveData) { flats, filter, seen, mode ->
-        val showSeen = seen ?: false
-        val filtered = flats?.filterFlats(filter)
-        val res = filtered?.filter { flatInfo ->
-            (!flatInfo.isSeen or (flatInfo.status == FlatStatus.FAVORITE) or showSeen)
-                    && (mode?.statuses?.contains(flatInfo.status) ?: true)
-        }?.sorted()
-        res
+    private val flatsLiveData = MutableLiveData<List<FlatWithStatus>>()
+
+    private var flats = combineLatest(flatsLiveData, flatsModeLiveData) { flats, mode ->
+        //TODO: move to interactor and prefs
+        flats.orEmpty().filter {
+            mode?.statuses?.contains(it.status) ?: true
+        }
     }
-    private val favoriteFlatsLiveData = repository.getFavoriteFlats()
 
     private var isLoading = MutableLiveData<Boolean>()
 
@@ -40,15 +36,10 @@ class FlatInfosViewModel(val repository: FlatsRepository,
             flatsModeLiveData.value = value
         }
 
-
-    private var remoteDisposable: Disposable? = null
+    private var flatsDisposable: Disposable? = null
 
     fun init() {
         loadFlats()
-    }
-
-    public override fun onCleared() {
-        remoteDisposable?.dispose()
     }
 
     fun getFlats() = flats
@@ -56,13 +47,16 @@ class FlatInfosViewModel(val repository: FlatsRepository,
     fun getIsLoading() = isLoading
 
     fun loadFlats() {
-        remoteDisposable = repository.getRemoteFlats()
+        flatsDisposable = getHomeFlatsInteractor.getObservable()
                 .subscribeOn(schedulersFacade.io())
                 .observeOn(schedulersFacade.ui())
                 .doOnSubscribe { isLoading.value = true }
-                .doAfterTerminate { isLoading.value = false }
                 .subscribe({
-
+                    flatsLiveData.value = it.flats
+                    if (it.iNeedAFlatLoadingStatus != GetHomeFlatsInteractor.FlatsLoadingStatus.LOADING
+                            && it.onlinerLoadingStatus != GetHomeFlatsInteractor.FlatsLoadingStatus.LOADING) {
+                        isLoading.value = false
+                    }
                 }, {
                     Log.e("FlatInfosViewModel", "error loading flats", it)
                 })
@@ -80,9 +74,7 @@ class FlatInfosViewModel(val repository: FlatsRepository,
         }
     }
 
-    fun isFavoriteSync(flat: Flat): Boolean {
-        return favoriteFlatsLiveData.value?.find {
-            it.isInfoFor(flat)
-        } != null
+    public override fun onCleared() {
+        flatsDisposable?.dispose()
     }
 }

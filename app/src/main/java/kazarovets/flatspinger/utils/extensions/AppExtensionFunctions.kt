@@ -1,4 +1,4 @@
-package kazarovets.flatspinger.utils
+package kazarovets.flatspinger.utils.extensions
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
@@ -11,6 +11,7 @@ import kazarovets.flatspinger.FlatsApplication
 import kazarovets.flatspinger.di.AppComponent
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatFilter
+import kazarovets.flatspinger.utils.FlatsFilterMatcher
 
 
 fun <T : Flat> Iterable<T>.filterFlats(flatsFilter: FlatFilter?) = filter {
@@ -45,20 +46,17 @@ fun <A> LiveData<out List<A>>.mergeWith(other: LiveData<out List<A>>): LiveData<
     }
 }
 
-fun <A, B, C, D, T> zip(liveDataA: LiveData<A>, liveDataB: LiveData<B>,
-                        liveDataC: LiveData<C>, liveDataD: LiveData<D>,
-                         zipFunction: (A?, B?, C?, D?) -> T): LiveData<T> {
+fun <A, B, T> combineLatest(liveDataA: LiveData<A>, liveDataB: LiveData<B>,
+                            zipFunction: (A?, B?) -> T): LiveData<T> {
     return MediatorLiveData<T>().apply {
         var lastA: A? = null
         var lastB: B? = null
-        var lastC: C? = null
-        var lastD: D? = null
 
         var disposable: Disposable? = null
 
         fun update() {
             disposable?.dispose()
-            disposable = Single.fromCallable { zipFunction(lastA, lastB, lastC, lastD) }
+            disposable = Single.fromCallable { zipFunction(lastA, lastB) }
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .subscribe({
@@ -76,13 +74,6 @@ fun <A, B, C, D, T> zip(liveDataA: LiveData<A>, liveDataB: LiveData<B>,
             lastB = it
             update()
         }
-        addSource(liveDataC) {
-            lastC = it
-            update()
-        }
-        addSource(liveDataD) {
-            lastD = it
-            update()
-        }
     }
 }
+

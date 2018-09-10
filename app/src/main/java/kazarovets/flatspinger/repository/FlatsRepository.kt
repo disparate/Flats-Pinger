@@ -2,69 +2,61 @@ package kazarovets.flatspinger.repository
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Transformations
+import android.util.Log
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.rxkotlin.Singles
 import kazarovets.flatspinger.api.ApiManager
 import kazarovets.flatspinger.db.dao.FlatsDao
+import kazarovets.flatspinger.db.model.DBFlat
 import kazarovets.flatspinger.db.model.DBFlatInfo
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatInfo
-import kazarovets.flatspinger.model.FlatInfoImpl
+import kazarovets.flatspinger.model.FlatFilter
 import kazarovets.flatspinger.model.FlatStatus
+import kazarovets.flatspinger.model.Provider
 import kazarovets.flatspinger.utils.PreferenceUtils
 
 
 class FlatsRepository(private val flatsDao: FlatsDao) {
 
-    private val onlinerFlatInfos = Transformations.map(flatsDao.getOnlinerFlats()) {
-        val dest = ArrayList<FlatInfo>()
-        it.mapTo(dest) { FlatInfoImpl(it.flat, it.status, it.isSeen) }
+    fun getFavorites(): Flowable<out List<Flat>> {
+        return flatsDao.getFavoriteFlats()
+                .doOnSubscribe { Log.d("NOCOMMIT", "favorites emit") }
+                .map { it.map { it } }
     }
 
-    private val iNeedAFlatFlatInfos = Transformations.map(flatsDao.getFavoriteFlats()) {
-        val dest = ArrayList<FlatInfo>()
-        it.mapTo(dest) { FlatInfoImpl(it.flat, it.status, it.isSeen) }
-    }
-
-    private val flatsLiveData: LiveData<List<FlatInfo>> = onlinerFlatInfos.mergeWith(
-            iNeedAFlatFlatInfos)
-
-    fun getLocalFlats(): LiveData<List<FlatInfo>> = flatsLiveData
-
-
-    fun getRemoteFlats(): Single<List<Flat>> {
+    fun getRemoteFlats(provider: Provider): Single<out List<Flat>> {
         val minCost = PreferenceUtils.minCost
         val maxCost = PreferenceUtils.maxCost
         val allowAgency = PreferenceUtils.allowAgency
         val rentTypes = PreferenceUtils.rentTypes
 
-        fun addFlatStatuses(flats: List<Flat>) {
-            flats.forEach {
-                flatsDao.addFlatStatus(DBFlatInfo(provider = it.provider, flatId = it.id))
-            }
+        val obs = when (provider) {
+            Provider.ONLINER ->
+                ApiManager.onlinerApi.getLatestFlats(minCost,
+                        maxCost,
+                        !allowAgency,
+                        rentTypes)
+            Provider.I_NEED_A_FLAT ->
+                ApiManager.iNeedAFlatApi.getFlats(minCost?.toDouble(),
+                        maxCost?.toDouble(),
+                        allowAgency,
+                        rentTypes)
         }
 
-        return Singles.zip(ApiManager.onlinerApi.getLatestFlats(minCost, maxCost, !allowAgency, rentTypes)
-                .doOnSuccess {
-                    flatsDao.addFavoriteOnlinerFlat(it)
-                    addFlatStatuses(it)
-                },
-                ApiManager.iNeedAFlatApi.getFlats(minCost?.toDouble(), maxCost?.toDouble(), allowAgency, rentTypes)
-                        .doOnSuccess {
-                            flatsDao.addFavoriteFlat(it)
-                            addFlatStatuses(it)
-                        }) { onlinerFlats, iNeedAFlatFlats ->
-            val res = ArrayList<Flat>()
-            res.addAll(onlinerFlats)
-            res.addAll(iNeedAFlatFlats)
-            res
+        return obs.doOnSuccess { flats ->
+            flats.forEach {
+                flatsDao.addFlatStatus(DBFlatInfo.createFromFlat(it))
+            }
         }
     }
 
     fun updateIsFlatFavorite(flat: Flat, isFavorite: Boolean) {
-        val status = if (isFavorite) FlatStatus.FAVORITE else FlatStatus.REGULAR
-        flatsDao.updateFlatStatus(flat.id, status, flat.provider)
+        if (isFavorite) {
+            flatsDao.addFavoriteFlat(DBFlat.createFromFlat(flat))
+        } else {
+            flatsDao.removeFavoriteFlat(DBFlat.createFromFlat(flat))
+        }
     }
 
     fun setFlatSeen(flat: Flat, isSeen: Boolean) {
@@ -82,15 +74,25 @@ class FlatsRepository(private val flatsDao: FlatsDao) {
         }
     }
 
-    fun getFavoriteFlats(): LiveData<List<DBFlatInfo>> {
-        return flatsDao.getFlatsByStatus(FlatStatus.FAVORITE)
-    }
-
     fun getSeenFlatsFlowable(): Flowable<List<DBFlatInfo>> {
         return flatsDao.getSeenFlatsFlowable(true)
     }
 
+    fun getFlatStatuses(): Observable<List<DBFlatInfo>> {
+        return flatsDao.getDBFlatInfosFlowable().toObservable()
+    }
+
     fun getNotRegularFlatsFlowable(): Flowable<List<DBFlatInfo>> {
         return flatsDao.getFlatsExcludingStatusFlowable(FlatStatus.REGULAR)
+    }
+
+    //TODO: remove singleton
+    fun getFlatsFilter(): Observable<FlatFilter> {
+        return PreferenceUtils.flatsFilterObservable
+    }
+
+    //TODO: remove singleton
+    fun getShowSeenFlats(): Observable<Boolean> {
+        return PreferenceUtils.showSeenFlatObservable
     }
 }

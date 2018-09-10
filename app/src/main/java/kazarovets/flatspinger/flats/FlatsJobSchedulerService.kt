@@ -16,26 +16,28 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.Observables
+import io.reactivex.rxkotlin.Singles
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.MainActivity
 import kazarovets.flatspinger.db.model.DBFlatInfo
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatFilter
+import kazarovets.flatspinger.model.Provider
 import kazarovets.flatspinger.repository.FlatsRepository
 import kazarovets.flatspinger.utils.FlatsFilterMatcher
 import kazarovets.flatspinger.utils.PreferenceUtils
-import kazarovets.flatspinger.utils.getAppComponent
+import kazarovets.flatspinger.utils.extensions.getAppComponent
 import javax.inject.Inject
 
 
 class FlatsJobSchedulerService : JobService() {
 
     companion object {
-        val NOTIFICATION_ID = 314
-        val NOTIFICATION_CHANNEL_ID = "new_flats"
-        val NOTIFICATION_CHANNEL_NAME = "New flats"
+        const val NOTIFICATION_ID = 314
+        const val NOTIFICATION_CHANNEL_ID = "new_flats"
+        const val NOTIFICATION_CHANNEL_NAME = "New flats"
 
-        val TAG = "FlatsJob"
+        const val TAG = "FlatsJob"
     }
 
     @Inject
@@ -87,7 +89,12 @@ class FlatsJobSchedulerService : JobService() {
         val flatsFilter = PreferenceUtils.flatFilter
         val seenFlats = flatsRepository.getSeenFlatsFlowable().take(1).toObservable()
         val notRegularFlats = flatsRepository.getNotRegularFlatsFlowable().take(1).toObservable()
-        return Observables.zip(flatsRepository.getRemoteFlats().toObservable(),
+        val flats = Singles.zip(flatsRepository.getRemoteFlats(Provider.I_NEED_A_FLAT),
+                flatsRepository.getRemoteFlats(Provider.ONLINER)) { iNeedAFlat, onliner ->
+            iNeedAFlat + onliner
+        }
+
+        return Observables.zip(flats.toObservable(),
                 seenFlats,
                 notRegularFlats, { remoteFlats, seenDbFlats, notRegularDbFlats ->
             remoteFlats.filter { filterFlat(it, seenDbFlats, notRegularDbFlats, flatsFilter) }
@@ -99,8 +106,8 @@ class FlatsJobSchedulerService : JobService() {
                            notRegularDbFlats: List<DBFlatInfo>,
                            flatsFilter: FlatFilter): Boolean {
         return FlatsFilterMatcher.matches(flatsFilter, flat)
-                && seenDbFlats.find { it.isInfoFor(flat) } == null
-                && notRegularDbFlats.find { it.isInfoFor(flat) } == null
+                && seenDbFlats.find { it.isSameIdAndProvider(flat) } == null
+                && notRegularDbFlats.find { it.isSameIdAndProvider(flat) } == null
     }
 
     private fun onFlatsReceived(flats: List<Flat>?) {

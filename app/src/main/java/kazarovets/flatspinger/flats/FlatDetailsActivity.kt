@@ -20,7 +20,7 @@ import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.ImagesActivity
 import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.utils.StringsUtils
-import kazarovets.flatspinger.utils.getAppComponent
+import kazarovets.flatspinger.utils.extensions.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatDetailsViewModel
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
 import kotlinx.android.synthetic.main.activity_flat_details.*

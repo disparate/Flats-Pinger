@@ -1,13 +1,15 @@
 package kazarovets.flatspinger.utils
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.LiveData
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.util.Log
+import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kazarovets.flatspinger.FlatsApplication
+import kazarovets.flatspinger.base.prefs.observers.SharedPreferenceMultiKeyObservable
+import kazarovets.flatspinger.base.prefs.observers.SharedPreferenceObservableBoolean
 import kazarovets.flatspinger.model.FlatFilter
 import kazarovets.flatspinger.model.RentType
 
@@ -31,6 +33,10 @@ object PreferenceUtils {
     val FILTER_RENT_TYPES = "filter_rent_types"
     val FILTER_MAX_DISTANCE_TO_SUBWAY = "filter_max_dist_to_subway"
     val FILTER_KEYWORDS = "filter_keywords"
+
+    val flatsKeys = listOf(FILTER_MIN_COST_USD, FILTER_MAX_COST_USD,
+            FILTER_AGENCY_ALLOWED, FILTER_WITH_PHOTOS_ONLY, FILTER_SUBWAYS_IDS,
+            FILTER_RENT_TYPES, FILTER_MAX_DISTANCE_TO_SUBWAY, FILTER_KEYWORDS)
 
     val SETTINGS_DAYS_AD_IS_ACTUAL = "days_ad_is_actual"
     val SETTINGS_SHOW_SEEN_FLATS = "show_seen_flats"
@@ -188,6 +194,17 @@ object PreferenceUtils {
             updateDaysAgo = value.updateDatesAgo
         }
 
+    val flatsFilterObservable: Observable<FlatFilter> by lazy {
+        object : SharedPreferenceMultiKeyObservable<FlatFilter>(prefs,
+                flatsKeys,
+                FlatFilter()
+        ) {
+            override fun getValueFromPreferences(defValue: FlatFilter): FlatFilter {
+                return PreferenceUtils.flatFilter
+            }
+        }
+    }
+
     var enableNotifications: Boolean = false
         get() {
             field = prefs.getBoolean(SETTINGS_ENABLE_NOTIFICATONS, false)
@@ -205,6 +222,10 @@ object PreferenceUtils {
         set(value) {
             prefs.edit().putBoolean(SETTINGS_SHOW_SEEN_FLATS, value).schedule()
         }
+
+    val showSeenFlatObservable: Observable<Boolean> by lazy {
+        SharedPreferenceObservableBoolean(prefs, SETTINGS_SHOW_SEEN_FLATS, false)
+    }
 
     private fun getNullableInt(fieldName: String): Int? {
         val value = prefs.getInt(fieldName, 0)
@@ -232,93 +253,6 @@ object PreferenceUtils {
         }
     }
 
-    fun getFlatsFilterLiveData() = FlatsFilterLiveData(prefs)
-
-    class FlatsFilterLiveData(private val sharedPrefs: SharedPreferences) : LiveData<FlatFilter>() {
-        companion object {
-            val KEYS = arrayOf(FILTER_MIN_COST_USD, FILTER_MAX_COST_USD,
-                    FILTER_AGENCY_ALLOWED, FILTER_WITH_PHOTOS_ONLY, FILTER_SUBWAYS_IDS,
-                    FILTER_RENT_TYPES, FILTER_MAX_DISTANCE_TO_SUBWAY, FILTER_KEYWORDS)
-        }
-
-        private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (KEYS.contains(key)) {
-                value = getValueFromPreferences()
-            }
-        }
-
-        fun getValueFromPreferences(): FlatFilter = PreferenceUtils.flatFilter
-
-        override fun onActive() {
-            super.onActive()
-            value = getValueFromPreferences()
-            sharedPrefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
-        }
-
-        override fun onInactive() {
-            sharedPrefs.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
-            super.onInactive()
-        }
-
-    }
-
-    fun getBooleanLiveData(key: String, defValue: Boolean): SharedPreferenceBooleanLiveData {
-        return SharedPreferenceBooleanLiveData(prefs, key, defValue)
-    }
-
-    abstract class SharedPreferenceLiveData<T>(val sharedPrefs: SharedPreferences,
-                                               private val key: String,
-                                               private val defValue: T) : LiveData<T>() {
-
-        private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == this.key) {
-                value = getValueFromPreferences(key, defValue)
-            }
-        }
-
-        abstract fun getValueFromPreferences(key: String, defValue: T): T
-
-        override fun onActive() {
-            super.onActive()
-            value = getValueFromPreferences(key, defValue)
-            sharedPrefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
-        }
-
-        override fun onInactive() {
-            sharedPrefs.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
-            super.onInactive()
-        }
-    }
-
-    class SharedPreferenceIntLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Int) :
-            SharedPreferenceLiveData<Int>(sharedPrefs, key, defValue) {
-        override fun getValueFromPreferences(key: String, defValue: Int): Int = sharedPrefs.getInt(key, defValue)
-    }
-
-    class SharedPreferenceStringLiveData(sharedPrefs: SharedPreferences, key: String, defValue: String) :
-            SharedPreferenceLiveData<String>(sharedPrefs, key, defValue) {
-        override fun getValueFromPreferences(key: String, defValue: String): String = sharedPrefs.getString(key, defValue)
-    }
-
-    class SharedPreferenceBooleanLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Boolean) :
-            SharedPreferenceLiveData<Boolean>(sharedPrefs, key, defValue) {
-        override fun getValueFromPreferences(key: String, defValue: Boolean): Boolean = sharedPrefs.getBoolean(key, defValue)
-    }
-
-    class SharedPreferenceFloatLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Float) :
-            SharedPreferenceLiveData<Float>(sharedPrefs, key, defValue) {
-        override fun getValueFromPreferences(key: String, defValue: Float): Float = sharedPrefs.getFloat(key, defValue)
-    }
-
-    class SharedPreferenceLongLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Long) :
-            SharedPreferenceLiveData<Long>(sharedPrefs, key, defValue) {
-        override fun getValueFromPreferences(key: String, defValue: Long): Long = sharedPrefs.getLong(key, defValue)
-    }
-
-    class SharedPreferenceStringSetLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Set<String>) :
-            SharedPreferenceLiveData<Set<String>>(sharedPrefs, key, defValue) {
-        override fun getValueFromPreferences(key: String, defValue: Set<String>): Set<String> = sharedPrefs.getStringSet(key, defValue)
-    }
 
     fun SharedPreferences.Editor.schedule() {
         Schedulers.io().scheduleDirect {

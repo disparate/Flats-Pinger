@@ -2,7 +2,6 @@ package kazarovets.flatspinger.flats
 
 import android.graphics.Point
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -11,10 +10,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kazarovets.flatspinger.model.FlatInfo
+import kazarovets.flatspinger.model.FlatWithStatus
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.widgets.FlatInfoWindowAdapter
 
@@ -75,14 +71,14 @@ class FlatsMapFragment : SupportMapFragment() {
         }
     }
 
-    fun setFlats(flats: List<FlatInfo>?) {
+    fun setFlats(flats: List<FlatWithStatus>?) {
         map?.clear()
 
 
         if (flats == null)
             return
 
-        fun getIconGeneratorStyle(flat: FlatInfo): Int {
+        fun getIconGeneratorStyle(flat: FlatWithStatus): Int {
             if (flat.status == FlatStatus.FAVORITE) {
                 return IconGenerator.STYLE_ORANGE
             }

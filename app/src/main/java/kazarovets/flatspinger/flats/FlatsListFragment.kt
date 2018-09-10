@@ -12,10 +12,10 @@ import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionButton
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatInfo
+import kazarovets.flatspinger.model.FlatWithStatus
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
-import kazarovets.flatspinger.utils.getAppComponent
+import kazarovets.flatspinger.utils.extensions.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModel
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
 import kotlinx.android.synthetic.main.fragment_flats_list.*
@@ -35,7 +35,7 @@ class FlatsListFragment : Fragment() {
     private var adapter: FlatsRecyclerAdapter? = null
     private var currentMode: MODE = MODE.LIST
 
-    private var flats: MutableList<FlatInfo> = ArrayList()
+    private var flats: MutableList<FlatWithStatus> = ArrayList()
 
     private var flatsMapFragment: FlatsMapFragment? = null
 
@@ -109,8 +109,8 @@ class FlatsListFragment : Fragment() {
     }
 
 
-    private fun onFlatsReceived(flats: List<FlatInfo>?) {
-        val list = ArrayList<FlatInfo>()
+    private fun onFlatsReceived(flats: List<FlatWithStatus>?) {
+        val list = ArrayList<FlatWithStatus>()
         if (flats != null) {
             list.addAll(flats)
         }

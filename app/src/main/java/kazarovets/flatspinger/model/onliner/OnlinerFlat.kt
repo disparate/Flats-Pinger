@@ -54,15 +54,15 @@ data class OnlinerFlat(@SerializedName("id")
 
     override fun hashCode(): Int = originalUrl?.hashCode() ?: 0
 
-    override val address = location?.address ?: ""
+    override val address by lazy { location?.address ?: "" }
 
-    override val costInDollars = price?.amount?.toInt() ?: 0
+    override val costInDollars by lazy { price?.amount?.toInt() ?: 0 }
 
-    override val latitude = location?.latitude
+    override val latitude by lazy { location?.latitude }
 
-    override val longitude = location?.longitude
+    override val longitude by lazy { location?.longitude }
 
-    override val isOwner = contact?.isOwner ?: false
+    override val isOwner by lazy { contact?.isOwner ?: false }
 
     override val rentType: RentType
         get() {
@@ -83,7 +83,7 @@ data class OnlinerFlat(@SerializedName("id")
 
     override val source = "onliner.by"
 
-    override val images = listOfNotNull(imageUrl)
+    override val images by lazy { listOfNotNull(imageUrl) }
 
     override val description = ""
 

@@ -11,13 +11,13 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatInfo
+import kazarovets.flatspinger.model.FlatWithStatus
 import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.utils.SubwayUtils
 
 
-class FlatsRecyclerAdapter(var flats: MutableList<FlatInfo>,
+class FlatsRecyclerAdapter(var flats: MutableList<FlatWithStatus>,
                            private val onFavoriteChangedListener: (Flat, Boolean) -> Unit,
                            private val onRemoveClickListener: (Flat) -> Unit)
     : RecyclerView.Adapter<FlatsRecyclerAdapter.FlatsViewHolder>() {
@@ -81,7 +81,7 @@ class FlatsRecyclerAdapter(var flats: MutableList<FlatInfo>,
         return flats.size
     }
 
-    fun setData(data: List<FlatInfo>?) {
+    fun setData(data: List<FlatWithStatus>?) {
         if (data != null) {
             flats.clear()
             flats.addAll(data)
