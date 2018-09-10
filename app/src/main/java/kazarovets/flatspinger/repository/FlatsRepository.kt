@@ -57,6 +57,9 @@ class FlatsRepository(private val flatsDao: FlatsDao) {
         } else {
             flatsDao.removeFavoriteFlat(DBFlat.createFromFlat(flat))
         }
+        flatsDao.updateFlatStatus(flat.id,
+                if (isFavorite) FlatStatus.FAVORITE else FlatStatus.REGULAR,
+                flat.provider)
     }
 
     fun setFlatSeen(flat: Flat, isSeen: Boolean) {

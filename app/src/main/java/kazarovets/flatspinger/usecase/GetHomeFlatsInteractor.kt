@@ -1,6 +1,5 @@
 package kazarovets.flatspinger.usecase
 
-import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import kazarovets.flatspinger.db.model.DBFlatInfo
@@ -17,23 +16,17 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository) {
         return Observables.combineLatest(getFavoriteFlatsWithLoadingStatus(),
                 getRemoteFlatsWithLoadingStatus(Provider.ONLINER),
                 getRemoteFlatsWithLoadingStatus(Provider.I_NEED_A_FLAT)) { favs, onliner, iNeedAFlat ->
-            val allFlats = (favs.flatsOrEmpty() + onliner.flatsOrEmpty() + iNeedAFlat.flatsOrEmpty())
+            val allFlats = summWithoutDuplicates(favs.flatsOrEmpty(), onliner.flatsOrEmpty(), iNeedAFlat.flatsOrEmpty())
             HomeFlatsResponse(allFlats.sorted(),
                     onliner.loadingStatus,
                     iNeedAFlat.loadingStatus)
         }
     }
 
-    private fun testFlatsWithLoadingStatus(): Observable<FlatsWithLoadingStatus> {
-        return Observable.just(emptyList<FlatWithStatus>())
-                .wrapInOptional(true)
-                .addLoadingStatus()
-    }
-
     private fun getFavoriteFlatsWithLoadingStatus(): Observable<FlatsWithLoadingStatus> {
         fun Observable<out List<Flat>>.addFlatStatus(): Observable<List<FlatWithStatus>> {
             return this.map { list ->
-                list.map { FlatWithStatusImpl(it, FlatStatus.REGULAR, true) }
+                list.map { FlatWithStatusImpl(it, FlatStatus.FAVORITE, true) }
             }
         }
 
@@ -86,19 +79,45 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository) {
             : Observable<List<FlatWithStatus>> {
         return Observables.combineLatest(this, filterObs) { flats, filter ->
 
-            Log.d("NOCOMMIT", "filterWithFlatFilter, size = " + flats.size)
             flats.filterFlats(filter)
         }
     }
 
+    private fun summWithoutDuplicates(favoriteFlats: List<FlatWithStatus>,
+                                      onlinerFlats: List<FlatWithStatus>,
+                                      iNeedAFlatFlats: List<FlatWithStatus>): List<FlatWithStatus> {
+        val onlinerWithoutDuplicates = onlinerFlats.filter { onliner ->
+            iNeedAFlatFlats
+                    .any { iNeedAFlat -> iNeedAFlat.originalUrl == onliner.originalUrl }
+                    .not()
+        }
 
-    fun Observable<Optional<List<FlatWithStatus>>>.addLoadingStatus(): Observable<FlatsWithLoadingStatus> {
+        fun List<FlatWithStatus>.removeDuplicates(filterPredicate: (FlatWithStatus) -> String?): List<FlatWithStatus> {
+            val set = HashSet<String>()
+            return this.filter {
+                filterPredicate(it)?.let {
+                    val setContainsKey = set.contains(it)
+                    set.add(it)
+                    setContainsKey.not()
+                } ?: true
+            }
+        }
+
+        val remotesWithoutDuplicates = (onlinerWithoutDuplicates + iNeedAFlatFlats).removeDuplicates { it.imageUrl }
+        val favsWithoutDuplicates = favoriteFlats.filter { fav ->
+            remotesWithoutDuplicates.any { it.originalUrl == fav.originalUrl }.not()
+        }
+
+        return favsWithoutDuplicates + remotesWithoutDuplicates
+    }
+
+
+    private fun Observable<Optional<List<FlatWithStatus>>>.addLoadingStatus(): Observable<FlatsWithLoadingStatus> {
         return this.map {
 
             if (it.value == null) {
                 FlatsWithLoadingStatus(it, FlatsLoadingStatus.LOADING)
             } else {
-                Log.d("NOCOMMIT", "addLoadingStatus, size = " + it.value.size)
                 FlatsWithLoadingStatus(it, FlatsLoadingStatus.SUCCESS)
             }
         }.onErrorReturn {
