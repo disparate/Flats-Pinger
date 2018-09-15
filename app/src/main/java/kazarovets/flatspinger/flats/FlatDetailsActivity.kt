@@ -18,50 +18,32 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kazarovets.flatspinger.R
 import kazarovets.flatspinger.activity.ImagesActivity
-import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.FlatWithStatus
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.utils.extensions.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatDetailsViewModel
-import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
+import kazarovets.flatspinger.viewmodel.FlatDetailsViewModelFactory
 import kotlinx.android.synthetic.main.activity_flat_details.*
 import javax.inject.Inject
 
 
 class FlatDetailsActivity : AppCompatActivity() {
 
-    companion object {
-
-        val EXTRA_FLAT = "flat"
-        fun getCallingIntent(context: Context, flat: Flat): Intent {
-            val intent = Intent()
-            intent.putExtra(EXTRA_FLAT, flat)
-            intent.setClass(context, FlatDetailsActivity::class.java)
-            return intent
-        }
-
-        val MAP_ZOOM = 15.0f
-    }
-
     @Inject
-    lateinit var flatsFactory: FlatInfosViewModelFactory
+    lateinit var flatsFactory: FlatDetailsViewModelFactory
 
-    private lateinit var flat: Flat
     private lateinit var detailsViewModel: FlatDetailsViewModel
 
     private var mapFragment: MovableMapsFragment? = null
 
     var isFavorite = false
 
+    private val flat by lazy { intent.extras.getSerializable(EXTRA_FLAT) as FlatWithStatus }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-
-
-        val flat = intent.extras.getSerializable(EXTRA_FLAT) as Flat
-        this.flat = flat
 
         setupViewModel(flat)
         setContentView(R.layout.activity_flat_details)
@@ -92,7 +74,7 @@ class FlatDetailsActivity : AppCompatActivity() {
         setupMap()
     }
 
-    private fun setupViewModel(flat: Flat) {
+    private fun setupViewModel(flat: FlatWithStatus) {
 
         getAppComponent().inject(this)
 
@@ -201,6 +183,21 @@ class FlatDetailsActivity : AppCompatActivity() {
             else -> return false
         }
         return true
+    }
+
+
+    companion object {
+
+        val EXTRA_FLAT = "flat"
+
+        fun getCallingIntent(context: Context, flat: FlatWithStatus): Intent {
+            val intent = Intent()
+            intent.putExtra(EXTRA_FLAT, flat)
+            intent.setClass(context, FlatDetailsActivity::class.java)
+            return intent
+        }
+
+        val MAP_ZOOM = 15.0f
     }
 
 

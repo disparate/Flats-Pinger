@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kazarovets.flatspinger.BR
+import kazarovets.flatspinger.flats.adapter.FlatViewState
 
 
 abstract class BaseBindingAdapter<DATA>(config: AsyncDifferConfig<DATA>) :
@@ -35,6 +36,9 @@ abstract class BaseBindingAdapter<DATA>(config: AsyncDifferConfig<DATA>) :
         }
     }
 
+    private var currentList: List<DATA>? = null
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder<*> =
             BindableViewHolder.create<ViewDataBinding>(
                     LayoutInflater.from(parent.context),
@@ -46,7 +50,7 @@ abstract class BaseBindingAdapter<DATA>(config: AsyncDifferConfig<DATA>) :
     protected abstract fun getLayoutResId(viewType: Int): Int
 
     override fun onBindViewHolder(holder: BindableViewHolder<*>, position: Int) {
-        onBind(holder, position)
+        onBind(holder, getItem(position))
         holder.bindings.executePendingBindings()
         if (hasInnerClickListener) {
             holder.itemView.setOnClickListener(innerClickListener)
@@ -58,7 +62,30 @@ abstract class BaseBindingAdapter<DATA>(config: AsyncDifferConfig<DATA>) :
         return super.getItem(position)
     }
 
-    open fun onBind(holder: BindableViewHolder<*>, position: Int) {
-        holder.bindings.setVariable(BR.item, getItem(position))
+    open fun onBind(holder: BindableViewHolder<*>, item: DATA) {
+        holder.bindings.setVariable(BR.item, item)
     }
+
+
+    protected fun changeListElement(old: DATA, new: DATA) {
+        submitList(currentList?.map {
+            if (it == old) {
+                new
+            } else {
+                it
+            }
+        })
+    }
+
+    protected fun removeListElement(element: FlatViewState) {
+        submitList(currentList?.filter { it != element })
+    }
+
+
+    override fun submitList(list: List<DATA>?) {
+        currentList = list
+        super.submitList(list)
+    }
+
+
 }

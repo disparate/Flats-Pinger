@@ -1,9 +1,11 @@
 package kazarovets.flatspinger.model
 
+import java.io.Serializable
 
-interface FlatWithStatus : Flat {
 
-    val status : FlatStatus
+interface FlatWithStatus : Flat, Serializable {
 
-    val isSeen : Boolean
+    val status: FlatStatus
+
+    val isSeen: Boolean
 }

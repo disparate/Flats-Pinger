@@ -58,7 +58,6 @@ interface Flat : Comparable<Flat>, Serializable {
         }
     }
 
-
     fun hasImages(): Boolean = !imageUrl.isNullOrBlank()
 
     fun getTags(): List<Tag> = listOf(
@@ -76,6 +75,10 @@ interface Flat : Comparable<Flat>, Serializable {
         } else {
             return -1
         }
+    }
+
+    fun sameIdAndProvider(flat: Flat): Boolean {
+        return this.id == flat.id && this.provider == flat.provider
     }
 
 }

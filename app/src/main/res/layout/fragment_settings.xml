@@ -19,12 +19,14 @@
             android:id="@+id/enable_notifications_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Regular.Medium"
             android:text="@string/settings_enable_notifications" />
 
 
         <CheckBox
             android:id="@+id/show_seen_flats_checkbox"
             android:layout_width="match_parent"
+            android:textAppearance="@style/TextAppearance.Regular.Medium"
             android:layout_height="wrap_content"
             android:text="@string/settings_show_seen_flats" />
 
@@ -40,6 +42,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorTextSecondary"
+                android:textAppearance="@style/TextAppearance.Regular.Medium"
                 android:text="@string/settings_time_ad_is_actual" />
 
             <EditText
@@ -47,6 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="numberSigned"
+                android:fontFamily="@font/eczar"
                 android:minEms="3" />
         </LinearLayout>
 

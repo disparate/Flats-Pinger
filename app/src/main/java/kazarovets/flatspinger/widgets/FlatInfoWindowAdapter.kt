@@ -13,17 +13,17 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 import kazarovets.flatspinger.R
-import kazarovets.flatspinger.model.Flat
+import kazarovets.flatspinger.model.FlatWithStatus
 import java.lang.Exception
 
 
 class FlatInfoWindowAdapter(layoutInflater: LayoutInflater) : GoogleMap.InfoWindowAdapter {
 
-    private var map = HashMap<Marker, Flat>()
+    private var map = HashMap<Marker, FlatWithStatus>()
 
     private var contentsView: View = layoutInflater.inflate(R.layout.item_window_flat, null)
 
-    fun addFlat(key: Marker, flat: Flat) {
+    fun addFlat(key: Marker, flat: FlatWithStatus) {
         map.put(key, flat)
     }
 

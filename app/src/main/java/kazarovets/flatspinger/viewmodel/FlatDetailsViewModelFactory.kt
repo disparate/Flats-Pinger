@@ -7,13 +7,12 @@ import kazarovets.flatspinger.repository.FlatsRepository
 import kazarovets.flatspinger.rx.SchedulersFacade
 
 
-class FlatInfosViewModelFactory(val flatsRepository: FlatsRepository,
-                                val schedulersFacade: SchedulersFacade,
-                                val flatsMapper: FlatViewStateMapper)
+class FlatDetailsViewModelFactory(val flatsRepository: FlatsRepository,
+                                  val schedulersFacade: SchedulersFacade)
     : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return FlatInfosViewModel(flatsRepository, flatsMapper, schedulersFacade) as T
+        return FlatDetailsViewModel(flatsRepository, schedulersFacade) as T
     }
 
 

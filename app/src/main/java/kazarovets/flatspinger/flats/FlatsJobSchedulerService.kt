@@ -88,7 +88,7 @@ class FlatsJobSchedulerService : JobService() {
     private fun getFilteredObservable(): Observable<List<Flat>> {
         val flatsFilter = PreferenceUtils.flatFilter
         val seenFlats = flatsRepository.getSeenFlatsFlowable().take(1).toObservable()
-        val notRegularFlats = flatsRepository.getNotRegularFlatsFlowable().take(1).toObservable()
+        val notRegularFlats = flatsRepository.getHiddenFlatsFlowable().take(1).toObservable()
         val flats = Singles.zip(flatsRepository.getRemoteFlats(Provider.I_NEED_A_FLAT),
                 flatsRepository.getRemoteFlats(Provider.ONLINER)) { iNeedAFlat, onliner ->
             iNeedAFlat + onliner

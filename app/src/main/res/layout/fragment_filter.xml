@@ -17,14 +17,16 @@
             android:id="@+id/filterAllowAgency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/filter_allow_agency" />
+            android:text="@string/filter_allow_agency"
+            android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
 
         <CheckBox
             android:id="@+id/filterAllowOnlyWithPhotos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/filter_allow_with_photos_only" />
+            android:text="@string/filter_allow_with_photos_only"
+            android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,7 +37,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/filter_rooms_number" />
+                android:textColor="@color/colorTextSecondary"
+                android:text="@string/filter_rooms_number"
+                android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -47,28 +51,32 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/rent_1k" />
+                    android:text="@string/rent_1k"
+                    android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
                 <CheckBox
                     android:id="@+id/filterRent2k"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/rent_2k" />
+                    android:text="@string/rent_2k"
+                    android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
                 <CheckBox
                     android:id="@+id/filterRent3k"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/rent_3k" />
+                    android:text="@string/rent_3k"
+                    android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
                 <CheckBox
                     android:id="@+id/filterRent4kAndMore"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
-                    android:text="@string/rent_4k" />
+                    android:text="@string/rent_4k"
+                    android:textAppearance="@style/TextAppearance.Regular.Medium" />
             </LinearLayout>
 
 
@@ -84,13 +92,16 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorTextSecondary"
                 android:layout_weight="1"
-                android:text="@string/filter_min_cost" />
+                android:text="@string/filter_min_cost"
+                android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
             <EditText
                 android:id="@+id/filterMinCostEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/eczar"
                 android:inputType="numberSigned"
                 android:minEms="4" />
         </LinearLayout>
@@ -105,14 +116,17 @@
 
             <TextView
                 android:layout_width="0dp"
+                android:textColor="@color/colorTextSecondary"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/filter_max_cost" />
+                android:text="@string/filter_max_cost"
+                android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
             <EditText
                 android:id="@+id/filterMaxCostEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/eczar"
                 android:inputType="numberSigned"
                 android:minEms="4" />
         </LinearLayout>
@@ -128,8 +142,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="12dp"
+                android:textColor="@color/colorTextSecondary"
                 android:layout_weight="1"
-                android:text="@string/filter_keywords_title" />
+                android:text="@string/filter_keywords_title"
+                android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
             <FrameLayout
                 android:id="@+id/filterEditKeywordsButton"
@@ -159,7 +175,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="12dp"
                 android:layout_weight="1"
-                android:text="@string/filter_subway_title" />
+                android:textColor="@color/colorTextSecondary"
+                android:text="@string/filter_subway_title"
+                android:textAppearance="@style/TextAppearance.Regular.Medium" />
 
             <FrameLayout
                 android:id="@+id/filterEditSubwaysButton"

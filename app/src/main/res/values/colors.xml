@@ -5,7 +5,7 @@
     <color name="colorAccent">#455A64</color>
 
     <color name="colorTextPrimary">#e6000000</color>
-    <color name="colorTextSecondary">#82000000</color>
+    <color name="colorTextSecondary">#90000000</color>
     <color name="colorPrimaryTranslucient">#aa03A9F4</color>
 
     <color name="colorSubwayRed">#e41d25</color>
@@ -19,4 +19,7 @@
     <color name="toolbarTitleTextColor">#ffffff</color>
 
     <color name="colorWhite">#ffffff</color>
+    <color name="colorScreenBackground">#EDF0F2</color>
+    <color name="colorCardBackground">@color/colorWhite</color>
+    <color name="colorMoney">@color/colorAccent</color>
 </resources>

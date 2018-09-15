@@ -5,16 +5,16 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionButton
 import kazarovets.flatspinger.R
-import kazarovets.flatspinger.model.Flat
-import kazarovets.flatspinger.model.FlatWithStatus
+import kazarovets.flatspinger.flats.adapter.FlatViewState
+import kazarovets.flatspinger.flats.adapter.FlatsRecyclerAdapter
 import kazarovets.flatspinger.model.FlatStatus
-import kazarovets.flatspinger.ui.FlatsRecyclerAdapter
 import kazarovets.flatspinger.utils.extensions.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModel
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
@@ -24,18 +24,21 @@ import javax.inject.Inject
 
 class FlatsListFragment : Fragment() {
 
-    companion object {
-        val VIEW_FLIPPER_LIST_POS = 0
-        val VIEW_FLIPPER_MAP_POS = 1
-    }
-
     @Inject
     lateinit var flatsFactory: FlatInfosViewModelFactory
 
-    private var adapter: FlatsRecyclerAdapter? = null
-    private var currentMode: MODE = MODE.LIST
+    private var adapter = FlatsRecyclerAdapter(
+            onFavoriteChangedListener = { flat, isFav ->
+                flatsViewModel.updateIsFavorite(flat, isFav)
+            },
 
-    private var flats: MutableList<FlatWithStatus> = ArrayList()
+            onRemoveClickListener = { flatsViewModel.setHiddenFlat(it) },
+
+            onClickListener = {
+                startActivity(FlatDetailsActivity.getCallingIntent(context!!, it))
+            })
+
+    private var currentMode: MODE = MODE.LIST
 
     private var flatsMapFragment: FlatsMapFragment? = null
 
@@ -71,18 +74,7 @@ class FlatsListFragment : Fragment() {
         }
 
         flatsListRecycler.layoutManager = LinearLayoutManager(context)
-        adapter = FlatsRecyclerAdapter(ArrayList(),
-                onFavoriteChangedListener = { flat, isFav ->
-                    flatsViewModel.updateIsFavorite(flat, isFav)
-                },
-                onRemoveClickListener = { flatsViewModel.setHiddenFlat(it) })
-
-        adapter?.onClickListener = object : FlatsRecyclerAdapter.OnItemClickListener {
-            override fun onItemClick(item: Flat) {
-                val intent = FlatDetailsActivity.getCallingIntent(context!!, item)
-                startActivity(intent)
-            }
-        }
+        (flatsListRecycler.itemAnimator as? DefaultItemAnimator)?.supportsChangeAnimations = false
 
         flatsListRecycler.adapter = adapter
 
@@ -94,11 +86,15 @@ class FlatsListFragment : Fragment() {
             onFlatsReceived(it)
         })
 
-
+        //TODO: change
         flatsContentViewFlipper.showLoader()
         flatsViewModel.getIsLoading().observe(this, Observer<Boolean> {
             flatsListSwipeRefresh.isRefreshing = it ?: flatsListSwipeRefresh.isRefreshing ?: false
-            flatsContentViewFlipper.showContentIfNotEmpty(flats)
+            if (it == true && flatsViewModel.getFlats().value?.isNotEmpty() == false) {
+                flatsContentViewFlipper.showLoader()
+            } else {
+                flatsContentViewFlipper.showContent()
+            }
         })
 
         flatsMapFragment = FlatsMapFragment()
@@ -109,19 +105,9 @@ class FlatsListFragment : Fragment() {
     }
 
 
-    private fun onFlatsReceived(flats: List<FlatWithStatus>?) {
-        val list = ArrayList<FlatWithStatus>()
-        if (flats != null) {
-            list.addAll(flats)
-        }
-        this.flats = list
-        updateAdapterData()
-
-        flatsMapFragment?.setFlats(flats ?: emptyList())
-    }
-
-    private fun updateAdapterData() {
-        adapter?.setData(flats)
+    private fun onFlatsReceived(flats: List<FlatViewState>?) {
+        adapter.submitList(flats)
+        flatsMapFragment?.setFlats(flats?.map { it.flat } ?: emptyList())
     }
 
     private fun fillFloatingMenu() {
@@ -167,5 +153,10 @@ class FlatsListFragment : Fragment() {
         LIST(listOf(FlatStatus.REGULAR, FlatStatus.FAVORITE)),
         MAP(listOf(FlatStatus.REGULAR, FlatStatus.FAVORITE)),
         FAVORITES(listOf(FlatStatus.FAVORITE))
+    }
+
+    companion object {
+        const val VIEW_FLIPPER_LIST_POS = 0
+        const val VIEW_FLIPPER_MAP_POS = 1
     }
 }

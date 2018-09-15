@@ -13,17 +13,17 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/mainToolbar"
-            app:titleTextColor="@color/toolbarTitleTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize" />
+            android:minHeight="?attr/actionBarSize"
+            app:titleTextColor="@color/toolbarTitleTextColor" />
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
         android:id="@+id/mainContainer"
         android:layout_width="match_parent"
-        android:background="@color/colorWhite"
         android:layout_height="match_parent"
+        android:background="@color/colorScreenBackground"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="kazarovets.flatspinger.activity.MainActivity">
