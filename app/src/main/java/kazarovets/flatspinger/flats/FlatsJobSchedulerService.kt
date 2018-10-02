@@ -13,6 +13,7 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.Observables
@@ -24,6 +25,8 @@ import kazarovets.flatspinger.model.Flat
 import kazarovets.flatspinger.model.FlatFilter
 import kazarovets.flatspinger.model.Provider
 import kazarovets.flatspinger.repository.FlatsRepository
+import kazarovets.flatspinger.usecase.GetHomeFlatsInteractor
+import kazarovets.flatspinger.usecase.GetRemoteFlatsInteractor
 import kazarovets.flatspinger.utils.FlatsFilterMatcher
 import kazarovets.flatspinger.utils.PreferenceUtils
 import kazarovets.flatspinger.utils.extensions.getAppComponent
@@ -41,7 +44,7 @@ class FlatsJobSchedulerService : JobService() {
     }
 
     @Inject
-    lateinit var flatsRepository: FlatsRepository
+    lateinit var getRemoteFlatsInteractor: GetRemoteFlatsInteractor
 
     private var disposable: Disposable? = null
 
@@ -66,7 +69,7 @@ class FlatsJobSchedulerService : JobService() {
     private fun loadData(params: JobParameters?) {
         Log.d("FlatsJob", "Starting job")
 
-        disposable = getFilteredObservable()
+        disposable = getRemoteFlatsInteractor.getObservable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         {
@@ -83,31 +86,6 @@ class FlatsJobSchedulerService : JobService() {
                         }
 
                 )
-    }
-
-    private fun getFilteredObservable(): Observable<List<Flat>> {
-        val flatsFilter = PreferenceUtils.flatFilter
-        val seenFlats = flatsRepository.getSeenFlatsFlowable().take(1).toObservable()
-        val notRegularFlats = flatsRepository.getHiddenFlatsFlowable().take(1).toObservable()
-        val flats = Singles.zip(flatsRepository.getRemoteFlats(Provider.I_NEED_A_FLAT),
-                flatsRepository.getRemoteFlats(Provider.ONLINER)) { iNeedAFlat, onliner ->
-            iNeedAFlat + onliner
-        }
-
-        return Observables.zip(flats.toObservable(),
-                seenFlats,
-                notRegularFlats, { remoteFlats, seenDbFlats, notRegularDbFlats ->
-            remoteFlats.filter { filterFlat(it, seenDbFlats, notRegularDbFlats, flatsFilter) }
-        })
-    }
-
-    private fun filterFlat(flat: Flat,
-                           seenDbFlats: List<DBFlatInfo>,
-                           notRegularDbFlats: List<DBFlatInfo>,
-                           flatsFilter: FlatFilter): Boolean {
-        return FlatsFilterMatcher.matches(flatsFilter, flat)
-                && seenDbFlats.find { it.isSameIdAndProvider(flat) } == null
-                && notRegularDbFlats.find { it.isSameIdAndProvider(flat) } == null
     }
 
     private fun onFlatsReceived(flats: List<Flat>?) {

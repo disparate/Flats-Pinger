@@ -9,6 +9,9 @@ import kazarovets.flatspinger.db.dao.FlatsDao
 import kazarovets.flatspinger.flats.adapter.FlatViewStateMapper
 import kazarovets.flatspinger.repository.FlatsRepository
 import kazarovets.flatspinger.rx.SchedulersFacade
+import kazarovets.flatspinger.usecase.GetRemoteFlatsInteractor
+import kazarovets.flatspinger.usecase.MergeFlatsStrategy
+import kazarovets.flatspinger.usecase.SetFlatStatusStrategy
 import kazarovets.flatspinger.viewmodel.FlatDetailsViewModelFactory
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
 import javax.inject.Singleton
@@ -52,5 +55,11 @@ class FlatsModule {
                                     schedulersFacade: SchedulersFacade): FlatDetailsViewModelFactory {
         return FlatDetailsViewModelFactory(flatsRepository,
                 schedulersFacade)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRemoteFlatsInteractor(flatsRepository: FlatsRepository): GetRemoteFlatsInteractor {
+        return GetRemoteFlatsInteractor(flatsRepository, MergeFlatsStrategy(), SetFlatStatusStrategy())
     }
 }

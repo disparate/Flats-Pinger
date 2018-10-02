@@ -6,10 +6,10 @@ import kazarovets.flatspinger.model.Provider
 
 class MergeFlatsStrategy {
 
-    fun mergeFlats(favoriteFlats: List<FlatWithStatus>,
+    fun mergeFlats(favoriteFlats: List<FlatWithStatus> = emptyList(),
                    onlinerRemoteFlats: List<FlatWithStatus>,
                    iNeedAFlatRemoteFlats: List<FlatWithStatus>,
-                   currentShownFlats: List<FlatWithStatus>): List<FlatWithStatus> {
+                   currentShownFlats: List<FlatWithStatus> = emptyList()): List<FlatWithStatus> {
 
         val allINeedAFlatFlats = iNeedAFlatRemoteFlats
                 .addUnique(currentShownFlats.filterProvider(Provider.I_NEED_A_FLAT))

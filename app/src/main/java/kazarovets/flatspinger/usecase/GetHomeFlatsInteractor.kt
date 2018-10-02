@@ -47,7 +47,7 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository,
 
     private fun getCurrentFlatsFiltered(currentFlats: List<FlatWithStatus>): Observable<List<FlatWithStatus>> {
         return Observable.just(currentFlats)
-                .addFlatStatus(flatStatusesObservable)
+                .addFlatStatus(flatStatusesObservable, setFlatStatusStrategy)
                 .filterHidden()
                 .filterSeen(flatsRepository.getShowSeenFlats())
                 .filterWithFlatFilter(flatsRepository.getFlatsFilter())
@@ -55,7 +55,7 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository,
 
     private fun getRemoteFlatsWithLoadingStatus(provider: Provider): Observable<FlatsWithLoadingStatus> {
         return flatsRepository.getRemoteFlats(provider).toObservable()
-                .addFlatStatus(flatStatusesObservable)
+                .addFlatStatus(flatStatusesObservable, setFlatStatusStrategy)
                 .filterHidden()
                 .filterSeen(flatsRepository.getShowSeenFlats())
                 .filterWithFlatFilter(flatsRepository.getFlatsFilter())
@@ -63,17 +63,29 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository,
                 .addLoadingStatus()
     }
 
-    private fun Observable<out List<Flat>>.addFlatStatus(statusesObs: Observable<List<DBFlatInfo>>)
+
+    private fun Observable<out List<FlatWithStatus>>.filterHidden(): Observable<List<FlatWithStatus>> {
+        return this.map { it.filter { it.status != FlatStatus.HIDDEN } }
+    }
+
+
+
+    private fun Observable<out List<FlatWithStatus>>.filterWithFlatFilter(filterObs: Observable<FlatFilter>)
+            : Observable<List<FlatWithStatus>> {
+        return Observables.combineLatest(this, filterObs) { flats, filter ->
+            flats.filterFlats(filter)
+        }
+    }
+
+
+    private fun Observable<out List<Flat>>.addFlatStatus(statusesObs: Observable<List<DBFlatInfo>>,
+                                                         setFlatStatusStrategy: SetFlatStatusStrategy)
             : Observable<out List<FlatWithStatus>> {
         return Observables.combineLatest(this, statusesObs) { flats, statuses ->
             flats.map { flat ->
                 setFlatStatusStrategy.convertWithStatus(flat, statuses)
             }
         }
-    }
-
-    private fun Observable<out List<FlatWithStatus>>.filterHidden(): Observable<List<FlatWithStatus>> {
-        return this.map { it.filter { it.status != FlatStatus.HIDDEN } }
     }
 
     private fun Observable<out List<FlatWithStatus>>.filterSeen(showSeenObservable: Observable<Boolean>)
@@ -83,12 +95,6 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository,
         }
     }
 
-    private fun Observable<out List<FlatWithStatus>>.filterWithFlatFilter(filterObs: Observable<FlatFilter>)
-            : Observable<List<FlatWithStatus>> {
-        return Observables.combineLatest(this, filterObs) { flats, filter ->
-            flats.filterFlats(filter)
-        }
-    }
 
     private fun sumWithoutDuplicates(favoriteFlats: List<FlatWithStatus>,
                                      onlinerFlats: List<FlatWithStatus>,
