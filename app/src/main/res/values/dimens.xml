@@ -11,4 +11,7 @@
     <dimen name="subway_selector_checkbox_inner_circle_padding">8dp</dimen>
     <dimen name="subway_selector_checkbox_width">24dp</dimen>
     <dimen name="subway_selector_checkbox_width_with_padding_half">18dp</dimen>
+
+    <dimen name="map_flat_width">280dp</dimen>
+    <dimen name="map_flat_height">180dp</dimen>
 </resources>

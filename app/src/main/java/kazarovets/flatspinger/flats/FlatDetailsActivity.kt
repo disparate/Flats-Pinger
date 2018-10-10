@@ -12,7 +12,6 @@ import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.bumptech.glide.Glide
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -21,6 +20,7 @@ import kazarovets.flatspinger.activity.ImagesActivity
 import kazarovets.flatspinger.model.FlatWithStatus
 import kazarovets.flatspinger.utils.StringsUtils
 import kazarovets.flatspinger.utils.extensions.getAppComponent
+import kazarovets.flatspinger.utils.loadCenterCrop
 import kazarovets.flatspinger.viewmodel.FlatDetailsViewModel
 import kazarovets.flatspinger.viewmodel.FlatDetailsViewModelFactory
 import kotlinx.android.synthetic.main.activity_flat_details.*
@@ -54,9 +54,8 @@ class FlatDetailsActivity : AppCompatActivity() {
 
 
         detailsFlatImage.visibility = if (flat.hasImages()) View.VISIBLE else View.GONE
-        if (!flat.imageUrl.isNullOrBlank()) {
-            Glide.with(this).load(flat.imageUrl).centerCrop().into(detailsFlatImage)
-        }
+
+        detailsFlatImage.loadCenterCrop(flat.imageUrl)
 
         detailsFlatImage.setOnClickListener { startActivity(ImagesActivity.getCallingIntent(this, flat.images)) }
 

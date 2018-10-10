@@ -3,25 +3,26 @@ package kazarovets.flatspinger.flats.adapter
 import android.databinding.BindingAdapter
 import android.view.View
 import android.widget.ImageView
-import com.bumptech.glide.Glide
 import kazarovets.flatspinger.R
+import kazarovets.flatspinger.utils.clearLoadings
+import kazarovets.flatspinger.utils.loadCenterCrop
 
 
 @BindingAdapter("loadCropImg")
 fun loadCropImg(imageView: ImageView, url: String?) {
     val prevUrl = imageView.getTag(R.id.glide_image_url)
     if (url != prevUrl) {
-        Glide.clear(imageView)
+        imageView.clearLoadings()
         if (url != null && url.isNotEmpty()) {
             imageView.setTag(R.id.glide_image_url, url)
-            Glide.with(imageView.context).load(url).centerCrop().into(imageView)
+            imageView.loadCenterCrop(url)
         }
     }
 }
 
 @BindingAdapter("setImgRes")
 fun setImgRes(imageView: ImageView, res: Int?) {
-    res?.let { 
+    res?.let {
         imageView.setImageResource(it)
     }
 }

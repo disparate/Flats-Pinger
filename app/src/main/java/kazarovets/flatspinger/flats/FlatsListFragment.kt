@@ -46,11 +46,13 @@ class FlatsListFragment : Fragment() {
     private lateinit var flatsViewModel: FlatInfosViewModel
 
     private val filterClickListener = View.OnClickListener { v ->
-        val mode = v?.tag as MODE
-        currentMode = mode
-        flatsViewModel.flatsMode = mode
-        fillFloatingMenu()
-        flatsListMapSwitcher.displayedChild = getDisplayedPagePos(mode)
+        val mode = v?.tag as? MODE
+        mode?.let {
+            currentMode = it
+            flatsViewModel.flatsMode = it
+            fillFloatingMenu()
+            flatsListMapSwitcher.displayedChild = getDisplayedPagePos(it)
+        }
     }
 
     override fun onAttach(context: Context?) {

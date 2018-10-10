@@ -10,36 +10,36 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
-import kazarovets.flatspinger.model.FlatWithStatus
 import kazarovets.flatspinger.model.FlatStatus
+import kazarovets.flatspinger.model.FlatWithStatus
 import kazarovets.flatspinger.widgets.FlatInfoWindowAdapter
 
 
 class FlatsMapFragment : SupportMapFragment() {
 
     companion object {
-        val MINSK_CENTER_LATITUDE = 53.901976
-        val MINSK_CENTER_LONGITUDE = 27.562056
-        val MAP_ZOOM = 11.5f
-        val SELECT_FLAT_INFO_ANIMATION_LENGTH_MS = 500
+        const val MINSK_CENTER_LATITUDE = 53.901976
+        const val MINSK_CENTER_LONGITUDE = 27.562056
+        const val MAP_ZOOM = 11.5f
+        const val SELECT_FLAT_INFO_ANIMATION_LENGTH_MS = 500
     }
 
     var map: GoogleMap? = null
-    var infoWindowAdapter: FlatInfoWindowAdapter? = null
-    var iconGenerator: IconGenerator? = null
+    private var infoWindowAdapter: FlatInfoWindowAdapter? = null
+    private var iconGenerator: IconGenerator? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        infoWindowAdapter = FlatInfoWindowAdapter(layoutInflater)
+        infoWindowAdapter = FlatInfoWindowAdapter(layoutInflater, context!!.applicationContext)
         iconGenerator = IconGenerator(context)
 
         getMapAsync {
             map = it
             it.setInfoWindowAdapter(infoWindowAdapter)
-            it.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    LatLng(MINSK_CENTER_LATITUDE, MINSK_CENTER_LONGITUDE),
-                    MAP_ZOOM))
+
+            it.moveCameraToCityCenter()
+
             it.setOnInfoWindowClickListener {
                 val flat = infoWindowAdapter?.getFlat(it)
                 if (flat != null) {
@@ -47,27 +47,40 @@ class FlatsMapFragment : SupportMapFragment() {
                     startActivity(intent)
                 }
             }
-            it.setOnMarkerClickListener {
-                val containerHeight = getView()?.height
 
-                val projection = map?.projection
+            it.setOnMarkerClickListener()
+        }
+    }
 
-                val markerLatLng = LatLng(it.position.latitude,
-                        it.position.longitude)
-                val markerScreenPosition = projection?.toScreenLocation(markerLatLng)
-                if (markerScreenPosition != null && containerHeight != null) {
-                    val pointHalfScreenAbove = Point(markerScreenPosition.x,
-                            markerScreenPosition.y - containerHeight / 3)
+    private fun GoogleMap.moveCameraToCityCenter() {
+        this.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                LatLng(MINSK_CENTER_LATITUDE, MINSK_CENTER_LONGITUDE),
+                MAP_ZOOM))
+    }
 
-                    val aboveMarkerLatLng = projection
-                            .fromScreenLocation(pointHalfScreenAbove)
+    private fun GoogleMap.setOnMarkerClickListener() {
+        this.setOnMarkerClickListener {
+            val containerHeight = view?.height
 
-                    it.showInfoWindow()
-                    val newPos = CameraUpdateFactory.newLatLng(aboveMarkerLatLng)
-                    map?.animateCamera(newPos, SELECT_FLAT_INFO_ANIMATION_LENGTH_MS, null)
-                }
-                true
+            val projection = map?.projection
+
+            val markerLatLng = LatLng(it.position.latitude,
+                    it.position.longitude)
+
+            val markerScreenPosition = projection?.toScreenLocation(markerLatLng)
+
+            if (markerScreenPosition != null && containerHeight != null) {
+                val pointHalfScreenAbove = Point(markerScreenPosition.x,
+                        markerScreenPosition.y - containerHeight / 3)
+
+                val aboveMarkerLatLng = projection
+                        .fromScreenLocation(pointHalfScreenAbove)
+
+                it.showInfoWindow()
+                val newPos = CameraUpdateFactory.newLatLng(aboveMarkerLatLng)
+                map?.animateCamera(newPos, SELECT_FLAT_INFO_ANIMATION_LENGTH_MS, null)
             }
+            true
         }
     }
 

@@ -9,10 +9,10 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
 import com.github.chrisbanes.photoview.PhotoView
 import com.github.chrisbanes.photoview.PhotoViewAttacher
 import kazarovets.flatspinger.R
+import kazarovets.flatspinger.utils.load
 import kotlinx.android.synthetic.main.activity_images.*
 
 /**
@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.activity_images.*
 class ImagesActivity : AppCompatActivity() {
 
     companion object {
-        val KEY_GALLERY = "gallery"
+        private const val KEY_GALLERY = "gallery"
 
         fun getCallingIntent(context: Context, urls: List<String>?): Intent {
             val intent = Intent()
@@ -70,7 +70,7 @@ class ImagesActivity : AppCompatActivity() {
             mAttacher?.setOnClickListener {
                 mActivity.finish()
             }
-            Glide.with(image.context).load(mGallery[position]).into(image)
+            image.load(mGallery[position])
             container.addView(view)
             return view
         }
@@ -98,6 +98,4 @@ class ImagesActivity : AppCompatActivity() {
             }
         }
     }
-
-
 }
