@@ -214,9 +214,9 @@ object PreferenceUtils {
             prefs.edit().putBoolean(SETTINGS_ENABLE_NOTIFICATONS, value).schedule()
         }
 
-    var showSeenFlats: Boolean = false
+    var showSeenFlats: Boolean = true
         get() {
-            field = prefs.getBoolean(SETTINGS_SHOW_SEEN_FLATS, false)
+            field = prefs.getBoolean(SETTINGS_SHOW_SEEN_FLATS, true)
             return field
         }
         set(value) {

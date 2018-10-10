@@ -13,7 +13,7 @@ data class FlatViewState(val flat: FlatWithStatus,
                          val sourceName: String,
                          val updatedTime: String,
 
-                         val isSeen: Boolean,
+                         val showAsSeen: Boolean,
                          val isFavorite: Boolean) : BaseRecyclerItem {
 
     override fun areItemsTheSame(obj: Any): Boolean {
@@ -30,7 +30,7 @@ data class FlatViewState(val flat: FlatWithStatus,
                 && providerRes == obj.providerRes
                 && sourceName == obj.sourceName
                 && updatedTime == obj.updatedTime
-                && isSeen == obj.isSeen
+                && showAsSeen == obj.showAsSeen
                 && isFavorite == obj.isFavorite
 
     }

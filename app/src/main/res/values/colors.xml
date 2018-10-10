@@ -14,6 +14,7 @@
 
     <color name="colorFlatDelete">#D32F2F</color>
     <color name="colorFlatSeen">#6e6f71</color>
+    <color name="colorFlatSeenTransparent">#406e6f71</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="toolbarTitleTextColor">#ffffff</color>

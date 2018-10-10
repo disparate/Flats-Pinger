@@ -20,7 +20,7 @@ class FlatViewStateMapper(val context: Context) : Mapper<FlatWithStatus, FlatVie
                 from.provider.drawableRes,
                 from.source,
                 StringsUtils.getTimeAgoString(from.updatedTime, context),
-                from.isSeen,
+                from.isSeen && from.status != FlatStatus.FAVORITE,
                 from.status == FlatStatus.FAVORITE
         )
     }
