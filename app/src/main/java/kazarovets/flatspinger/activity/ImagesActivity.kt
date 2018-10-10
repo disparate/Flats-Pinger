@@ -70,7 +70,7 @@ class ImagesActivity : AppCompatActivity() {
             mAttacher?.setOnClickListener {
                 mActivity.finish()
             }
-            image.load(mGallery[position])
+            image.load(mGallery[position], R.drawable.home_placeholder)
             container.addView(view)
             return view
         }

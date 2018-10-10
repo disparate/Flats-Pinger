@@ -34,8 +34,9 @@
                 app:layout_constraintBottom_toBottomOf="@+id/site"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/guideline"
+                android:scaleType="centerCrop"
                 app:layout_constraintTop_toTopOf="parent"
-                bind:loadCropImg="@{item.imageUrl}"
+                bind:loadFlatImg="@{item.imageUrl}"
                 tools:background="@drawable/rectangle_circular_bg" />
 
             <ImageView

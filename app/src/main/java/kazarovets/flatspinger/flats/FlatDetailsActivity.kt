@@ -55,7 +55,7 @@ class FlatDetailsActivity : AppCompatActivity() {
 
         detailsFlatImage.visibility = if (flat.hasImages()) View.VISIBLE else View.GONE
 
-        detailsFlatImage.loadCenterCrop(flat.imageUrl)
+        detailsFlatImage.loadCenterCrop(flat.imageUrl, R.drawable.home_placeholder)
 
         detailsFlatImage.setOnClickListener { startActivity(ImagesActivity.getCallingIntent(this, flat.images)) }
 

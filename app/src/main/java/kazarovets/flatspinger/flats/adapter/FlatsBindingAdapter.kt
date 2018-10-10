@@ -8,14 +8,14 @@ import kazarovets.flatspinger.utils.clearLoadings
 import kazarovets.flatspinger.utils.loadCenterCrop
 
 
-@BindingAdapter("loadCropImg")
-fun loadCropImg(imageView: ImageView, url: String?) {
+@BindingAdapter("loadFlatImg")
+fun loadFlatImg(imageView: ImageView, url: String?) {
     val prevUrl = imageView.getTag(R.id.glide_image_url)
     if (url != prevUrl) {
         imageView.clearLoadings()
         if (url != null && url.isNotEmpty()) {
             imageView.setTag(R.id.glide_image_url, url)
-            imageView.loadCenterCrop(url)
+            imageView.loadCenterCrop(url, R.drawable.home_placeholder)
         }
     }
 }

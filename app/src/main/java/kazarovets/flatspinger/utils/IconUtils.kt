@@ -6,10 +6,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.BaseTarget
 
-fun ImageView.loadCenterCrop(url: String?) {
+fun ImageView.loadCenterCrop(url: String?, placeholderId: Int) {
     Glide.with(context)
             .load(url)
-            .apply(RequestOptions().centerCrop().dontAnimate())
+            .apply(RequestOptions()
+                    .placeholder(placeholderId)
+                    .centerCrop()
+                    .dontAnimate())
             .into(this)
 
 }
@@ -24,20 +27,24 @@ fun ImageView.loadCenterCrop(url: String?, imageViewTarget: BaseTarget<Bitmap>) 
             .into(imageViewTarget)
 }
 
-fun ImageView.loadFitCenter(url: String?) {
+fun ImageView.loadFitCenter(url: String?, placeholderId: Int) {
     Glide.with(context)
             .load(url)
-            .apply(RequestOptions().fitCenter()
+            .apply(RequestOptions()
+                    .fitCenter()
+                    .placeholder(placeholderId)
                     .dontAnimate())
             .into(this)
 
 }
 
-fun ImageView.load(url: String?) {
+fun ImageView.load(url: String?, placeholderId: Int) {
     Glide.with(context)
             .load(url)
+            .apply(RequestOptions()
+                    .placeholder(placeholderId)
+                    .dontAnimate())
             .into(this)
-
 }
 
 fun ImageView.clearLoadings() {

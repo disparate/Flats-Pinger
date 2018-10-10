@@ -62,7 +62,7 @@ class FlatInfoWindowAdapter(layoutInflater: LayoutInflater, appContext: Context)
             imageView.setImageBitmap(clickedMarkerBitmap)
         } else {
             try {
-                imageView.setImageBitmap(null)
+                imageView.setImageResource(R.drawable.home_placeholder)
                 imageView.loadCenterCrop(flat.imageUrl, MarkerTarget(marker))
             } catch (ignored: Exception) {
                 //happens if triggered by target
