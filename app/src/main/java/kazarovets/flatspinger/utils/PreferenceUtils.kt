@@ -39,7 +39,6 @@ object PreferenceUtils {
             FILTER_RENT_TYPES, FILTER_MAX_DISTANCE_TO_SUBWAY, FILTER_KEYWORDS)
 
     val SETTINGS_DAYS_AD_IS_ACTUAL = "days_ad_is_actual"
-    val SETTINGS_SHOW_SEEN_FLATS = "show_seen_flats"
     val SETTINGS_ENABLE_NOTIFICATONS = "enable_notifications"
 
     val TAG = "PreferenceUtils"
@@ -214,18 +213,6 @@ object PreferenceUtils {
             prefs.edit().putBoolean(SETTINGS_ENABLE_NOTIFICATONS, value).schedule()
         }
 
-    var showSeenFlats: Boolean = true
-        get() {
-            field = prefs.getBoolean(SETTINGS_SHOW_SEEN_FLATS, true)
-            return field
-        }
-        set(value) {
-            prefs.edit().putBoolean(SETTINGS_SHOW_SEEN_FLATS, value).schedule()
-        }
-
-    val showSeenFlatObservable: Observable<Boolean> by lazy {
-        SharedPreferenceObservableBoolean(prefs, SETTINGS_SHOW_SEEN_FLATS, false)
-    }
 
     private fun getNullableInt(fieldName: String): Int? {
         val value = prefs.getInt(fieldName, 0)

@@ -29,8 +29,11 @@ interface FlatsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addFavoriteFlat(flat: DBFlat)
 
-    @Delete
-    fun removeFavoriteFlat(flat: DBFlat)
+    @Query("DELETE FROM DBFlat WHERE id = :flatId")
+    fun removeFavoriteFlat(flatId: String)
+
+    @Query("DELETE FROM DBFlat WHERE url = :imageUrl")
+    fun removeFavoriteFlatByImageUrl(imageUrl: String?)
 
     @Query("SELECT * FROM DBFlat")
     fun getFavoriteFlats(): Flowable<List<DBFlat>>

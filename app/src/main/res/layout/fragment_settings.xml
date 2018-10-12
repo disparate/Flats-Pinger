@@ -23,14 +23,6 @@
             android:text="@string/settings_enable_notifications" />
 
 
-        <CheckBox
-            android:id="@+id/show_seen_flats_checkbox"
-            android:layout_width="match_parent"
-            android:textAppearance="@style/TextAppearance.Regular.Medium"
-            android:layout_height="wrap_content"
-            android:text="@string/settings_show_seen_flats" />
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

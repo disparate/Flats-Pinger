@@ -51,15 +51,15 @@ class ContentViewFlipper : ViewFlipper {
         displayedChild = NO_CONTENT_INDEX
     }
 
+    fun showError() {
+        showNoContent(R.string.error)
+    }
+
     fun showNoContent(@StringRes text: Int) {
         emptyText.setText(text)
         displayedChild = NO_CONTENT_INDEX
     }
 
-    fun showNoContent(text: CharSequence?) {
-        emptyText.text = text
-        displayedChild = NO_CONTENT_INDEX
-    }
 
     fun showContent() {
         if (displayedChild != CONTENT_INDEX) {
@@ -67,25 +67,10 @@ class ContentViewFlipper : ViewFlipper {
         }
     }
 
-    fun showContentIfNotEmpty(data: List<Any>) {
-        if (data.isEmpty()) {
-            showNoContent()
-        } else {
-            showContent()
-        }
-    }
-
-    fun setNoContentText(@StringRes resId: Int) {
-        emptyText.setText(resId)
-    }
-
     fun setNoContentText(text: CharSequence) {
         emptyText.text = text
     }
 
-    fun setNoContentTextColor(color: Int) {
-        emptyText.setTextColor(color)
-    }
 
     fun isShowLoading(): Boolean = displayedChild == PROGRESS_INDEX
 

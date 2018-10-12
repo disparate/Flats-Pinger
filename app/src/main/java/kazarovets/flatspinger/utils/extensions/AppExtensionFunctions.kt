@@ -46,7 +46,8 @@ fun <A> LiveData<out List<A>>.mergeWith(other: LiveData<out List<A>>): LiveData<
     }
 }
 
-fun <A, B, T> combineLatest(liveDataA: LiveData<A>, liveDataB: LiveData<B>,
+fun <A, B, T> combineLatest(liveDataA: LiveData<A>,
+                            liveDataB: LiveData<B>,
                             zipFunction: (A?, B?) -> T): LiveData<T> {
     return MediatorLiveData<T>().apply {
         var lastA: A? = null
@@ -72,6 +73,45 @@ fun <A, B, T> combineLatest(liveDataA: LiveData<A>, liveDataB: LiveData<B>,
         }
         addSource(liveDataB) {
             lastB = it
+            update()
+        }
+    }
+}
+
+fun <A, B, C, T> combineLatest(liveDataA: LiveData<A>,
+                               liveDataB: LiveData<B>,
+                               liveDataC: LiveData<C>,
+                               zipFunction: (A?, B?, C?) -> T): LiveData<T> {
+    return MediatorLiveData<T>().apply {
+        var lastA: A? = null
+        var lastB: B? = null
+        var lastC: C? = null
+
+        var disposable: Disposable? = null
+
+        fun update() {
+            disposable?.dispose()
+            disposable = Single.fromCallable { zipFunction(lastA, lastB, lastC) }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe({
+                        postValue(it)
+                    }, { error ->
+                        Log.d("ZipLiveData", "error zipping data", error)
+                    })
+        }
+
+        addSource(liveDataA) {
+            lastA = it
+            update()
+        }
+        addSource(liveDataB) {
+            lastB = it
+            update()
+        }
+
+        addSource(liveDataC) {
+            lastC = it
             update()
         }
     }

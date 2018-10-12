@@ -41,4 +41,9 @@
     <style name="TextAppearance.FlatDetails.CollapsingToolbar.Expanded">
         <item name="android:textSize">18sp</item>
     </style>
+
+    <style name="SwitchCompatStyle">
+        <item name="android:thumb">@drawable/layer_list_eye_thumb</item>
+        <item name="trackTint">@color/selector_track_color</item>
+    </style>
 </resources>

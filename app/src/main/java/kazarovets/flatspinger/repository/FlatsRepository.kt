@@ -48,7 +48,7 @@ class FlatsRepository(private val flatsDao: FlatsDao,
         if (isFavorite) {
             flatsDao.addFavoriteFlat(DBFlat.createFromFlat(flat))
         } else {
-            flatsDao.removeFavoriteFlat(DBFlat.createFromFlat(flat))
+            flatsDao.removeFavoriteFlat(flat.id)
         }
     }
 
@@ -57,7 +57,10 @@ class FlatsRepository(private val flatsDao: FlatsDao,
     }
 
     fun setFlatHidden(flat: FlatWithStatus) {
-        flatsDao.removeFavoriteFlat(DBFlat.createFromFlat(flat))
+        flatsDao.removeFavoriteFlat(flat.id)
+        if(flat.imageUrl?.isNotBlank() == true) {
+            flatsDao.removeFavoriteFlatByImageUrl(flat.imageUrl)
+        }
         flatsDao.addOrReplaceFlatStatus(DBFlatInfo.createHiddenFromFlat(flat))
     }
 
@@ -78,8 +81,4 @@ class FlatsRepository(private val flatsDao: FlatsDao,
         return PreferenceUtils.flatsFilterObservable
     }
 
-    //TODO: remove singleton
-    fun getShowSeenFlats(): Observable<Boolean> {
-        return PreferenceUtils.showSeenFlatObservable
-    }
 }

@@ -18,7 +18,6 @@ class SettingsFragment : Fragment() {
 
 
     private var enableNotificationsCheckbox: CheckBox? = null
-    private var showSeenFlatsCheckbox: CheckBox? = null
     private var daysAdIsActualView: TextView? = null
 
 
@@ -38,12 +37,6 @@ class SettingsFragment : Fragment() {
             } else {
                 ScheduleUtils.cancelScheduledJob(context!!)
             }
-        }
-
-        showSeenFlatsCheckbox = view.findViewById(R.id.show_seen_flats_checkbox)
-        showSeenFlatsCheckbox?.isChecked = PreferenceUtils.showSeenFlats
-        showSeenFlatsCheckbox?.setOnCheckedChangeListener { compoundButton, checked ->
-            PreferenceUtils.showSeenFlats = checked
         }
 
         daysAdIsActualView = view.findViewById(R.id.edit_text_days_ad_actual)

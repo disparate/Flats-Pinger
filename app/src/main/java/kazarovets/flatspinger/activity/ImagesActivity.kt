@@ -60,17 +60,24 @@ class ImagesActivity : AppCompatActivity() {
     class GalleryPhotoPagerAdapter(private val mGallery: ArrayList<String>,
                                    private val mActivity: ImagesActivity)
         : PagerAdapter(), ViewPager.PageTransformer {
-        private var mAttacher: PhotoViewAttacher? = null
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val inflater = LayoutInflater.from(container.context)
             val view = inflater.inflate(R.layout.item_gallery_photo, container, false)
             val image = view.findViewById<PhotoView>(R.id.item_gallery_photo_image)
-            mAttacher = PhotoViewAttacher(image)
-            mAttacher?.setOnClickListener {
+            val attacher = PhotoViewAttacher(image)
+            attacher.setOnClickListener {
                 mActivity.finish()
             }
-            image.load(mGallery[position], R.drawable.home_placeholder)
+            image.setImageResource(R.drawable.home_placeholder)
+            image.load(mGallery[position],
+                    onBitmapSet = { attacher.update() },
+                    onLoadFailed = {
+                        image.setImageResource(R.drawable.no_flat_image)
+                        attacher.update()
+                    }
+            )
+
             container.addView(view)
             return view
         }

@@ -7,18 +7,6 @@
     android:background="@color/colorPrimaryDark"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/mainToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:titleTextColor="@color/toolbarTitleTextColor" />
-    </android.support.design.widget.AppBarLayout>
-
     <LinearLayout
         android:id="@+id/mainContainer"
         android:layout_width="match_parent"

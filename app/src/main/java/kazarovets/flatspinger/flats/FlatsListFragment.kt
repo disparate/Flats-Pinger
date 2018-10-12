@@ -18,6 +18,7 @@ import kazarovets.flatspinger.model.FlatStatus
 import kazarovets.flatspinger.utils.extensions.getAppComponent
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModel
 import kazarovets.flatspinger.viewmodel.FlatInfosViewModelFactory
+import kazarovets.flatspinger.views.ContentViewState
 import kotlinx.android.synthetic.main.fragment_flats_list.*
 import javax.inject.Inject
 
@@ -72,7 +73,7 @@ class FlatsListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         flatsListSwipeRefresh.setOnRefreshListener {
-            flatsViewModel.loadFlats()
+            flatsViewModel.refresh()
         }
 
         flatsListRecycler.layoutManager = LinearLayoutManager(context)
@@ -88,22 +89,33 @@ class FlatsListFragment : Fragment() {
             onFlatsReceived(it)
         })
 
-        //TODO: change
-        flatsContentViewFlipper.showLoader()
-        flatsViewModel.getIsLoading().observe(this, Observer<Boolean> {
-            flatsListSwipeRefresh.isRefreshing = it ?: flatsListSwipeRefresh.isRefreshing ?: false
-            if (it == true && flatsViewModel.getFlats().value?.isNotEmpty() == false) {
-                flatsContentViewFlipper.showLoader()
-            } else {
-                flatsContentViewFlipper.showContent()
-            }
-        })
+        observeLoadingState()
 
         flatsMapFragment = FlatsMapFragment()
         childFragmentManager
                 .beginTransaction()
                 .replace(R.id.flatsListsMapContainer, flatsMapFragment)
                 .commit()
+
+        flatsViewModel.setShowSeen(showVisibleFlatsSwitch.isChecked)
+        showVisibleFlatsSwitch.setOnCheckedChangeListener { _, checked ->
+            flatsViewModel.setShowSeen(checked)
+        }
+    }
+
+    private fun observeLoadingState() {
+        flatsViewModel.loadingStateData.stateData.observe(this, Observer<ContentViewState> {
+            when (it) {
+                ContentViewState.CONTENT -> flatsContentViewFlipper.showContent()
+                ContentViewState.LOADING -> flatsContentViewFlipper.showLoader()
+                ContentViewState.ERROR -> flatsContentViewFlipper.showError()
+                ContentViewState.NO_DATA -> flatsContentViewFlipper.showNoContent()
+                null -> flatsContentViewFlipper.showLoader()
+            }
+        })
+        flatsViewModel.loadingStateData.isRefreshing.observe(this, Observer {
+            flatsListSwipeRefresh.isRefreshing = it == true
+        })
     }
 
 

@@ -49,7 +49,6 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository,
         return Observable.just(currentFlats)
                 .addFlatStatus(flatStatusesObservable, setFlatStatusStrategy)
                 .filterHidden()
-                .filterSeen(flatsRepository.getShowSeenFlats())
                 .filterWithFlatFilter(flatsRepository.getFlatsFilter())
     }
 
@@ -57,7 +56,6 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository,
         return flatsRepository.getRemoteFlats(provider).toObservable()
                 .addFlatStatus(flatStatusesObservable, setFlatStatusStrategy)
                 .filterHidden()
-                .filterSeen(flatsRepository.getShowSeenFlats())
                 .filterWithFlatFilter(flatsRepository.getFlatsFilter())
                 .wrapInOptional(true)
                 .addLoadingStatus()
@@ -85,13 +83,6 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository,
             flats.map { flat ->
                 setFlatStatusStrategy.convertWithStatus(flat, statuses)
             }
-        }
-    }
-
-    private fun Observable<out List<FlatWithStatus>>.filterSeen(showSeenObservable: Observable<Boolean>)
-            : Observable<List<FlatWithStatus>> {
-        return Observables.combineLatest(this, showSeenObservable) { flats, showSeen ->
-            flats.filter { !it.isSeen || it.status == FlatStatus.FAVORITE || showSeen }
         }
     }
 
@@ -134,6 +125,12 @@ class GetHomeFlatsInteractor(private val flatsRepository: FlatsRepository,
     )
 
     enum class FlatsLoadingStatus {
-        LOADING, ERROR, SUCCESS
+        LOADING, ERROR, SUCCESS;
+
+        fun isLoading() = this == LOADING
+
+        fun isError() = this == ERROR
+
+        fun isSuccess() = this == SUCCESS
     }
 }

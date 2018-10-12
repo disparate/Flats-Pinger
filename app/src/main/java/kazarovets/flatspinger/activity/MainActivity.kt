@@ -46,15 +46,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setSupportActionBar(mainToolbar)
-
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
         mainNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         currPosition = savedInstanceState?.getInt(CURRENT_POSITION) ?: currPosition
         mainViewFlipper.displayedChild = currPosition
-
     }
 
 

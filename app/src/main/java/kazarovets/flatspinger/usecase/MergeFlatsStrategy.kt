@@ -30,7 +30,10 @@ class MergeFlatsStrategy {
             : List<FlatWithStatus> {
         return listToFilterFrom.filter { flat ->
             this
-                    .any { compared -> flat.originalUrl == compared.originalUrl }
+                    .any { compared ->
+                        flat.originalUrl == compared.originalUrl
+                    || (flat.imageUrl?.isNotBlank() == true && flat?.imageUrl == compared?.imageUrl)}
+
                     .not()
         } + this
     }
