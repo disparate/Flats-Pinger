@@ -61,7 +61,6 @@ class FlatsListFragment : Fragment() {
         super.onAttach(context)
 
         flatsViewModel = ViewModelProviders.of(this, flatsFactory).get(FlatInfosViewModel::class.java)
-        flatsViewModel.init()
         flatsViewModel.flatsMode = currentMode
     }
 
@@ -83,8 +82,6 @@ class FlatsListFragment : Fragment() {
 
         fillFloatingMenu()
 
-        flatsListSwipeRefresh.isRefreshing = true
-
         flatsViewModel.getFlats().observe(this, Observer {
             onFlatsReceived(it)
         })
@@ -103,6 +100,13 @@ class FlatsListFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(flatsViewModel.loadingStateData.isLoading.value == false) {
+            flatsViewModel.refresh()
+        }
+    }
+
     private fun observeLoadingState() {
         flatsViewModel.loadingStateData.stateData.observe(this, Observer<ContentViewState> {
             when (it) {
@@ -117,7 +121,6 @@ class FlatsListFragment : Fragment() {
             flatsListSwipeRefresh.isRefreshing = it == true
         })
     }
-
 
     private fun onFlatsReceived(flats: List<FlatViewState>?) {
         adapter.submitList(flats)

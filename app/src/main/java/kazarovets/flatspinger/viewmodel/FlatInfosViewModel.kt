@@ -37,15 +37,14 @@ class FlatInfosViewModel(private val repository: FlatsRepository,
 
     private var flatsDisposable: Disposable? = null
 
-    fun init() {
+    init {
         loadFlats(false)
     }
 
     fun getFlats() = combineLatest(flatsLiveData, flatsModeLiveData, showSeenLiveData) { flats, mode, showSeen ->
-        flats.orEmpty()
-                .filter { mode?.statuses?.contains(it.flat.status) ?: true }
-                .filter { it.showAsSeen == false || showSeen == true }
-                .apply {
+        flats?.filter { mode?.statuses?.contains(it.flat.status) ?: true }
+                ?.filter { it.showAsSeen.not() || showSeen == true }
+                ?.apply {
                     if (loadingStateData.isLoading.value == true) {
                         if (isEmpty().not()) {
                             loadingStateData.setState(ContentViewState.CONTENT)
@@ -54,6 +53,7 @@ class FlatInfosViewModel(private val repository: FlatsRepository,
                         loadingStateData.setState(if (isEmpty()) ContentViewState.NO_DATA else ContentViewState.CONTENT)
                     }
                 }
+                .orEmpty()
     }
 
     fun refresh() = loadFlats(true)
@@ -63,7 +63,6 @@ class FlatInfosViewModel(private val repository: FlatsRepository,
     }
 
     private fun loadFlats(isRefresh: Boolean) {
-
         val current = flatsLiveData.value?.map { it.flat }.orEmpty()
 
         loadingStateData.setIsRefreshing(isRefresh)
